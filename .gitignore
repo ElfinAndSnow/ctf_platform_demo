@@ -2,7 +2,6 @@
 node_modules
 frontend/dist
 venv
-./backend/db.sqlite3
 
 
 # local env files
@@ -23,3 +22,4 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+backend/db.sqlite3
