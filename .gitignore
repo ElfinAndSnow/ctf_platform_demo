@@ -2,6 +2,7 @@
 node_modules
 frontend/dist
 venv
+./backend/db.sqlite3
 
 
 # local env files
