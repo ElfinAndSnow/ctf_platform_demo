@@ -10,4 +10,4 @@ class Book(models.Model):
 
     class Meta:
         db_table = "db_book"
-        verbose_name = "书"
+        verbose_name = "书籍"
