@@ -22,8 +22,8 @@ def judgement(request, question_id):
 
     # Continue processing the flag submission
     if request.method == 'POST':
-        summitted_flag = request.POST.get('flag','')
-        if summitted_flag == question.flag:
+        submitted_flag = request.POST.get('flag','')
+        if submitted_flag == question.flag:
             return render(request, 'success.html')
         else:
             return render(request, 'failure.html')
