@@ -22,18 +22,16 @@ from library.views import BookViewSet
 from rest_framework import routers
 # import jwtauth.urls as jwturls
 from django.urls import path
+from account import models
 
-
-router = routers.DefaultRouter()
-
-router.register("books", BookViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     # 接口文档，开放访问权限用于前端开发
     path(r'docs/', include_docs_urls(title="接口文档", authentication_classes=[], permission_classes=[])),
 
-    path(r'api/', include(router.urls)),
+    path(r'api/', include('library.urls')),
+    path(r'api/', include('article.urls')),
 
     # login, register, token
     path(r'auth/', include('jwtauth.urls')),
