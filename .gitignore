@@ -1,1 +1,29 @@
+<<<<<<< HEAD
 migrations
+=======
+.DS_Store
+node_modules
+frontend/dist
+venv
+
+
+# local env files
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+backend/db.sqlite3
+>>>>>>> 543e929561b96fe1f6e0b6d2fdeea48c79d20e89
