@@ -15,8 +15,27 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.urls import path, include
+from rest_framework.documentation import include_docs_urls
+
+from library.views import BookViewSet
+from rest_framework import routers
+# import jwtauth.urls as jwturls
 from django.urls import path
+from account import models
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # 接口文档，开放访问权限用于前端开发
+    path(r'docs/', include_docs_urls(title="接口文档", authentication_classes=[], permission_classes=[])),
+
+    path(r'api/', include('library.urls')),
+    path(r'api/', include('article.urls')),
+    path(r'api/', include('account.urls')),
+
+    # login, register, token
+    path(r'auth/', include('jwtauth.urls')),
 ]
+
+# urlpatterns += router.urls
