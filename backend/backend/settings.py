@@ -59,7 +59,7 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = 'account.User'    # 自定义用户模型
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=2),  # 配置过期时间
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=5),  # 配置过期时间
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=15),
     'JWT_ALLOW_REFRESH': True,  # 是否允许用户获取新的token值
 }
