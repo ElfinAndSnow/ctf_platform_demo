@@ -8,6 +8,8 @@ class Question(models.Model):
     description = models.TextField()
     timer = models.PositiveIntegerField(null=True, blank=True)
     flag = models.CharField(max_length=100, null=False, blank=True)
+    # Add start_time to save the start time and avoid conflicts.
+    start_time = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.description

@@ -9,15 +9,19 @@ def question_categories(request):
     return render(request, 'categories.html', {'categories': categories})
 
 
-# Set up a timer for the puzzle
+# Set up a judgement for the puzzle
 def judgement(request, question_id):
     question = Question.object.get(pk=question_id)
-    if 'start_time' not in request.session:
-        request.session['start_time'] = timezone.now()
+    # Save the start time.
+    if question.start_time is None:
+        now = timezone.now()
+        now = now.replace(microsecond=0)
+        question.start_time = now
+        question.save()
 
-    # Check if the user exceeded the time limit(30 mins)
-    elapsed_time = timezone.now() - request.session['start_time']
-    if elapsed_time.total_seconds() > 1800:
+    # Check if the user exceeded the time limit
+    elapsed_time = timezone.now() - question.start_time
+    if elapsed_time.total_seconds() > question.timer:
         return render(request, 'timeout.html')
 
     # Continue processing the flag submission

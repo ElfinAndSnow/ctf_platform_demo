@@ -37,6 +37,9 @@ urlpatterns = [
 
     # login, register, token
     path(r'auth/', include('jwtauth.urls')),
+
+    # Add the urls of the puzzles
+    path(r'puzzles/', include('puzzles.urls')),
 ]
 
 # urlpatterns += router.urls
