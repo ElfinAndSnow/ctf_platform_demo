@@ -1,3 +1,13 @@
-from django.shortcuts import render
+from rest_framework import generics
 
-# Create your views here.
+from account.models import User
+from account.serializer import UserIDSerializer
+
+
+class UserIDByUsernameView(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserIDSerializer
+
+    def get_object(self):
+        username = self.kwargs['username']
+        return self.get_queryset().get(username=username)

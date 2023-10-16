@@ -32,6 +32,7 @@ urlpatterns = [
 
     path(r'api/', include('library.urls')),
     path(r'api/', include('article.urls')),
+    path(r'api/', include('account.urls')),
 
     # login, register, token
     path(r'auth/', include('jwtauth.urls')),
