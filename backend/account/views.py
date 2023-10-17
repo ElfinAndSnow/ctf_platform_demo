@@ -1,8 +1,8 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
-from account.models import User, UserPuzzleSession
-from account.serializer import UserIDSerializer, UserPuzzleSessionCreateRetrieveSerializer
+from account.models import User, UserChallengeSession
+from account.serializer import UserIDSerializer, UserChallengeSessionCreateRetrieveSerializer
 from utils.custom_permissions import IsAdminOrSessionCreator
 
 
@@ -15,15 +15,15 @@ class UserIDByUsernameView(generics.RetrieveAPIView):
         return self.get_queryset().get(username=username)
 
 
-class UserPuzzleSessionCreateView(generics.CreateAPIView):
-    queryset = UserPuzzleSession
-    serializer_class = UserPuzzleSessionCreateRetrieveSerializer
+class UserChallengeSessionCreateView(generics.CreateAPIView):
+    queryset = UserChallengeSession
+    serializer_class = UserChallengeSessionCreateRetrieveSerializer
 
     permission_classes = [IsAuthenticated]
 
 
-class UserPuzzleSessionRetrieveView(generics.RetrieveAPIView):
-    queryset = UserPuzzleSession
-    serializer_class = UserPuzzleSessionCreateRetrieveSerializer
+class UserChallengeSessionRetrieveView(generics.RetrieveAPIView):
+    queryset = UserChallengeSession
+    serializer_class = UserChallengeSessionCreateRetrieveSerializer
 
     permission_classes = [IsAdminOrSessionCreator]

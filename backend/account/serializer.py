@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, UserPuzzleSession
+from .models import User, UserChallengeSession
 
 
 # 暂时不需要，因为login和register的视图和序列化器要单独写
@@ -18,9 +18,9 @@ class UserIDSerializer(serializers.ModelSerializer):
         ]
 
 
-class UserPuzzleSessionCreateRetrieveSerializer(serializers.ModelSerializer):
+class UserChallengeSessionCreateRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
-        model = UserPuzzleSession
+        model = UserChallengeSession
         fields = [
             'user',
             'question',

@@ -38,11 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'challenge',
     'account',
     'article',
     'jwtauth',
     'library',
-    'puzzles',
+    # 'puzzles',
 ]
 
 REST_FRAMEWORK = {

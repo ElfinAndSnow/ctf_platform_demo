@@ -34,7 +34,8 @@ urlpatterns = [
     path(r'api/', include('article.urls')),
     path(r'api/', include('account.urls')),
 
-    path(r'api/', include('puzzles.urls')),
+    # path(r'api/', include('puzzles.urls')),
+    path(r'api/', include('challenge.urls')),
 
     # login, register, token
     path(r'auth/', include('jwtauth.urls')),
