@@ -23,5 +23,5 @@ class UserChallengeSessionCreateRetrieveSerializer(serializers.ModelSerializer):
         model = UserChallengeSession
         fields = [
             'user',
-            'question',
+            'challenge',
         ]
