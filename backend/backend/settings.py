@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'article',
     'jwtauth',
     'library',
+    'puzzles',
 ]
 
 REST_FRAMEWORK = {
