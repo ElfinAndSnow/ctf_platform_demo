@@ -15,3 +15,8 @@ class IsAdminOrAuthorOrReadOnly(permissions.BasePermission):
 
         # Instance must have an attribute named `owner`.
         return (obj.author == request.user) or request.user.is_staff
+
+
+class IsAdminOrSessionCreator(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.user == request.user or request.user.is_staff
