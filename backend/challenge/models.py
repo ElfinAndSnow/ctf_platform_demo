@@ -12,8 +12,8 @@ class Challenge(models.Model):
     # 记录解出该题的用户
     solved_by = models.ManyToManyField('account.User', related_name="solved_challenges", blank=True)
 
-    # Add start_time
-    # start_time = models.DateTimeField(null=True, blank=True)
+    # 单个题目的分数可以有所不同
+    points = models.IntegerField(verbose_name="题目分数", default=100, null=True)
 
     def __str__(self):
         return str(self.id) + " | " + self.name + "_" + self.type

@@ -1,4 +1,4 @@
-from rest_framework import generics, status
+from rest_framework import generics, status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -79,6 +79,8 @@ class FlagSubmissionView(generics.CreateAPIView):
         user = self.request.user
         challenge = user_challenge_session.challenge
         challenge.solved_by.add(user)
+        # 给用户加分
+        user.check_points()
         # for solved_challenge in user.solved_challenges.all():
         #     print(solved_challenge.name)
 
@@ -90,3 +92,8 @@ class FlagSubmissionView(generics.CreateAPIView):
         # serializer里少东西生成headers时会报错，待解决
         # headers = self.get_success_headers(serializer.data)
         return Response({"msg": "You get the correct answer!"}, status=status.HTTP_201_CREATED)
+
+
+# 用户信息接口
+# class UserViewSet(viewsets.ModelViewSet):
+#     pass
