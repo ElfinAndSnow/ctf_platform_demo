@@ -54,6 +54,7 @@ class FlagSubmissionSerializer(serializers.ModelSerializer):
         is_expired = user_challenge_session.expiration_verification()
         if is_expired:
             user_challenge_session.is_solved_or_expired = True
+            user_challenge_session.save()
             raise serializers.ValidationError("Time limit exceeded. Session is closed.")
 
         is_correct = user_challenge_session.flag_verification(user_flag)
