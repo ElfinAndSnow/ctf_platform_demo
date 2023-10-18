@@ -79,6 +79,8 @@ class FlagSubmissionView(generics.CreateAPIView):
         user = self.request.user
         challenge = user_challenge_session.challenge
         challenge.solved_by.add(user)
+        # for solved_challenge in user.solved_challenges.all():
+        #     print(solved_challenge.name)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
