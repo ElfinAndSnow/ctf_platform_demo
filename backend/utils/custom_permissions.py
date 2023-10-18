@@ -19,4 +19,6 @@ class IsAdminOrAuthorOrReadOnly(permissions.BasePermission):
 
 class IsAdminOrSessionCreator(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
+        # print("obj.user: " + obj.user.username)
+        # print("request.user: " + request.user.username)
         return obj.user == request.user or request.user.is_staff
