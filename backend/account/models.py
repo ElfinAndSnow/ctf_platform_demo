@@ -10,6 +10,9 @@ class User(AbstractUser):
     class Meta:
         verbose_name = "用户"
 
+    def __str__(self):
+        return str(self.id) + " | " + self.username
+
 
 class UserChallengeSession(models.Model):
     user = models.ForeignKey(User, verbose_name="用户", on_delete=models.CASCADE)
@@ -53,7 +56,7 @@ class UserChallengeSession(models.Model):
         return flag == correct_flag
 
     def __str__(self):
-        _str = ""
+        _str = str(self.id) + " | "
         is_closed = self.get_current_state()
         if is_closed:
             _str += "[CLOSED]"

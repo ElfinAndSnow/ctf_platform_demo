@@ -16,4 +16,4 @@ class Challenge(models.Model):
     # start_time = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return self.name + "_" + self.type
+        return str(self.id) + " | " + self.name + "_" + self.type
