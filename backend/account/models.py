@@ -5,10 +5,21 @@ from django.db import models
 
 
 class User(AbstractUser):
+    points = models.IntegerField(verbose_name="个人总分数", default=0, null=True)
     # objects = models.Manager()
 
     class Meta:
         verbose_name = "用户"
+
+    # 加分函数写在用户类下作为用户的方法
+    # 逻辑不是加分而是算分
+    # 每次调用方法依照solved_challenges字段中的Challenges重新计算用户总分
+    def check_points(self):
+        self.points = 0
+        for challenge in self.solved_challenges.all():
+            points = challenge.points
+            self.points += points
+        self.save()
 
     def __str__(self):
         return str(self.id) + " | " + self.username

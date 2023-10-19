@@ -54,6 +54,7 @@ urlpatterns = [
     path(r'api/', include('library.urls')),
     path(r'api/', include('article.urls')),
     path(r'api/', include('account.urls')),
+    path(r'api/', include('leaderboard.urls')),
 
     # path(r'api/', include('puzzles.urls')),
     path(r'api/', include('challenge.urls')),
