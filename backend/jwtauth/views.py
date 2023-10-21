@@ -1,6 +1,7 @@
 from django.shortcuts import render
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 
 from account.models import User
 from jwtauth.serializer import RegistrationSerializer, PasswordUpdateSerializer
