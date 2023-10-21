@@ -62,6 +62,12 @@ REST_FRAMEWORK = {
 
 AUTH_USER_MODEL = 'account.User'  # 自定义用户模型
 
+# 自定义验证后台
+# 可使用用户名或邮箱登录
+AUTHENTICATION_BACKENDS = (
+    'jwtauth.views.MyCustomBackend',
+)
+
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=100),  # 配置过期时间
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=15),
