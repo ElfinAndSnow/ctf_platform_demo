@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from account.models import User, UserChallengeSession
 from account.serializer import UserInfoSerializer, UsernameUpdateSerializer, UserIDSerializer, UserChallengeSessionCreateRetrieveSerializer, FlagSubmissionSerializer
 from challenge.models import Challenge
-from utils.custom_permissions import IsAdminOrSessionCreator
+from utils.custom_permissions import IsAdminOrSessionCreator, IsAdminOrSelf, IsSelf, IsNotPrivateOrSelf
 
 
 class UserIDByUsernameView(generics.RetrieveAPIView):
@@ -65,7 +65,6 @@ class UserChallengeSessionCreateView(generics.CreateAPIView):
 class UserChallengeSessionRetrieveView(generics.RetrieveAPIView):
     queryset = UserChallengeSession
     serializer_class = UserChallengeSessionCreateRetrieveSerializer
-
     permission_classes = [IsAdminOrSessionCreator]
 
 
@@ -98,12 +97,17 @@ class FlagSubmissionView(generics.CreateAPIView):
 class UserInfoViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserInfoSerializer
-    permission_classes = []
+    permission_classes = [IsNotPrivateOrSelf, IsAuthenticated]
     # 要根据访问的用户重写get_permissions
     # 同时在自定义权限里增加一些权限
-    # 根据用户的is_private来分配权限
+    def get_queryset(self):
+        if not self.request.user.is_private:
+            return User.objects.filter(is_private=False)
+        else:
+            return User.objects.filter(Q(id=self.request.user.id) | Q(is_private=False))
+
 
 class UsernameUpdateView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UsernameUpdateSerializer
-    permission_classes = []
+    permission_classes = [IsAdminOrSelf, IsAuthenticated]

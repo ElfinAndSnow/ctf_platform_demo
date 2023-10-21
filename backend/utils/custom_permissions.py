@@ -22,3 +22,18 @@ class IsAdminOrSessionCreator(permissions.BasePermission):
         # print("obj.user: " + obj.user.username)
         # print("request.user: " + request.user.username)
         return obj.user == request.user or request.user.is_staff
+
+
+class IsAdminOrSelf(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj == request.user or request.user.is_staff
+
+
+class IsNotPrivateOrSelf(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return (not obj.is_private) or obj == request.user
+
+
+class IsSelf(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj == request.user
