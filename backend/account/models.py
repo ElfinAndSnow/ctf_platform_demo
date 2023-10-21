@@ -5,7 +5,9 @@ from django.db import models
 
 
 class User(AbstractUser):
+    # solved_challenges = models.ManyToManyField('challenge.Challenge', related_name="solved_by", blank=True)
     points = models.IntegerField(verbose_name="个人总分数", default=0, null=True)
+    team = models.ForeignKey('team.Team', on_delete=models.SET_NULL, related_name="members", null=True, blank=True)
     # objects = models.Manager()
 
     class Meta:
@@ -20,6 +22,7 @@ class User(AbstractUser):
             points = challenge.points
             self.points += points
         self.save()
+        return self.points
 
     def __str__(self):
         return str(self.id) + " | " + self.username
