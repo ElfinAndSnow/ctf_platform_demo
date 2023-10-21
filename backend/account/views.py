@@ -1,9 +1,9 @@
 from rest_framework import generics, status, viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
 from account.models import User, UserChallengeSession
-from account.serializer import UserIDSerializer, UserChallengeSessionCreateRetrieveSerializer, FlagSubmissionSerializer
+from account.serializer import UserInfoSerializer, UsernameUpdateSerializer, UserIDSerializer, UserChallengeSessionCreateRetrieveSerializer, FlagSubmissionSerializer
 from challenge.models import Challenge
 from utils.custom_permissions import IsAdminOrSessionCreator
 
@@ -95,5 +95,15 @@ class FlagSubmissionView(generics.CreateAPIView):
 
 
 # 用户信息接口
-# class UserViewSet(viewsets.ModelViewSet):
-#     pass
+class UserInfoViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserInfoSerializer
+    permission_classes = []
+    # 要根据访问的用户重写get_permissions
+    # 同时在自定义权限里增加一些权限
+    # 根据用户的is_private来分配权限
+
+class UsernameUpdateView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UsernameUpdateSerializer
+    permission_classes = []

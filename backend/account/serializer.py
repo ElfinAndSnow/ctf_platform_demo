@@ -4,6 +4,40 @@ from .models import User, UserChallengeSession
 
 # 暂时不需要，因为login和register的视图和序列化器要单独写
 class UserSerializer(serializers.ModelSerializer):
+class UserInfoSerializer(serializers.ModelSerializer):
+    # TODO TeamInfoSerializer嵌套
+    # team = TeamInfoSerializer
+    # {
+    #     "username": "xxx",
+    #     "team": {
+    #         "name": "ccc",
+    #         "description": "bbb"
+    #     }
+    # }
+    # points = serializers.ReadOnlyField(source='get_points_display')
+
+    class Meta:
+        model = User
+        # fields = '__all__'
+        fields = [
+            'id',
+            'username',
+            'description',
+            'is_private',
+            'points',
+            'team',
+            'date_joined',
+            # 由于使用jwt认证，last_login不刷新
+            # 'last_login',
+        ]
+        read_only_fields = [
+            'username',
+            'id',
+            'points',
+            'team',
+        ]
+
+
     class Meta:
         model = User
         fields = '__all__'
