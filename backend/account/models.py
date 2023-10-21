@@ -9,6 +9,13 @@ class User(AbstractUser):
     points = models.IntegerField(verbose_name="个人总分数", default=0, null=True)
     team = models.ForeignKey('team.Team', on_delete=models.SET_NULL, related_name="members", null=True, blank=True)
     # objects = models.Manager()
+    team = models.ForeignKey('team.Team', verbose_name="所属战队", on_delete=models.SET_NULL, related_name="members", null=True, blank=True)
+    description = models.TextField(verbose_name="个人简介", null=True, blank=True)
+    is_private = models.BooleanField(verbose_name="个人信息状态", null=True, default=False)
+
+    # 隐藏的字段
+    # leading_team
+    # solved_challenges
 
     class Meta:
         verbose_name = "用户"

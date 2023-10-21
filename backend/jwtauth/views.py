@@ -3,7 +3,7 @@ from rest_framework import generics
 from rest_framework.permissions import AllowAny
 
 from account.models import User
-from jwtauth.serializer import RegistrationSerializer
+from jwtauth.serializer import RegistrationSerializer, PasswordUpdateSerializer
 from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
 from account.models import User
@@ -13,6 +13,13 @@ class RegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegistrationSerializer
     permission_classes = [AllowAny]
+
+
+class PasswordUpdateView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = PasswordUpdateSerializer
+    permission_classes = []
+
 
 class MyCustomBackend(ModelBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
