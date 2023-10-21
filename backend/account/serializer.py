@@ -39,7 +39,22 @@ class UserInfoSerializer(serializers.ModelSerializer):
 class UsernameUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = [
+            'username',
+        ]
+        extra_kwargs = {
+            'username': {
+                'write_only': True,
+            },
+        }
+
+    def to_representation(self, obj):
+        data = super().to_representation(obj)
+        # 对序列化数据做修改，添加新的数据
+        serializer = UserInfoSerializer(instance=obj)
+        print(serializer.data)
+        data.update(serializer.data)
+        return data
 
 
 class UserIDSerializer(serializers.ModelSerializer):
