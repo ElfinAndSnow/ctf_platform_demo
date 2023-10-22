@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from challenge.serializer import ChallengeSerializer
 from .models import User, UserChallengeSession
 
 
@@ -13,6 +15,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
     #     }
     # }
     # points = serializers.ReadOnlyField(source='get_points_display')
+    solved_challenges = ChallengeSerializer(many=True)
 
     class Meta:
         model = User
@@ -25,6 +28,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
             'points',
             'team',
             'date_joined',
+            'solved_challenges',
             # 由于使用jwt认证，last_login不刷新
             # 'last_login',
         ]
@@ -33,6 +37,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
             'id',
             'points',
             'team',
+            'solved_challenges',
         ]
 
 
