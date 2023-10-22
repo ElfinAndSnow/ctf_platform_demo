@@ -13,6 +13,10 @@ class Team(models.Model):
         null=True,
         blank=True
     )
+
+    # 隐藏字段
+    # solved_challenges_team
+
     # TODO 邀请码
     # invitation_token = models.CharField(
     #     verbose_name="邀请码",
@@ -29,6 +33,7 @@ class Team(models.Model):
     # 检验其solved_by_teams中是否包含self，也就是当前Team object
     # 若不包含则添加，之后再check全队的points
     def check_points(self):
+        print("checking score: " + self.name)
         self.points = 0
         for user in self.members.all():
             # self.points += user.check_points()

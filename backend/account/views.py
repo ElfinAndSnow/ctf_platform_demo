@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from account.models import User, UserChallengeSession
 from account.serializer import UserInfoSerializer, UsernameUpdateSerializer, UserIDSerializer, UserChallengeSessionCreateRetrieveSerializer, FlagSubmissionSerializer
 from challenge.models import Challenge
-from utils.custom_permissions import IsAdminOrSessionCreator, IsAdminOrSelf, IsSelf, IsNotPrivateOrSelf
+from utils.custom_permissions import IsAdminOrSessionCreator, IsAdminOrSelf, IsNotPrivateOrSelf, DisallowAny
 
 
 class UserIDByUsernameView(generics.RetrieveAPIView):
@@ -79,7 +79,7 @@ class FlagSubmissionView(generics.CreateAPIView):
         challenge = user_challenge_session.challenge
         challenge.solved_by.add(user)
         # 给用户加分
-        user.check_points()
+        user.team.check_points()
         # for solved_challenge in user.solved_challenges.all():
         #     print(solved_challenge.name)
 
@@ -100,6 +100,15 @@ class UserInfoViewSet(viewsets.ModelViewSet):
     permission_classes = [IsNotPrivateOrSelf, IsAuthenticated]
     # 要根据访问的用户重写get_permissions
     # 同时在自定义权限里增加一些权限
+    def get_permissions(self):
+        if self.action == 'create':
+            permission_classes = [DisallowAny]
+        if self.action == 'list' or self.action == 'retrieve':
+            permission_classes = [IsNotPrivateOrSelf, IsAuthenticated]
+        else:
+            permission_classes = [IsAdminOrSelf, IsAuthenticated]
+        return [permission() for permission in permission_classes]
+
     def get_queryset(self):
         if not self.request.user.is_private:
             return User.objects.filter(is_private=False)

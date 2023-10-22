@@ -8,6 +8,7 @@ from jwtauth.serializer import RegistrationSerializer, PasswordUpdateSerializer
 from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
 from account.models import User
+from utils.custom_permissions import IsSelf
 
 
 class RegistrationView(generics.CreateAPIView):
@@ -19,7 +20,7 @@ class RegistrationView(generics.CreateAPIView):
 class PasswordUpdateView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = PasswordUpdateSerializer
-    permission_classes = []
+    permission_classes = [IsSelf]
 
 
 class MyCustomBackend(ModelBackend):

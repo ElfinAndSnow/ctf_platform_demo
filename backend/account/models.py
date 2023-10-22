@@ -22,6 +22,7 @@ class User(AbstractUser):
     # 逻辑不是加分而是算分
     # 每次调用方法依照solved_challenges字段中的Challenges重新计算用户总分
     def check_points(self):
+        print("checking score: " + self.username)
         self.points = 0
         for challenge in self.solved_challenges.all():
             points = challenge.points
