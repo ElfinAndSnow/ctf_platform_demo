@@ -2,11 +2,59 @@ from rest_framework import serializers
 from .models import User, UserChallengeSession
 
 
-# 暂时不需要，因为login和register的视图和序列化器要单独写
-class UserSerializer(serializers.ModelSerializer):
+class UserInfoSerializer(serializers.ModelSerializer):
+    # TODO TeamInfoSerializer嵌套
+    # team = TeamInfoSerializer
+    # {
+    #     "username": "xxx",
+    #     "team": {
+    #         "name": "ccc",
+    #         "description": "bbb"
+    #     }
+    # }
+    # points = serializers.ReadOnlyField(source='get_points_display')
+
     class Meta:
         model = User
-        fields = '__all__'
+        # fields = '__all__'
+        fields = [
+            'id',
+            'username',
+            'description',
+            'is_private',
+            'points',
+            'team',
+            'date_joined',
+            # 由于使用jwt认证，last_login不刷新
+            # 'last_login',
+        ]
+        read_only_fields = [
+            'username',
+            'id',
+            'points',
+            'team',
+        ]
+
+
+class UsernameUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'username',
+        ]
+        extra_kwargs = {
+            'username': {
+                'write_only': True,
+            },
+        }
+
+    def to_representation(self, obj):
+        data = super().to_representation(obj)
+        # 对序列化数据做修改，添加新的数据
+        serializer = UserInfoSerializer(instance=obj)
+        print(serializer.data)
+        data.update(serializer.data)
+        return data
 
 
 class UserIDSerializer(serializers.ModelSerializer):

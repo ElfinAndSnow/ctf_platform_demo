@@ -6,7 +6,7 @@ class Book(models.Model):
     # author =
     text = models.TextField(verbose_name="内容")
     create_time = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
-    objects = models.Manager()
+    # objects = models.Manager()
 
     class Meta:
         db_table = "db_book"
