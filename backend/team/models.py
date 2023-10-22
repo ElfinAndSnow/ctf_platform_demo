@@ -13,6 +13,10 @@ class Team(models.Model):
         null=True,
         blank=True
     )
+
+    # 隐藏字段
+    # solved_challenges_team
+
     # TODO 邀请码
     # invitation_token = models.CharField(
     #     verbose_name="邀请码",
