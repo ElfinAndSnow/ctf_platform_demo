@@ -74,6 +74,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=100),  # 配置过期时间
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=15),
     'JWT_ALLOW_REFRESH': True,  # 是否允许用户获取新的token值
+    'UPDATE_LAST_LOGIN': True,  # 更新User的last_login
 }
 
 MIDDLEWARE = [
