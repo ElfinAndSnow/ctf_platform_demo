@@ -29,8 +29,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
             'team',
             'date_joined',
             'solved_challenges',
-            # 由于使用jwt认证，last_login不刷新
-            # 'last_login',
+            'last_login',
         ]
         read_only_fields = [
             'username',
@@ -38,6 +37,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
             'points',
             'team',
             'solved_challenges',
+            'last_login',
         ]
 
 
