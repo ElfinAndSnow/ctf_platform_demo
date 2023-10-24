@@ -1,26 +1,30 @@
-from django.shortcuts import render
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from account.models import User
-from jwtauth.serializer import RegistrationSerializer, PasswordUpdateSerializer
+from jwtauth.models import EmailVerification
+from jwtauth.serializer import RegistrationSerializer, PasswordUpdateSerializer, CodeVerificationSerializer, \
+    EmailVerificationCreateSerializer
 from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
 from account.models import User
-from utils.custom_permissions import IsSelf
+from utils.custom_permissions import IsSelf, IsAdminOrSessionCreator
+from utils.email_verification import email_verification
 
 
 class RegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegistrationSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [AllowAny, ]
 
 
-class PasswordUpdateView(generics.UpdateAPIView):
+class PasswordResetView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = PasswordUpdateSerializer
-    permission_classes = [IsSelf]
+    permission_classes = [IsSelf, ]
+
+
 class EmailVerificationCreateView(generics.CreateAPIView):
     queryset = EmailVerification
     permission_classes = [IsAdminOrSessionCreator, ]
@@ -65,6 +69,28 @@ class EmailVerificationCreateView(generics.CreateAPIView):
             headers=headers
         )
 
+
+class AccountActivationView(generics.CreateAPIView):
+    serializer_class = CodeVerificationSerializer
+    permission_classes = [IsSelf, ]
+
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        user = self.request.user
+        user.is_email_verified = True
+        user.save()
+
+    def create(self, request, *args, **kwargs):
+        # Done in serializer
+        # if request.user.is_email_verified:
+        #     return Response(
+        #         {"detail": "You have already activated."},
+        #         status=status.HTTP_400_BAD_REQUEST
+        #     )
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response({"detail": "You have successfully activated your account."}, status=status.HTTP_200_OK)
 
 
 class MyCustomBackend(ModelBackend):
