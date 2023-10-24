@@ -3,6 +3,73 @@ from account.models import User
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 
+from jwtauth.models import EmailVerification
+from utils.email_verification import code_generate
+
+
+class CodeVerificationSerializer(serializers.ModelSerializer):
+    verify_code = serializers.CharField()
+    verify_purpose = serializers.CharField()
+
+    class Meta:
+        model = EmailVerification
+        fields = [
+            'verify_code',
+            'verify_purpose',
+        ]
+
+    def create(self, validated_data):
+        verify_code = validated_data.get('verify_code')
+        verify_purpose = validated_data.get('verify_purpose')
+
+        is_activated = self.context['request'].user.is_email_verified
+        if is_activated and verify_purpose == "registration":
+            raise serializers.ValidationError(
+                {"detail": "You have already activated your account."},
+                code=status.HTTP_400_BAD_REQUEST
+            )
+
+        if (not is_activated) and verify_purpose == "password_reset":
+            raise serializers.ValidationError(
+                {"detail": "Please activate your account."},
+                code=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            instance = EmailVerification.objects.get(
+                code=verify_code,
+                purpose=verify_purpose,
+                is_verified=False,
+                is_expired=False
+            )
+        except EmailVerification.DoesNotExist:
+            raise serializers.ValidationError(
+                {"detail": "Invalid code."},
+                code=status.HTTP_400_BAD_REQUEST
+            )
+
+        # if instance.purpose != verify_purpose:
+        #     raise serializers.ValidationError(
+        #         {"detail": "Invalid purpose."},
+        #         code=status.HTTP_400_BAD_REQUEST
+        #     )
+
+        is_expired = instance.expiration_verification()
+        if is_expired:
+            raise serializers.ValidationError(
+                {"detail": "This code is no longer valid."},
+                code=status.HTTP_400_BAD_REQUEST
+            )
+
+        is_correct = instance.code_verification(verify_code)
+        if not is_correct:
+            raise serializers.ValidationError(
+                {"detail": "Invalid code."},
+                code=status.HTTP_400_BAD_REQUEST
+            )
+
+        return instance
+
 
 class RegistrationSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
