@@ -14,4 +14,5 @@ urlpatterns = [
     path(r'register/', RegistrationView.as_view(), name='user_registration'),
     path(r'password/change/<int:pk>/', PasswordUpdateView.as_view(), name='password_change')
     path(r'email-verify/', EmailVerificationCreateView.as_view(), name='email_verify'),
+    path(r'account-activate/', AccountActivationView.as_view(), name='account_activate'),
 ]
