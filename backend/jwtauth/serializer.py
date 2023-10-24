@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework import serializers, status
 from account.models import User
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
@@ -106,10 +106,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return instance
 
 
-class PasswordUpdateSerializer(serializers.ModelSerializer):
+class PasswordResetSerializer(serializers.ModelSerializer):
     current_password = serializers.CharField(write_only=True, required=True)
     new_password = serializers.CharField(write_only=True, required=True)
     confirm_new_password = serializers.CharField(write_only=True, required=True)
+    verify_code = CodeVerificationSerializer(write_only=True)
 
     class Meta:
         model = User
@@ -117,23 +118,33 @@ class PasswordUpdateSerializer(serializers.ModelSerializer):
             'current_password',
             'new_password',
             'confirm_new_password',
+            'verify_code',
         ]
 
-    def validate(self, data):
+    def validate(self, attrs):
+        print("attrs:")
+        print(attrs)
         user = self.context['request'].user
 
-        # Check if the current password is correct
-        if not user.check_password(data['current_password']):
+        if not user.check_password(attrs['current_password']):
             raise serializers.ValidationError("Current password is incorrect.")
 
-        # Check if the new password and confirm new password match
-        if data['new_password'] != data['confirm_new_password']:
+        if attrs['new_password'] != attrs['confirm_new_password']:
             raise serializers.ValidationError("New passwords do not match.")
 
-        return data
+        print(attrs)
+        # attrs.pop('verify_code')
+        # print(attrs)
+        return attrs
 
     def update(self, instance, validated_data):
+        print(self.context['request'].user)
+        print("verify create")
+        verify_data = validated_data.pop('verify_code')
+        CodeVerificationSerializer.create(self, verify_data)
+        print("in update")
         instance.set_password(validated_data['new_password'])
+        print(instance)
         instance.save()
         return instance
 
