@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from account.models import User
 from jwtauth.models import EmailVerification
-from jwtauth.serializer import RegistrationSerializer, PasswordUpdateSerializer, CodeVerificationSerializer, \
+from jwtauth.serializer import RegistrationSerializer, PasswordResetSerializer, CodeVerificationSerializer, \
     EmailVerificationCreateSerializer
 from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
@@ -21,7 +21,7 @@ class RegistrationView(generics.CreateAPIView):
 
 class PasswordResetView(generics.UpdateAPIView):
     queryset = User.objects.all()
-    serializer_class = PasswordUpdateSerializer
+    serializer_class = PasswordResetSerializer
     permission_classes = [IsSelf, ]
 
 
