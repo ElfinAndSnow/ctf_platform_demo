@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import datetime
 import os
 from pathlib import Path
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -167,7 +167,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # EMAIL_VERIFICATION_REGISTRATION_SECRET_KEY = "OYbJ7Cne7b5PBZYM_E_38T8VgpYYsqNrawghVnO_FAY"
 # EMAIL_VERIFICATION_PASSWORD_RESET_SECRET_KEY = "plHWNLROAEDDSVQFAYOLcHWm1N85sL5EoP3FJ7SQKEo"
 
-load_dotenv()
+# load_dotenv()
 
 EMAIL_USE_SSL = True
 EMAIL_HOST = os.getenv('EMAIL_HOST')

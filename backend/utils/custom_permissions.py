@@ -47,3 +47,16 @@ class DisallowAny(permissions.BasePermission):
 class IsActivatedUser(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.is_email_verified
+
+# Add IsTeamLeader permission class
+
+
+class IsTeamLeader(permissions.BasePermission):
+    def has_permission(self, request, view):
+        # 检查用户是否是队长
+        team = view.get_object()
+        return request.user == team.leader
+
+    def has_object_permission(self, request, view, obj):
+        # 进一步检查是否有权限操作对象
+        return request.user == obj.leader
