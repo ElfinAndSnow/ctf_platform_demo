@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework import serializers, status
 
 from challenge.serializer import ChallengeSerializer
 from .models import User, UserChallengeSession
@@ -99,20 +99,18 @@ class FlagSubmissionSerializer(serializers.ModelSerializer):
         try:
             user_challenge_session = UserChallengeSession.objects.get(id=user_challenge_session_id)
         except UserChallengeSession.DoesNotExist:
-            raise serializers.ValidationError("Session not found!")
+            raise serializers.ValidationError({"detail": "Session not found!"}, code=status.HTTP_400_BAD_REQUEST)
 
-        if user_challenge_session.is_solved_or_expired:
-            raise serializers.ValidationError("Session is closed.")
+        if user_challenge_session.is_solved:
+            raise serializers.ValidationError({"detail": "Challenge is solved. Session is closed."}, code=status.HTTP_400_BAD_REQUEST)
 
         is_expired = user_challenge_session.expiration_verification()
         if is_expired:
-            user_challenge_session.is_solved_or_expired = True
-            user_challenge_session.save()
-            raise serializers.ValidationError("Time limit exceeded. Session is closed.")
+            raise serializers.ValidationError({"detail": "Time limit exceeded. Session is closed."}, code=status.HTTP_400_BAD_REQUEST)
 
         is_correct = user_challenge_session.flag_verification(user_flag)
         if not is_correct:
-            raise serializers.ValidationError("Incorrect answer.")
+            raise serializers.ValidationError({"detail": "Incorrect answer."}, code=status.HTTP_400_BAD_REQUEST)
 
         # session = UserChallengeSession.objects.get(id=user_challenge_session_id)
         # session.is_solved_or_expired = True
