@@ -110,10 +110,7 @@ class UserInfoViewSet(viewsets.ModelViewSet):
         return [permission() for permission in permission_classes]
 
     def get_queryset(self):
-        if not self.request.user.is_private:
-            return User.objects.filter(is_private=False)
-        else:
-            return User.objects.filter(Q(id=self.request.user.id) | Q(is_private=False))
+        return User.objects.filter(Q(id=self.request.user.id) | Q(is_private=False))
 
 
 class UsernameUpdateView(generics.UpdateAPIView):
