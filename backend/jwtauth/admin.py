@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from utils.models import AbstractTimeLimitedModel
+from jwtauth.models import EmailVerification
+
+admin.site.register(EmailVerification)
