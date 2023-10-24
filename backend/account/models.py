@@ -3,6 +3,8 @@ import datetime
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from utils.models import AbstractTimeLimitedModel
+
 
 class User(AbstractUser):
     # solved_challenges = models.ManyToManyField('challenge.Challenge', related_name="solved_by", blank=True)
@@ -34,7 +36,15 @@ class User(AbstractUser):
         return str(self.id) + " | " + self.username
 
 
-class UserChallengeSession(models.Model):
+class UserChallengeSession(AbstractTimeLimitedModel):
+    """
+    Inherit from AbstractTimeLimitedModel, including
+    created_at, time_limit fields, time_limit_second
+    varialble and get_created_at() and get_time_limit()
+    methods.
+    """
+    time_limit_second = 3000
+
     user = models.ForeignKey(User, verbose_name="用户", on_delete=models.CASCADE)
     challenge = models.ForeignKey('challenge.Challenge', verbose_name="题目", on_delete=models.CASCADE)
     start_time = models.DateTimeField(verbose_name="开始时间", auto_now_add=True)
