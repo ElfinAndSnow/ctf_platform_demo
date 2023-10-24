@@ -69,3 +69,53 @@ class PasswordUpdateSerializer(serializers.ModelSerializer):
         instance.set_password(validated_data['new_password'])
         instance.save()
         return instance
+
+
+class EmailVerificationCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EmailVerification
+        fields = [
+            # 由于视图已经做权限过滤，user可从request提取
+            # 'user',
+            'purpose',
+            # code should be automatically generated while creating
+            # 'code',
+        ]
+
+    def validate(self, attrs):
+        user = self.context['request'].user
+
+        # print(attrs['user'])
+        # print(str(user.id))
+        # if user != attrs['user']:
+        #     raise serializers.ValidationError(
+        #         detail={"detail": "You can only create verification for yourself."},
+        #         code=status.HTTP_400_BAD_REQUEST
+        #     )
+        for instance in user.email_verifications.all():
+            if instance.is_verified or instance.is_expired:
+                continue
+            is_expired = instance.expiration_verification()
+            if not is_expired:
+                raise serializers.ValidationError(
+                    detail={"detail": "Please wait for your last verification code expires."},
+                    code=status.HTTP_400_BAD_REQUEST
+                )
+
+        # print(attrs)
+        # attrs.update(user)
+        # print(attrs)
+
+        return attrs
+
+    def create(self, validated_data):
+        print(validated_data)
+        validated_data.update(
+            {"user": self.context['request'].user}
+        )
+        print(validated_data)
+        instance = super().create(validated_data)
+        # generate code
+        instance.code = code_generate()
+        instance.save()
+        return instance
