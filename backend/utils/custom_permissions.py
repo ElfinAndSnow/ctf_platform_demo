@@ -42,3 +42,8 @@ class IsSelf(permissions.BasePermission):
 class DisallowAny(permissions.BasePermission):
     def has_permission(self, request, view):
         return False
+
+
+class IsActivatedUser(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_email_verified

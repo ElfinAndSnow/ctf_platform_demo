@@ -10,7 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import datetime
+import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,6 +41,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'rest_framework',
     'rest_framework_simplejwt',
+    'utils',
     'challenge',
     'team',
     'account',
@@ -58,6 +61,8 @@ REST_FRAMEWORK = {
             'rest_framework_simplejwt.authentication.JWTAuthentication',
         ),
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
 }
 
 AUTH_USER_MODEL = 'account.User'  # 自定义用户模型
@@ -72,6 +77,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=100),  # 配置过期时间
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=15),
     'JWT_ALLOW_REFRESH': True,  # 是否允许用户获取新的token值
+    'UPDATE_LAST_LOGIN': True,  # 更新User的last_login
 }
 
 MIDDLEWARE = [
@@ -157,6 +163,18 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# EMAIL_VERIFICATION_REGISTRATION_SECRET_KEY = "OYbJ7Cne7b5PBZYM_E_38T8VgpYYsqNrawghVnO_FAY"
+# EMAIL_VERIFICATION_PASSWORD_RESET_SECRET_KEY = "plHWNLROAEDDSVQFAYOLcHWm1N85sL5EoP3FJ7SQKEo"
+
+load_dotenv()
+
+EMAIL_USE_SSL = True
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
