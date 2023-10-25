@@ -1,6 +1,7 @@
 from rest_framework import generics, status, viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from django.db.models import Q
 
 from account.models import User, UserChallengeSession
 from account.serializer import UserInfoSerializer, UsernameUpdateSerializer, UserIDSerializer, UserChallengeSessionCreateRetrieveSerializer, FlagSubmissionSerializer
@@ -28,7 +29,7 @@ class UserChallengeSessionCreateView(generics.CreateAPIView):
         # 只能给自己创建session
         if request.user.pk != request.data['user']:
             return Response(
-                data={"msg": "You can only create session for yourself!"},
+                data={"detail": "You can only create session for yourself!"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -49,9 +50,9 @@ class UserChallengeSessionCreateView(generics.CreateAPIView):
         # user_challenge_sessions_created:
         # <QuerySet [<UserChallengeSession: [OPEN]user1_lunatic web_2023-10-18 02:00:30.762051+00:00>]>
         for session_obj in user_challenge_sessions_created:
-            if not session_obj.is_solved_or_expired:
+            if not (session_obj.is_solved and session_obj.is_expired):
                 return Response(
-                    data={"msg": "You have created a session for this challenge!"},
+                    data={"detail": "You have created a session for this challenge!"},
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
@@ -90,7 +91,7 @@ class FlagSubmissionView(generics.CreateAPIView):
         # TODO
         # serializer里少东西生成headers时会报错，待解决
         # headers = self.get_success_headers(serializer.data)
-        return Response({"msg": "You get the correct answer!"}, status=status.HTTP_201_CREATED)
+        return Response({"detail": "You get the correct answer!"}, status=status.HTTP_200_OK)
 
 
 # 用户信息接口
@@ -109,11 +110,10 @@ class UserInfoViewSet(viewsets.ModelViewSet):
             permission_classes = [IsAdminOrSelf, IsAuthenticated]
         return [permission() for permission in permission_classes]
 
+    # 验证is_private应转移到序列化器中进行
+    # 好像不能在序列化器里操作queryset，只好在视图里验证了
     def get_queryset(self):
-        if not self.request.user.is_private:
-            return User.objects.filter(is_private=False)
-        else:
-            return User.objects.filter(Q(id=self.request.user.id) | Q(is_private=False))
+        return User.objects.filter(Q(id=self.request.user.id) | Q(is_private=False))
 
 
 class UsernameUpdateView(generics.UpdateAPIView):
