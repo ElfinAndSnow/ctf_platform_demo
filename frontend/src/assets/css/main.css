@@ -39,6 +39,7 @@ html {
     /*color*/
     --global-bg: #d3f5f3;
     --card-color: #e9f7f7bb;
+    --card-solid-color: #e9f7f7;
     --title-color: #252423;
     --plain-color: #4c4948;
     --preloader-bg: #37474f;
@@ -56,6 +57,7 @@ html {
     --selected-color: #a3cfde;
     --challenge-bar-color: #aedde6;
     --solved-color: #39f07cac;
+    --pure-color: #000;
 
     /*background image*/
     --background-image: url(../images/light.png);
@@ -69,6 +71,7 @@ html {
 [data-theme='dark'] {
     --global-bg: #0c143d;
     --card-color: #090e18c5;
+    --card-solid-color: #090e18;
     --shadow-color: #888c93;
     --border-color: #827f82;
     --btn-color: #373b52;
@@ -83,6 +86,7 @@ html {
     --divided-line-color: #5e5e60;
     --selected-color: #3c3d5c;
     --challenge-bar-color: #32333a;
+    --pure-color: #fff;
 
     --background-image: url(../images/dark.png)
 }
@@ -104,6 +108,7 @@ main {
     max-width: 90%;
     justify-content: space-between;
     position: relative;
+    margin-top: var(--main-margin-top);
 }
 
 svg {
@@ -132,6 +137,41 @@ a {
     margin: auto 0;
     background-color: var(--divided-line-color);
 }
+
+.button {
+    height: 4vh;
+    width: 70px;
+    font-size: 22px;
+    background-color: rgb(23, 144, 23);
+
+    color: #fff;
+    line-height: 4vh;
+    text-align: center;
+}
+
+.button:hover {
+    background-color: var(--btn-hover-color);
+}
+
+.button:active {
+    background-color: var(--btn-activate-color);
+}
+
+.card {
+    background-color: var(--card-color);
+    /* border-radius: 1vw; */
+    border: 1px solid var(--edge-color);
+    overflow: hidden;
+}
+
+.active {
+    background-color: var(--selected-color);
+}
+
+.hide {
+    display: none;
+}
+
 
 ::-webkit-scrollbar {
     display: none; /* Chrome Safari */

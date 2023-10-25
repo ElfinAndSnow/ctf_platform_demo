@@ -1,11 +1,6 @@
 export default function requests(req, preloader = null){
-    const BaseURL = ""
+    const BaseURL = "http://127.0.0.1:8000"
     return new Promise((resolve,reject)=>{
-        const token = localStorage.getItem('token')
-        if (!token){
-            location.hash = '/Home'
-            reject('请登陆或注册！')
-        }
         const xhr = new XMLHttpRequest()
         if (req.params){
             const params = new URLSearchParams(req.params)
@@ -20,6 +15,9 @@ export default function requests(req, preloader = null){
                 }
             }
             else if (xhr.readyState === xhr.DONE) {
+                if (preloader !== null){
+                    preloader.style.display = 'none'
+                }
                 if(xhr.status>=200 && xhr.status<300){
                     resolve(JSON.parse(xhr.response))
                 }
@@ -29,7 +27,8 @@ export default function requests(req, preloader = null){
             }
         })
         if(req.data){
-            xhr.send(req.data)
+            xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
+            xhr.send(JSON.stringify(req.data))
         }else{
             xhr.send()
         }

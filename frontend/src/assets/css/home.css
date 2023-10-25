@@ -1,8 +1,5 @@
 #intro {
     width: 100%;
-    min-height: 90vw;
-    margin-top: var(--main-margin-top);
-    border-radius: 1vw;
     overflow: hidden;
 }
 
@@ -22,9 +19,7 @@
 #qs #typing {
     color: var(--plain-color);
     font-size: var(--text-font-size);
-    background-color: var(--card-color);
     border-radius: 5px;
-    border: 1px solid var(--edge-color);
     width: 100%;
     padding: 2% 5%;
 }

@@ -1,7 +1,5 @@
 #rank {
     width: 100%;
-    min-height: 90%;
-    margin-top: var(--main-margin-top);
 }
 
 #rank #chart {

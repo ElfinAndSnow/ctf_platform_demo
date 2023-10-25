@@ -1,16 +1,11 @@
 #challenge-bank {
-    margin-top: var(--main-margin-top);
     width: 70vw;
-    background-color: var(--card-color);
-    border-radius: 1vw;
-    border: 1px solid var(--edge-color);
 }
 
 #aside-bar {
     position: fixed;
     width: 20vw;
     left: 77vw;
-    margin-top: var(--main-margin-top);
     background-color: var(--card-color);
     border-radius: 1vw;
     max-height: var(--aside-bar-height);
@@ -42,9 +37,7 @@
     margin: var(--distance) auto;
     box-sizing: border-box;
 }
-.active {
-    background-color: var(--selected-color);
-}
+
 #switch-bar a {
     height: 100%;
     line-height: var(--switcher-height);
@@ -66,17 +59,14 @@
 }
 
 #challenge-list {
-    display: flex;
+    display: grid;
     width: 95%;
     margin: 15px auto;
-    flex-wrap: wrap;
-    justify-content: start;
-    align-content: flex-start;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 0.6fr));
     box-sizing: content-box;
 }
 
 .challenge-bar {
-    width: var(--challenge-bar-width);
     height: var(--challenge-bar-height);
     background-color: var(--challenge-bar-color);
     border-radius: calc(var(--challenge-bar-height)/5);
@@ -86,8 +76,9 @@
     box-sizing: border-box;
 }
 
-.challenge-bar.hide {
-    display: none;
+.misc, .web, .reverse, .pwn, .crypto {
+    background-position: center right;
+    background-repeat: no-repeat;
 }
 
 .misc {

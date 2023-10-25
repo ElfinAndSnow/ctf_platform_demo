@@ -1,5 +1,13 @@
 export default function auth(){
-    if (!localStorage.getItem('token')){
-        location.hash = '/home'
+    const info = JSON.parse(localStorage.getItem('zctf'))
+    if(info?.userToken){
+        
     }
+    else if(info?.freshToken){
+
+    }
+    else {
+        
+    }
+    return true
 }

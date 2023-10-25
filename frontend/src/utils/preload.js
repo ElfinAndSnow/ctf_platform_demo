@@ -1,10 +1,7 @@
 import '../assets/css/loader.css'
 export function preload(){
-    const info = JSON.parse(localStorage.getItem('zctf'))
-    if (info?.darkMode){
-        document.body.dataset.theme = info.darkMode
-        console.log(info.darkMode)
-    }
+    document.body.dataset.theme = localStorage.getItem('zctf-darkmode')
+
     document.onreadystatechange = () => {
         const loader = document.querySelector(".box")
         switch (document.readyState) {

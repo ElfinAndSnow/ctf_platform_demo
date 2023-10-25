@@ -5,22 +5,19 @@ import(/* webpackPreload: true */ './utils/preload.js')
 
 import './assets/css/main.css'
 
+import render from './utils/render.js'
+
 //载入logo
-import logo from'./assets/images/logo.png'
+
 
 //导航栏
-import initHeader from './components/header.js'
-initHeader()
-document.querySelectorAll('.logo').forEach(i => i.src=logo)
-
-//内容页
-import initMain from './components/main.js'
-initMain()
+import header from './components/header.js'
+render(header)
 
 //页脚
-import initFooter from './components/footer.js'
-initFooter()
+import footer from './components/footer.js'
+render(footer)
 
-//路由
+//注册路由
 import router from './router/routers'
 router()
