@@ -58,7 +58,7 @@ class UserChallengeSession(AbstractTimeLimitedModel):
         return self.challenge.flag
 
     def get_current_state(self):
-        return self.is_solved and self.is_expired
+        return self.is_solved or self.is_expired
 
     def flag_verification(self, flag):
         correct_flag = self.get_flag()
