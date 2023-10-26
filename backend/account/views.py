@@ -80,7 +80,9 @@ class FlagSubmissionView(generics.CreateAPIView):
         challenge = user_challenge_session.challenge
         challenge.solved_by.add(user)
         # 给用户加分
-        user.team.check_points()
+        user.check_points()
+        if user.team:
+            user.team.check_points()
         # for solved_challenge in user.solved_challenges.all():
         #     print(solved_challenge.name)
 
