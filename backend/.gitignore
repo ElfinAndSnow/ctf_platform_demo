@@ -1,2 +1,6 @@
 0*.py
 *.env
+
+# python byte code
+__pycache__
+*.pyc
