@@ -1,0 +1,18 @@
+footer {
+    width: 100vw;
+    height: 15vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--footer-color);
+    font-size: var(--footer-font-size);
+    z-index: 1;
+}
+footer div {
+    display: block;
+    color: #fff;
+}
+footer div a {
+    color: rgb(255, 255, 255,0.7)
+}

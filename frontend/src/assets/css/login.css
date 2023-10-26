@@ -1,0 +1,88 @@
+#input-area {
+    width: 40%;
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    transform: translate(-50%,-50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+}
+
+#input-area #header {
+    display: flex;
+    width: 100%;
+    height: 45px;
+    justify-content: center;
+    align-items: center;
+}
+
+#input-area .hr {
+    width: 100%;
+}
+
+#login-btn, #register-btn {
+    width: 50%;
+    text-align: center;
+    margin: auto 0;
+    font-size: var(--global-font-size);
+    color: #818CF8;
+}
+
+
+#loginForm, #registerForm {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+}
+
+#loginForm.hide, #registerForm.hide {
+    display: none;
+}
+
+
+.coolinput {
+    display: flex;
+    flex-direction: column;
+    position: static;
+    margin: 10px auto;
+    width: 60%;
+}
+
+.coolinput label.text {
+    font-size: 15px;
+    color: #818CF8;
+    font-weight: 700;
+    position: relative;
+    top: 10px;
+    padding: 0 3px;
+    background: var(--card-solid-color);
+    width: fit-content;
+}
+
+.coolinput input {
+    padding: 11px 10px;
+    font-size: 15px;
+    border: 2px #818CF8 solid;
+    border-radius: 5px;
+    background: var(--card-solid-color);
+    color: var(--pure-color);
+}
+
+.coolinput input:focus {
+    outline: none;
+}
+
+form .button {
+    margin: 20px auto;
+}
+
+@media (max-width:955px) {
+    #input-area {
+        width: 80%;
+    }
+    .coolinput {
+        width: 90%;
+    }
+}
