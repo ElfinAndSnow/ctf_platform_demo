@@ -78,6 +78,10 @@ class UserChallengeSessionCreateRetrieveSerializer(serializers.ModelSerializer):
             'id',
             'user',
             'challenge',
+            'address',
+        ]
+        read_only_fields = [
+            'address',
         ]
 
 
