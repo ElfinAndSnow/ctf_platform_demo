@@ -76,6 +76,36 @@ class UserChallengeSession(AbstractTimeLimitedModel):
                 _port -= 1
 
         self.port = _port
+
+    def create_container(self, request):
+        client = docker.from_env()
+        port = self.port
+        image_name = self.challenge.image_name
+        try:
+            image = client.images.get(image_name)
+        except docker.errors.ImageNotFound:
+            print(f"Image {image_name} not found!")
+        for k in image.attrs['ContainerConfig']['ExposedPorts']:
+            port_inside = k
+        container = client.containers.run(
+            image=image_name,
+            detach=True,
+            ports={port_inside: port}
+        )
+        self.container_id = container.id
+        self.port_inside = port_inside
+        self.address = str(get_current_site(request)).split(':')[0] + f":{port}"
+        self.save()
+
+    def destroy_container(self):
+        client = docker.from_env()
+        try:
+            container = client.containers.get(container_id=self.container_id)
+        except docker.errors.NotFound:
+            print(f"Container '{self.container_id}' not found.")
+        container.stop()
+        container.remove()
+
     def get_flag(self):
         return self.challenge.flag
 
