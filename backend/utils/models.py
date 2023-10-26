@@ -34,5 +34,6 @@ class AbstractTimeLimitedModel(models.Model):
             self.save()
             return True
         else:
-            # Logic
+            self.is_expired = False
+            self.save()
             return False
