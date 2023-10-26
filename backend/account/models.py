@@ -1,6 +1,8 @@
 import datetime
 
+import docker
 from django.contrib.auth.models import AbstractUser
+from django.contrib.sites.shortcuts import get_current_site
 from django.db import models
 
 from utils.models import AbstractTimeLimitedModel
@@ -54,6 +56,10 @@ class UserChallengeSession(AbstractTimeLimitedModel):
     # 被动检测超时或已解决，每次收到请求之前先进行一次超时检查
     is_solved = models.BooleanField(verbose_name="是否已解决或已过期", default=False)
 
+    container_id = models.CharField(verbose_name="容器id", max_length=255, null=True, blank=True)
+    port = models.IntegerField(verbose_name="主机端口", default=50000, null=True)
+    port_inside = models.CharField(verbose_name="容器内部端口/protocol", max_length=127, default="80/tcp", null=True)
+    address = models.CharField(verbose_name="题目地址", max_length=127, null=True, blank=True)
     def get_flag(self):
         return self.challenge.flag
 
