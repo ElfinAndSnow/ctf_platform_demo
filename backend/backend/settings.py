@@ -201,5 +201,5 @@ SWAGGER_SETTINGS = {
 }
 
 CRON_CLASSES = [
-    "user_challenge_session_cron_job",
+    "account.cron.UserChallengeSessionCronJob",
 ]
