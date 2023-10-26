@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 
 from team.models import Team
-from team.serializer import TeamSerializer
+from team.serializer import TeamSerializer, CustomResponseSerializer
 from utils.custom_permissions import IsTeamLeader
 
 import random
@@ -52,26 +52,28 @@ def create_team(request, team_name):
 
 
 class DeleteTeamView(generics.DestroyAPIView):
-    serializer_class = TeamSerializer  # 设置序列化器
-    permission_classes = [IsAuthenticated, IsTeamLeader]  # 设置权限类，限制访问
-    lookup_field = 'pk'
-
-    # def get_object(self):
-    #     return self.request.user.team
+    serializer_class = TeamSerializer
+    permission_classes = [IsAuthenticated, IsTeamLeader]
 
     def get_object(self):
-        team_pk = self.kwargs[self.lookup_field]
         try:
-            team = Team.objects.get(pk=team_pk)
-            return team
+            team = self.request.user.team
+            if team:
+                return team
+            else:
+                raise Team.DoesNotExist  # 触发异常以后续处理
         except Team.DoesNotExist:
-            return Response(
-                data={"msg": "你所指定的队伍不存在"},
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return None  # 返回None表示队伍不存在
 
     def destroy(self, request, *args, **kwargs):
         team = self.get_object()
+
+        if team is None:
+            return Response(
+                data={"msg": "队伍不存在"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
         # 检查当前用户是否是队长
         if request.user != team.leader:
             return Response(
@@ -84,6 +86,39 @@ class DeleteTeamView(generics.DestroyAPIView):
             data={"msg": "队伍已成功删除"},
             status=status.HTTP_204_NO_CONTENT
         )
+# class DeleteTeamView(generics.DestroyAPIView):
+#     serializer_class = TeamSerializer  # 设置序列化器
+#     permission_classes = [IsAuthenticated, IsTeamLeader]  # 设置权限类，限制访问
+#     lookup_field = 'pk'
+#
+#     # def get_object(self):
+#     #     return self.request.user.team
+#
+#     def get_object(self):
+#         team_pk = self.kwargs[self.lookup_field]
+#         try:
+#             team = Team.objects.get(pk=team_pk)
+#             return team
+#         except Team.DoesNotExist:
+#             return Response(
+#                 data={"msg": "你所指定的队伍不存在"},
+#                 status=status.HTTP_404_NOT_FOUND
+#             )
+#
+#     def destroy(self, request, *args, **kwargs):
+#         team = self.get_object()
+#         # 检查当前用户是否是队长
+#         if request.user != team.leader:
+#             return Response(
+#                 data={"msg": "你不是队长，无法删除队伍"},
+#                 status=status.HTTP_403_FORBIDDEN
+#             )
+#
+#         team.delete()
+#         return Response(
+#             CustomResponseSerializer({"msg": "队伍已成功删除"}).data,
+#             status=status.HTTP_204_NO_CONTENT
+#         )
 
 
 @api_view(['POST'])
@@ -123,56 +158,84 @@ def join_team(request, team_id, invitation_token):
     )
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated, IsTeamLeader])
-def remove_member(request, user_id):
-    team = request.user.team
+class RemoveMemberView(generics.DestroyAPIView):
+    serializer_class = TeamSerializer
+    permission_classes = [IsAuthenticated, IsTeamLeader]  # 请替换IsTeamLeader为实际的权限类
+    lookup_url_kwarg = 'user_id'  # 这将匹配URL中的user_id参数
 
-    try:
-        user = User.objects.get(id=user_id)
-    except User.DoesNotExist:
-        return Response(
-            data={"msg": "该成员不存在"},
-            status=status.HTTP_404_NOT_FOUND
-        )
+    def get_object(self):
+        team = self.request.user.team
+        return team
 
-    if request.method == 'POST':
-        team.teammate.remove(user)
+    def destroy(self, request, *args, **kwargs):
+        if request.method == 'DELETE':
+            team = self.get_object()
+            user_id = self.kwargs[self.lookup_url_kwarg]
+
+            try:
+                user = User.objects.get(id=user_id)
+            except User.DoesNotExist:
+                return Response(
+                    data={"msg": "该用户id指向的用户不存在"},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            if user in team.teammate.all():
+                team.teammate.remove(user)
+                user.team = None
+                user.save()
+                return Response(
+                    data={"msg": "成员移除成功"},
+                    status=status.HTTP_200_OK
+                )
+            else:
+                return Response(
+                    data={"msg": "该成员不是队伍成员"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        else:
+            return Response(
+                data={"msg": "Method not allowed."},
+                status=status.HTTP_405_METHOD_NOT_ALLOWED
+            )
+
+
+class ChangeTeamLeaderView(generics.UpdateAPIView):
+    serializer_class = TeamSerializer
+    permission_classes = [IsAuthenticated, IsTeamLeader]  # Replace IsTeamLeader with your actual permission class
+    lookup_url_kwarg = 'user_id'  # This will match the user_id parameter in the URL
+
+    def get_object(self):
+        team = self.request.user.team
+        return team
+
+    def update(self, request, *args, **kwargs):
+        team = self.get_object()
+        user_id = self.kwargs[self.lookup_url_kwarg]
+
+        try:
+            new_leader = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response(
+                data={"msg": "目标用户不存在"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Check if the current user is the team leader
+        if request.user != team.leader:
+            return Response(
+                data={"msg": "You are not the team leader."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        # Change the team leader by adding the current leader to teammates
+        team.teammate.add(request.user)
+
+        # Set the new leader
+        team.leader = new_leader
+        team.save()
+
         return Response(
-            data={"msg": "成员移除成功"},
+            data={"msg": "队长变更成功"},
             status=status.HTTP_200_OK
         )
-
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated, IsTeamLeader])
-def change_team_leader(request, user_id):
-    team = request.user.team
-
-    try:
-        new_leader = User.objects.get(id=user_id)
-    except User.DoesNotExist:
-        return Response(
-            data={"msg": "目标用户不存在"},
-            status=status.HTTP_404_NOT_FOUND
-        )
-
-    # 检查当前用户是否是队长
-    if request.user != team.leader:
-        return Response(
-            data={"msg": "You are not the team leader."},
-            status=status.HTTP_403_FORBIDDEN
-        )
-
-    # 将当前队长设置为队员
-    team.teammate.add(request.user)
-
-    # 将新队员设置为队长
-    team.leader = new_leader
-    team.save()
-
-    return Response(
-        data={"msg": "队长变更成功"},
-        status=status.HTTP_200_OK
-    )
-

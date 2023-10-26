@@ -17,6 +17,7 @@ class Team(models.Model):
     )
     teammate = models.ManyToManyField(
         User,
+        through='TeamMembership',
         verbose_name="队员",
         blank=True,
         related_name="teams"
@@ -36,15 +37,6 @@ class Team(models.Model):
 
     class Meta:
         verbose_name = "战队"
-
-    def get_id(self):
-        return self.id
-
-    def get_name(self):
-        return self.name
-
-    def get_description(self):
-        return self.description
 
     def check_points(self):
         self.points = 0
@@ -73,6 +65,8 @@ class Team(models.Model):
     def get_leader(self):
         return self.leader
 
+    def get_teammates(self):
+        return User.objects.filter(teams=self)
     # 战队不能单纯总和队员总分，应当根据队员解题的并集
     # 由此应当在题目中建立另一个ManyToMany字段solved_by_teams，指向Team
     # 在check每个队员的points后再check全队的points
@@ -86,3 +80,11 @@ class Team(models.Model):
     def __str__(self):
         team_info = f"Team ID: {self.id}, Name: {self.name}, Leader ID: {self.leader.id}"
         return team_info
+
+# TO DO
+# fix the relationship.
+
+
+class TeamMembership(models.Model):
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
