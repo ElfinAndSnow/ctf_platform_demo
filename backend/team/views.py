@@ -28,10 +28,6 @@ def create_team(request, team_name):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # serializer = TeamSerializer(data=request.data)
-        #
-        # if serializer.is_valid():
-        #     team = serializer.save()
         try:
             team = Team(name=team_name, leader=user)
             team.save()
@@ -55,41 +51,34 @@ def create_team(request, team_name):
     )
 
 
-# class DeleteTeamView(generics.DestroyAPIView):
-#     serializer_class = TeamSerializer  # 设置序列化器
-#     permission_classes = [IsAuthenticated, IsTeamLeader]  # 设置权限类，限制访问
-#     lookup_field = 'pk'
-#
-#     def get_object(self):
-#         return self.request.user.team
-#
-#     def destroy(self, request, *args, **kwargs):
-#         team = self.get_object()
-#         # 检查当前用户是否是队长
-#         if request.user != team.leader:
-#             return Response(
-#                 data={"msg": "你不是队长，无法删除队伍"},
-#                 status=status.HTTP_403_FORBIDDEN
-#             )
-#
-#         team.delete()
-#         return Response(
-#             data={"msg": "队伍已成功删除"},
-#             status=status.HTTP_204_NO_CONTENT
-#         )
+class DeleteTeamView(generics.DestroyAPIView):
+    serializer_class = TeamSerializer  # 设置序列化器
+    permission_classes = [IsAuthenticated, IsTeamLeader]  # 设置权限类，限制访问
+    lookup_field = 'pk'
 
-@api_view(['DELETE'])
-@permission_classes([IsAuthenticated, IsTeamLeader])
-def delete_team(request):
-    try:
-        team = request.user.team
-    except Exception as e:
-        return Response(
-            data={"msg": f"发生错误: {str(e)}, 请联系网站管理员"},
-            status=status.HTTP_404_NOT_FOUND
-        )
+    # def get_object(self):
+    #     return self.request.user.team
 
-    if request.method == 'DELETE':
+    def get_object(self):
+        team_pk = self.kwargs[self.lookup_field]
+        try:
+            team = Team.objects.get(pk=team_pk)
+            return team
+        except Team.DoesNotExist:
+            return Response(
+                data={"msg": "你所指定的队伍不存在"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+    def destroy(self, request, *args, **kwargs):
+        team = self.get_object()
+        # 检查当前用户是否是队长
+        if request.user != team.leader:
+            return Response(
+                data={"msg": "你不是队长，无法删除队伍"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
         team.delete()
         return Response(
             data={"msg": "队伍已成功删除"},
@@ -99,13 +88,12 @@ def delete_team(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def join_team(request, team_id):
+def join_team(request, team_id, invitation_token):
     user = request.user
-    invitation_token = request.data.get('invitation_token')
 
     if user.team:
         return Response(
-            data={"msg": "你已经是其他战队的成员了"},
+            data={"msg": "你已经是战队的成员了"},
             status=status.HTTP_400_BAD_REQUEST
         )
 
