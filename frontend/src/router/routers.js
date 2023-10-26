@@ -6,22 +6,22 @@ import {verify} from '../api/api.js'
 export default async function router() {
     let view = undefined
     const routes = {
-        home: () => {
+        '/home': () => {
           import('../views/home.js').then((module) => {
             view = render(module.default)
           })
         },
-        challenges: () => {
+        '/challenges': () => {
           import('../views/challenges.js').then((module) => {
             view = render(module.default)
           })
         },
-        ranking: () => {
+        '/ranking': () => {
           import('../views/ranking.js').then((module) => {
             view = render(module.default)
           })
         },
-        login: () => {
+        '/login': () => {
           import('../views/login.js').then((module) => {
             view = render(module.default)
           })
@@ -30,7 +30,7 @@ export default async function router() {
     
 
     function navTo() {
-      const hash = window.location.hash.slice(1) || 'home';
+      const hash = window.location.hash.slice(1) === '/' ? '/home' : location.hash.slice(1);
       const route = routes[hash]
       if (route) {
         if (typeof view?.destroyed !== 'undefined'){
@@ -42,6 +42,7 @@ export default async function router() {
 
     window.addEventListener('DOMContentLoaded', () => {
       window.addEventListener('hashchange', navTo)
+      window.history.pushState({path: '/'}, '', '#/')
       navTo()
     })
 
