@@ -60,6 +60,22 @@ class UserChallengeSession(AbstractTimeLimitedModel):
     port = models.IntegerField(verbose_name="主机端口", default=50000, null=True)
     port_inside = models.CharField(verbose_name="容器内部端口/protocol", max_length=127, default="80/tcp", null=True)
     address = models.CharField(verbose_name="题目地址", max_length=127, null=True, blank=True)
+
+    def distribute_port(self):
+        _port = 50000
+        sessions = UserChallengeSession.objects.filter(is_solved=False).order_by('-port')
+        for session in sessions:
+            is_expired = True
+            if not session.is_expired:
+                is_expired = session.expiration_verification()
+
+            print(is_expired)
+            if is_expired:
+                continue
+            if session.port == _port:
+                _port -= 1
+
+        self.port = _port
     def get_flag(self):
         return self.challenge.flag
 
