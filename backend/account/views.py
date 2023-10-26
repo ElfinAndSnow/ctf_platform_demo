@@ -24,6 +24,9 @@ class UserChallengeSessionCreateView(generics.CreateAPIView):
 
     permission_classes = [IsAuthenticated]
 
+    def perform_create(self, serializer):
+        return serializer.save()
+
     def create(self, request, *args, **kwargs):
         print("request data: " + str(request.data))
         # 只能给自己创建session
@@ -50,7 +53,8 @@ class UserChallengeSessionCreateView(generics.CreateAPIView):
         # user_challenge_sessions_created:
         # <QuerySet [<UserChallengeSession: [OPEN]user1_lunatic web_2023-10-18 02:00:30.762051+00:00>]>
         for session_obj in user_challenge_sessions_created:
-            if not (session_obj.is_solved and session_obj.is_expired):
+            session_obj.expiration_verification()
+            if not (session_obj.is_solved or session_obj.is_expired):
                 return Response(
                     data={"detail": "You have created a session for this challenge!"},
                     status=status.HTTP_400_BAD_REQUEST
@@ -58,9 +62,14 @@ class UserChallengeSessionCreateView(generics.CreateAPIView):
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        instance = self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+        instance.distribute_port()
+        instance.create_container(request)
+        data = UserChallengeSessionCreateRetrieveSerializer(instance=instance, many=False).data
+
+        return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class UserChallengeSessionRetrieveView(generics.RetrieveAPIView):
