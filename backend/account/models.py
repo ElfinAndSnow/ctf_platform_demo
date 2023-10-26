@@ -54,7 +54,10 @@ class UserChallengeSession(AbstractTimeLimitedModel):
     # 不保存用户提交的flag
     # user_flag = models.CharField(verbose_name="用户提交的flag", max_length=127, blank=True)
     # 被动检测超时或已解决，每次收到请求之前先进行一次超时检查
-    is_solved = models.BooleanField(verbose_name="是否已解决或已过期", default=False)
+    is_solved = models.BooleanField(verbose_name="是否已解决", default=False)
+
+    # 防止在超时检查中，多次销毁容器产生异常
+    is_container_removed = models.BooleanField(verbose_name="是否已销毁容器", default=False)
 
     container_id = models.CharField(verbose_name="容器id", max_length=255, null=True, blank=True)
     port = models.IntegerField(verbose_name="主机端口", default=50000, null=True)
@@ -101,10 +104,21 @@ class UserChallengeSession(AbstractTimeLimitedModel):
         client = docker.from_env()
         try:
             container = client.containers.get(container_id=self.container_id)
+            container.stop()
+            container.remove()
         except docker.errors.NotFound:
             print(f"Container '{self.container_id}' not found.")
-        container.stop()
-        container.remove()
+
+    def expiration_verification(self):
+        print("verifying" + self.__str__())
+        _expired = super().expiration_verification()
+        if not _expired:
+            return _expired
+        if not self.is_container_removed:
+            self.destroy_container()
+            self.is_container_removed = True
+            self.save()
+        return _expired
 
     def get_flag(self):
         return self.challenge.flag
