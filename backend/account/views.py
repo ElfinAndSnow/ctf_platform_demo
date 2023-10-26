@@ -85,6 +85,7 @@ class FlagSubmissionView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         user_challenge_session = serializer.save()
+        user_challenge_session.destroy_container()
         user = self.request.user
         challenge = user_challenge_session.challenge
         challenge.solved_by.add(user)
