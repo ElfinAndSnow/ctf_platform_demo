@@ -13,6 +13,8 @@ class Challenge(models.Model):
     solved_by = models.ManyToManyField('account.User', related_name="solved_challenges", blank=True)
     solved_by_teams = models.ManyToManyField('team.team', related_name="solved_challenges_team", blank=True)
 
+    image_name = models.CharField(verbose_name="镜像名称", max_length=127, null=True, blank=True)
+
     # 单个题目的分数可以有所不同
     points = models.IntegerField(verbose_name="题目分数", default=100, null=True)
 

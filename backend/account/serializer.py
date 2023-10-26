@@ -71,38 +71,70 @@ class UserIDSerializer(serializers.ModelSerializer):
         ]
 
 
-class UserChallengeSessionCreateRetrieveSerializer(serializers.ModelSerializer):
+class UserChallengeSessionCreateRetrieveDestroySerializer(serializers.ModelSerializer):
+
     class Meta:
         model = UserChallengeSession
         fields = [
-            'id',
+            # 'id',
             'user',
             'challenge',
+            'address',
+        ]
+        read_only_fields = [
+            'user',
+            # 'challenge',
+            'address',
         ]
 
+    def create(self, validated_data):
+        # user_challenge_session_id = validated_data.get('user_challenge_session_id')
+        user = self.context['request'].user
+        print(validated_data)
+        validated_data.update(
+            {
+                'user': user
+            }
+        )
+
+        print(validated_data)
+        instance = UserChallengeSession.objects.create(**validated_data)
+        # for k in instance:
+        #     print(instance.k)
+        print(str(instance))
+
+        # raise serializers.ValidationError("Stop.")
+        return instance
 
 class FlagSubmissionSerializer(serializers.ModelSerializer):
     # UserChallengeSession没有这俩field
-    user_flag = serializers.CharField(max_length=100)
-    user_challenge_session_id = serializers.IntegerField()
+    user_flag = serializers.CharField(max_length=100, write_only=True)
+    # user_challenge_session_id = serializers.IntegerField()
 
     class Meta:
         model = UserChallengeSession
         fields = [
-            'user_challenge_session_id',
+            # 'user_challenge_session_id',
             'user_flag',
         ]
 
     def create(self, validated_data):
-        user_challenge_session_id = validated_data.get('user_challenge_session_id')
+        # user_challenge_session_id = validated_data.get('user_challenge_session_id')
+        user = self.context['request'].user
         user_flag = validated_data.get('user_flag')
         try:
-            user_challenge_session = UserChallengeSession.objects.get(id=user_challenge_session_id)
+            user_challenge_session = UserChallengeSession.objects.filter(user=user, is_solved=False).last()
         except UserChallengeSession.DoesNotExist:
-            raise serializers.ValidationError({"detail": "Session not found!"}, code=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError(
+                detail={"detail": "You don't have any open session."},
+                code=status.HTTP_400_BAD_REQUEST
+            )
 
-        if user_challenge_session.is_solved:
-            raise serializers.ValidationError({"detail": "Challenge is solved. Session is closed."}, code=status.HTTP_400_BAD_REQUEST)
+        # if user_challenge_session.is_solved:
+        #     raise serializers.ValidationError(
+        #         detail={"detail": "Challenge is solved. Session is closed."},
+        #         code=status.HTTP_400_BAD_REQUEST
+        #     )
 
         is_expired = user_challenge_session.expiration_verification()
         if is_expired:
