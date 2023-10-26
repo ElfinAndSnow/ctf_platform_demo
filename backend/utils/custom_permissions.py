@@ -60,3 +60,14 @@ class IsTeamLeader(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         # 进一步检查是否有权限操作对象
         return request.user == obj.leader
+
+
+class IsTeamMate(permissions.BasePermission):
+    def has_permission(self, request, view):
+        # 在列表视图中检查用户是否是队员
+        team = view.get_object()
+        return request.user in team.teammate.all()
+
+    def has_object_permission(self, request, view, obj):
+        # 在对象级别视图中检查用户是否是队员
+        return request.user in obj.teammate.all()

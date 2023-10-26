@@ -1,8 +1,9 @@
 from account.models import User
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import get_object_or_404
 
 from team.models import Team
 from team.serializer import TeamSerializer
@@ -10,26 +11,40 @@ from utils.custom_permissions import IsTeamLeader
 
 import random
 import string
-from django.utils import timezone
-
-# team_instance = Team.objects.get(pk=1)
-# user_instance = User.objects.get(pk=2)
+# from django.utils import timezone
+# from django.db.models import Q
+# from datetime import timedelta
 
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def create_team(request):
+def create_team(request, team_name):
     if request.method == 'POST':
-        serializer = TeamSerializer(data=request.data)
+        user = request.user
 
-        if serializer.is_valid():
-            serializer.save()
+        if user.team:
             return Response(
-                data={"msg": "队伍创建成功", "Team_id:": Team.id},
+                data={"msg": "已经是战队的成员了，无法创建队伍"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # serializer = TeamSerializer(data=request.data)
+        #
+        # if serializer.is_valid():
+        #     team = serializer.save()
+        try:
+            team = Team(name=team_name, leader=user)
+            team.save()
+
+            user.team = team
+            user.save()
+
+            return Response(
+                data={"msg": "队伍创建成功", "Team_id:": team.id, "Team_name:": team_name, "The user id of leader:": user.id},
                 status=status.HTTP_201_CREATED
             )
-        else:
-            error_message = "队伍创建失败: " + ', '.join(serializer.errors)
+        except Exception as e:
+            error_message = f"队伍创建失败: {str(e)}"
             return Response(
                 data={"msg": error_message},
                 status=status.HTTP_400_BAD_REQUEST
@@ -40,14 +55,37 @@ def create_team(request):
     )
 
 
+# class DeleteTeamView(generics.DestroyAPIView):
+#     serializer_class = TeamSerializer  # 设置序列化器
+#     permission_classes = [IsAuthenticated, IsTeamLeader]  # 设置权限类，限制访问
+#     lookup_field = 'pk'
+#
+#     def get_object(self):
+#         return self.request.user.team
+#
+#     def destroy(self, request, *args, **kwargs):
+#         team = self.get_object()
+#         # 检查当前用户是否是队长
+#         if request.user != team.leader:
+#             return Response(
+#                 data={"msg": "你不是队长，无法删除队伍"},
+#                 status=status.HTTP_403_FORBIDDEN
+#             )
+#
+#         team.delete()
+#         return Response(
+#             data={"msg": "队伍已成功删除"},
+#             status=status.HTTP_204_NO_CONTENT
+#         )
+
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated, IsTeamLeader])
-def delete_team(request, team_id):
+def delete_team(request):
     try:
-        team = Team.objects.get(id=team_id)
-    except Team.DoesNotExist:
+        team = request.user.team
+    except Exception as e:
         return Response(
-            data={"msg": "你试图删除的队伍不存在"},
+            data={"msg": f"发生错误: {str(e)}, 请联系网站管理员"},
             status=status.HTTP_404_NOT_FOUND
         )
 
@@ -59,42 +97,48 @@ def delete_team(request, team_id):
         )
 
 
-# @api_view(['POST'])
-# @permission_classes([IsAuthenticated, IsTeamLeader])
-# def invite_member(request, team_id, user_id):
-#     try:
-#         team = Team.objects.get(id=team_id)
-#     except Team.DoesNotExist:
-#         return Response(
-#             data={"msg": "目标队伍不存在"},
-#             status=status.HTTP_404_NOT_FOUND
-#         )
-#
-#     try:
-#         user = User.objects.get(id=user_id)
-#     except User.DoesNotExist:
-#         return Response(
-#             data={"msg": "目标用户不存在"},
-#             status=status.HTTP_404_NOT_FOUND
-#         )
-#
-#     if request.method == 'POST':
-#         # 生成邀请码
-#         token = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(12))
-#
-#         # 设置邀请码有效期
-
-
 @api_view(['POST'])
-@permission_classes([IsAuthenticated, IsTeamLeader])
-def remove_member(request, team_id, user_id):
+@permission_classes([IsAuthenticated])
+def join_team(request, team_id):
+    user = request.user
+    invitation_token = request.data.get('invitation_token')
+
+    if user.team:
+        return Response(
+            data={"msg": "你已经是其他战队的成员了"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
     try:
         team = Team.objects.get(id=team_id)
     except Team.DoesNotExist:
         return Response(
-            data={"msg": "队伍不存在"},
+            data={"msg": "目标战队不存在"},
             status=status.HTTP_404_NOT_FOUND
         )
+
+        # 检查邀请码是否匹配
+    if invitation_token != team.invitation_token:
+        return Response(
+            data={"msg": "邀请码无效"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+        # 成为战队队员
+    team.teammate.add(user)
+    user.team = team
+    user.save()
+
+    return Response(
+        data={"msg": "成功加入战队"},
+        status=status.HTTP_200_OK
+    )
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsTeamLeader])
+def remove_member(request, user_id):
+    team = request.user.team
 
     try:
         user = User.objects.get(id=user_id)
@@ -114,14 +158,8 @@ def remove_member(request, team_id, user_id):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsTeamLeader])
-def change_team_leader(request, team_id, user_id):
-    try:
-        team = Team.objects.get(id=team_id)
-    except Team.DoesNotExist:
-        return Response(
-            data={"msg": "所指定的队伍不存在"},
-            status=status.HTTP_404_NOT_FOUND
-        )
+def change_team_leader(request, user_id):
+    team = request.user.team
 
     try:
         new_leader = User.objects.get(id=user_id)

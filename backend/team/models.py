@@ -21,10 +21,12 @@ class Team(models.Model):
         blank=True,
         related_name="teams"
     )
+    # 邀请码部分待修改
     invitation_token = models.CharField(
         verbose_name="邀请码",
         default="",
-        max_length=12
+        max_length=12,
+        help_text="No longer than 12 characters"
     )
     # token_expiration = models.DateTimeField(
     #     verbose_name="验证码有效期",
@@ -44,17 +46,17 @@ class Team(models.Model):
     def get_description(self):
         return self.description
 
-    # def check_points(self):
-    #     self.points = 0
-    #     for user in self.teammate.all():
-    #         # self.points += user.check_points()
-    #         for challenge in user.solved_challenges.all():
-    #             if challenge not in self.solved_challenges_team.all():
-    #                 self.solved_challenges_team.add(challenge)
-    #     for challenge in self.solved_challenges_team.all():
-    #         self.points += challenge.points
-    #     self.save()
-    #     return self.points
+    def check_points(self):
+        self.points = 0
+        for user in self.teammate.all():
+            # self.points += user.check_points()
+            for challenge in user.solved_challenges.all():
+                if challenge not in self.solved_challenges_team.all():
+                    self.solved_challenges_team.add(challenge)
+        for challenge in self.solved_challenges_team.all():
+            self.points += challenge.points
+        self.save()
+        return self.points
 
     # def check_points(self):
     #     self.points = 0
@@ -78,16 +80,9 @@ class Team(models.Model):
     # 检验其solved_by_teams中是否包含self，也就是当前Team object
     # 若不包含则添加，之后再check全队的points
 
+    # def __str__(self):
+    #     return str(self.id) + " | " + self.name + "_" + str(self.points)
+
     def __str__(self):
-        return str(self.id) + " | " + self.name + "_" + str(self.points)
-
-
-# class Teammate(models.Model):
-#     user = models.ForeignKey('account.User', verbose_name="队员", on_delete=models.CASCADE)
-#     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="teammates")
-#
-#     class Meta:
-#         verbose_name = "队员"
-#
-#     def __str__(self):
-#         return f"{self.user.username} ({self.team.name})"
+        team_info = f"Team ID: {self.id}, Name: {self.name}, Leader ID: {self.leader.id}"
+        return team_info
