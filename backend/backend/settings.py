@@ -190,3 +190,7 @@ SWAGGER_SETTINGS = {
     },
     'DEFAULT_AUTO_SCHEMA_CLASS': 'utils.swagger.CustomSwaggerAutoSchema',
 }
+
+CRON_CLASSES = [
+    "user_challenge_session_cron_job",
+]
