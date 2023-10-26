@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from django.db.models import Q
 
 from account.models import User, UserChallengeSession
-from account.serializer import UserInfoSerializer, UsernameUpdateSerializer, UserIDSerializer, UserChallengeSessionCreateRetrieveSerializer, FlagSubmissionSerializer
+from account.serializer import UserInfoSerializer, UsernameUpdateSerializer, UserIDSerializer, UserChallengeSessionCreateRetrieveDestroySerializer, FlagSubmissionSerializer
 from challenge.models import Challenge
 from utils.custom_permissions import IsAdminOrSessionCreator, IsAdminOrSelf, IsNotPrivateOrSelf, DisallowAny
 
@@ -18,11 +18,34 @@ class UserIDByUsernameView(generics.RetrieveAPIView):
         return self.get_queryset().get(username=username)
 
 
-class UserChallengeSessionCreateView(generics.CreateAPIView):
+class UserChallengeSessionCreateRetrieveDestroyViewSet(viewsets.ModelViewSet):
     queryset = UserChallengeSession
-    serializer_class = UserChallengeSessionCreateRetrieveSerializer
-
+    serializer_class = UserChallengeSessionCreateRetrieveDestroySerializer
+    # TODO Change permission class to IsActivatedUser
     permission_classes = [IsAuthenticated]
+
+    def retrieve(self, request, *args, **kwargs):
+        user = request.user
+        try:
+            session = UserChallengeSession.objects.filter(user=user).last()
+        except UserChallengeSession.DoesNotExist:
+            return Response(
+                data={"detail": "You haven't created a session yet."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        is_expired = session.expiration_verification()
+        if is_expired or session.is_solved:
+            return Response(
+                data={"detail": "You don't have an open session."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        serializer = self.get_serializer(session)
+        return Response(
+            data=serializer.data,
+            status=status.HTTP_200_OK
+        )
 
     def perform_create(self, serializer):
         return serializer.save()
@@ -30,11 +53,11 @@ class UserChallengeSessionCreateView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         print("request data: " + str(request.data))
         # 只能给自己创建session
-        if request.user.pk != request.data['user']:
-            return Response(
-                data={"detail": "You can only create session for yourself!"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        # if request.user.pk != request.data['user']:
+        #     return Response(
+        #         data={"detail": "You can only create session for yourself!"},
+        #         status=status.HTTP_400_BAD_REQUEST
+        #     )
 
         # 如果该题目已被该用户完成，则无法创建session
         user = request.user
@@ -67,15 +90,84 @@ class UserChallengeSessionCreateView(generics.CreateAPIView):
 
         instance.distribute_port()
         instance.create_container(request)
-        data = UserChallengeSessionCreateRetrieveSerializer(instance=instance, many=False).data
+        data = UserChallengeSessionCreateRetrieveDestroySerializer(instance=instance, many=False).data
 
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 
+    def destroy(self, request, *args, **kwargs):
+        user = request.user
+        try:
+            session = UserChallengeSession.objects.filter(user=user).last()
+        except UserChallengeSession.DoesNotExist:
+            return Response(
+                data={"detail": "You haven't created a session yet."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-class UserChallengeSessionRetrieveView(generics.RetrieveAPIView):
+        session.time_limit = -1
+        session.expiration_verification()
+        session.save()
+
+        return Response(
+            data={"detail": "You have successfully closed your latest open session."},
+            status=status.HTTP_200_OK
+        )
+
+
+class UserChallengeSessionGetView(generics.GenericAPIView):
     queryset = UserChallengeSession
-    serializer_class = UserChallengeSessionCreateRetrieveSerializer
+    serializer_class = UserChallengeSessionCreateRetrieveDestroySerializer
     permission_classes = [IsAdminOrSessionCreator]
+
+    # def get(self, request, *args, **kwargs):
+    #     return list(self, request, *args, **kwargs)
+    # def list(self, request, *args, **kwargs):
+    #     user = request.user
+    #     try:
+    #         session = UserChallengeSession.objects.filter(user=user).last()
+    #     except UserChallengeSession.DoesNotExist:
+    #         return Response(
+    #             data={"detail": "You haven't created a session yet."},
+    #             status=status.HTTP_400_BAD_REQUEST
+    #         )
+    #
+    #     is_expired = session.expiration_verification()
+    #     if is_expired or session.is_solved:
+    #         return Response(
+    #             data={"detail": "You don't have an open session."},
+    #             status=status.HTTP_400_BAD_REQUEST
+    #         )
+    #
+    #     serializer = self.get_serializer(session)
+    #     return Response(
+    #         data=serializer.data,
+    #         status=status.HTTP_200_OK
+    #     )
+
+# class UserChallengeSessionDestroyView(generics.GenericAPIView):
+#     queryset = UserChallengeSession
+#     serializer_class = UserChallengeSessionCreateRetrieveSerializer
+#     permission_classes = [IsAdminOrSessionCreator]
+
+    # def delete(self, request, *args, **kwargs):
+    #     user = request.user
+    #     try:
+    #         session = UserChallengeSession.objects.filter(user=user).last()
+    #     except UserChallengeSession.DoesNotExist:
+    #         return Response(
+    #             data={"detail": "You haven't created a session yet."},
+    #             status=status.HTTP_400_BAD_REQUEST
+    #         )
+    #
+    #     self.time_limit = -1
+    #     self.expiration_verification()
+    #
+    #     return Response(
+    #         data={"detail": "You have successfully closed your latest open session."},
+    #         status=status.HTTP_200_OK
+    #     )
+
+
 
 
 class FlagSubmissionView(generics.CreateAPIView):
