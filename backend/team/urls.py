@@ -10,4 +10,6 @@ urlpatterns = [
     path('ChangeTeamLeaderView/<int:user_id>/', views.ChangeTeamLeaderView.as_view(), name='ChangeTeamLeaderView'),
     path(r'GenerateInvitationCodeView', views.GenerateInvitationCodeView.as_view(), name='GenerateInvitationCodeView'),
     path(r'CalculateTeamPointsView/<int:team_id>/', views.CalculateTeamPointsView.as_view(), name='CalculateTeamPointsView'),
+    path(r'CalculateTeamChallengeView/<int:team_id>/', views.CalculateTeamChallengeView.as_view(),
+         name='CalculateTeamChallengeView'),
 ]

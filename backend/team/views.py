@@ -228,10 +228,6 @@ class GenerateInvitationCodeView(generics.CreateAPIView):
             status=status.HTTP_201_CREATED
         )
 
-# TO DO:
-# 1.谁都能访问任何一个队伍的总分数，根据队伍ID查询相应的队伍
-# 2. 既要更新数据库中的总分数，又要显示分数
-
 
 class CalculateTeamPointsView(generics.GenericAPIView):
     serializer_class = TeamSerializer
@@ -272,5 +268,48 @@ class CalculateTeamPointsView(generics.GenericAPIView):
         else:
             return Response(
                 data={"msg": "队伍分数更新失败"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+class CalculateTeamChallengeView(generics.GenericAPIView):
+    serializer_class = TeamSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, team_id):
+        try:
+            team = Team.objects.get(pk=team_id)
+            return team
+        except Team.DoesNotExist:
+            return None
+
+    def calculate_team_challenges(self, team):
+        team.check_challenges()
+
+    def get(self, request, *args, **kwargs):
+        team_id = kwargs.get('team_id')
+        # 获取队伍ID
+        team = self.get_object(team_id)
+
+        if not team:
+            return Response(
+                data={"msg": "目标队伍不存在" },
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # 调用计算队伍总分的方法
+        self.calculate_team_challenges(team)
+
+        updated_team = self.get_object(team_id)
+        if updated_team:
+            challenges = updated_team.challenges_solved
+
+            return Response(
+                data={"msg": "队伍总解出题数已统计", "总数为:": challenges},
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                data={"msg": "队伍总解出题数更新失败"},
                 status=status.HTTP_400_BAD_REQUEST
             )

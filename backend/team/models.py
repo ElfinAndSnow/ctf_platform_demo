@@ -7,6 +7,7 @@ class Team(models.Model):
     name = models.CharField(verbose_name="战队", max_length=127, null=True)
     description = models.TextField(verbose_name="战队简介", null=True, blank=True, default="该战队尚未填写简介")
     points = models.IntegerField(verbose_name="战队总分", default=0, null=True)
+    challenges_solved = models.IntegerField(verbose_name="战队总解出题数(不重复)", default=0, null=True)
     leader = models.OneToOneField(
         User,
         verbose_name="队长",
@@ -45,17 +46,16 @@ class Team(models.Model):
         self.save()
         return self.points
 
-    # def check_points(self):
-    #     self.points = 0
-    #     for user in self.teammate.all():
-    #         # self.points += user.check_points()
-    #         for challenge in user.solved_challenges.all():
-    #             if challenge not in self.solved_challenges_team.all():
-    #                 self.solved_challenges_team.set([challenge])
-    #     for challenge in self.solved_challenges_team.all():
-    #         self.points += challenge.points
-    #     self.save()
-    #     return self.points
+    def check_challenges(self):
+        self.challenges_solved = 0
+        for user in self.teammate.all():
+            for challenge in user.solved_challenges.all():
+                if challenge not in self.solved_challenges_team.all():
+                    self.solved_challenges_team.add(challenge)
+        for challenge in self.solved_challenges_team.all():
+            self.challenges_solved += 1
+        self.save()
+        return self.points
 
     def get_leader(self):
         return self.leader
