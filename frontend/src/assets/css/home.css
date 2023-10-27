@@ -1,0 +1,39 @@
+#intro {
+    width: 100%;
+    overflow: hidden;
+}
+
+#qs {
+    width: 80%;
+    margin: 0 auto;
+    margin-bottom: 10px;
+}
+#qs h1 {
+    color: var(--title-color);
+    font-size: var(--title-font-size);
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+#qs #typing {
+    color: var(--plain-color);
+    font-size: var(--text-font-size);
+    border-radius: 5px;
+    width: 100%;
+    padding: 2% 5%;
+}
+
+#main {
+    width: 100%;
+    background-color: var(--card-color);
+    border: 1px solid var(--edge-color);
+    border-radius: 5px;
+    min-height: 90%;
+}
+
+@media (max-width: 800px) {
+    #qs {
+        width: 100%;
+    }
+}

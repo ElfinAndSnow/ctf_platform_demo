@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'rest_framework',
     'rest_framework_simplejwt',
+    'django_cron',
     'utils',
     'challenge',
     'team',
@@ -125,6 +126,15 @@ DATABASES = {
     }
 }
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "cache_table",
+    }
+}
+
+# DJANGO_CRON_LOCK_BACKEND = "django_cron.backends.lock.database.DatabaseLock"
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -189,3 +199,7 @@ SWAGGER_SETTINGS = {
     },
     'DEFAULT_AUTO_SCHEMA_CLASS': 'utils.swagger.CustomSwaggerAutoSchema',
 }
+
+CRON_CLASSES = [
+    "account.cron.UserChallengeSessionCronJob",
+]

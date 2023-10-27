@@ -1,6 +1,8 @@
 import datetime
 
+import docker
 from django.contrib.auth.models import AbstractUser
+from django.contrib.sites.shortcuts import get_current_site
 from django.db import models
 
 from utils.models import AbstractTimeLimitedModel
@@ -52,13 +54,77 @@ class UserChallengeSession(AbstractTimeLimitedModel):
     # 不保存用户提交的flag
     # user_flag = models.CharField(verbose_name="用户提交的flag", max_length=127, blank=True)
     # 被动检测超时或已解决，每次收到请求之前先进行一次超时检查
-    is_solved = models.BooleanField(verbose_name="是否已解决或已过期", default=False)
+    is_solved = models.BooleanField(verbose_name="是否已解决", default=False)
+
+    # 防止在超时检查中，多次销毁容器产生异常
+    is_container_removed = models.BooleanField(verbose_name="是否已销毁容器", default=False)
+
+    container_id = models.CharField(verbose_name="容器id", max_length=255, null=True, blank=True)
+    port = models.IntegerField(verbose_name="主机端口", default=50000, null=True)
+    port_inside = models.CharField(verbose_name="容器内部端口/protocol", max_length=127, default="80/tcp", null=True)
+    address = models.CharField(verbose_name="题目地址", max_length=127, null=True, blank=True)
+
+    def distribute_port(self):
+        _port = 50000
+        sessions = UserChallengeSession.objects.filter(is_solved=False).order_by('-port')
+        for session in sessions:
+            is_expired = True
+            if not session.is_expired:
+                is_expired = session.expiration_verification()
+
+            print(is_expired)
+            if is_expired:
+                continue
+            if session.port == _port:
+                _port -= 1
+
+        self.port = _port
+
+    def create_container(self, request):
+        client = docker.from_env()
+        port = self.port
+        image_name = self.challenge.image_name
+        try:
+            image = client.images.get(image_name)
+        except docker.errors.ImageNotFound:
+            print(f"Image {image_name} not found!")
+        for k in image.attrs['ContainerConfig']['ExposedPorts']:
+            port_inside = k
+        container = client.containers.run(
+            image=image_name,
+            detach=True,
+            ports={port_inside: port}
+        )
+        self.container_id = container.id
+        self.port_inside = port_inside
+        self.address = str(get_current_site(request)).split(':')[0] + f":{port}"
+        self.save()
+
+    def destroy_container(self):
+        client = docker.from_env()
+        try:
+            container = client.containers.get(container_id=self.container_id)
+            container.stop()
+            container.remove()
+        except docker.errors.NotFound:
+            print(f"Container '{self.container_id}' not found.")
+
+    def expiration_verification(self):
+        print("verifying" + self.__str__())
+        _expired = super().expiration_verification()
+        if not _expired:
+            return _expired
+        if not self.is_container_removed:
+            self.destroy_container()
+            self.is_container_removed = True
+            self.save()
+        return _expired
 
     def get_flag(self):
         return self.challenge.flag
 
     def get_current_state(self):
-        return self.is_solved and self.is_expired
+        return self.is_solved or self.is_expired
 
     def flag_verification(self, flag):
         correct_flag = self.get_flag()
