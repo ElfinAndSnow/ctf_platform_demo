@@ -29,11 +29,6 @@ class Team(models.Model):
         max_length=12,
         help_text="No longer than 12 characters"
     )
-    # token_expiration = models.DateTimeField(
-    #     verbose_name="验证码有效期",
-    #     null=True,
-    #     blank=True
-    # )
 
     class Meta:
         verbose_name = "战队"

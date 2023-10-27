@@ -3,7 +3,6 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
-from django.shortcuts import get_object_or_404
 
 from team.models import Team
 from team.serializer import TeamSerializer, CustomResponseSerializer
@@ -11,9 +10,6 @@ from utils.custom_permissions import IsTeamLeader
 
 import random
 import string
-# from django.utils import timezone
-# from django.db.models import Q
-# from datetime import timedelta
 
 
 @api_view(['POST'])
@@ -86,39 +82,6 @@ class DeleteTeamView(generics.DestroyAPIView):
             data={"msg": "队伍已成功删除"},
             status=status.HTTP_204_NO_CONTENT
         )
-# class DeleteTeamView(generics.DestroyAPIView):
-#     serializer_class = TeamSerializer  # 设置序列化器
-#     permission_classes = [IsAuthenticated, IsTeamLeader]  # 设置权限类，限制访问
-#     lookup_field = 'pk'
-#
-#     # def get_object(self):
-#     #     return self.request.user.team
-#
-#     def get_object(self):
-#         team_pk = self.kwargs[self.lookup_field]
-#         try:
-#             team = Team.objects.get(pk=team_pk)
-#             return team
-#         except Team.DoesNotExist:
-#             return Response(
-#                 data={"msg": "你所指定的队伍不存在"},
-#                 status=status.HTTP_404_NOT_FOUND
-#             )
-#
-#     def destroy(self, request, *args, **kwargs):
-#         team = self.get_object()
-#         # 检查当前用户是否是队长
-#         if request.user != team.leader:
-#             return Response(
-#                 data={"msg": "你不是队长，无法删除队伍"},
-#                 status=status.HTTP_403_FORBIDDEN
-#             )
-#
-#         team.delete()
-#         return Response(
-#             CustomResponseSerializer({"msg": "队伍已成功删除"}).data,
-#             status=status.HTTP_204_NO_CONTENT
-#         )
 
 
 @api_view(['POST'])
@@ -239,3 +202,75 @@ class ChangeTeamLeaderView(generics.UpdateAPIView):
             data={"msg": "队长变更成功"},
             status=status.HTTP_200_OK
         )
+
+
+class GenerateInvitationCodeView(generics.CreateAPIView):
+    serializer_class = TeamSerializer
+    permission_classes = [IsAuthenticated, IsTeamLeader]  # 请替换IsTeamLeader为实际的权限类
+
+    def get_object(self):
+        team = self.request.user.team
+        return team
+
+    def create(self, request, *args, **kwargs):
+        # 生成随机12位邀请码
+        invitation_code = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(12))
+
+        # 获取当前用户的队伍
+        team = self.get_object()
+
+        # 将邀请码保存到队伍中
+        team.invitation_token = invitation_code
+        team.save()
+
+        return Response(
+            data={"msg": "邀请码生成成功", "invitation_code": invitation_code},
+            status=status.HTTP_201_CREATED
+        )
+
+# TO DO:
+# 1.谁都能访问任何一个队伍的总分数，根据队伍ID查询相应的队伍
+# 2. 既要更新数据库中的总分数，又要显示分数
+
+
+class CalculateTeamPointsView(generics.GenericAPIView):
+    serializer_class = TeamSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, team_id):
+        try:
+            team = Team.objects.get(pk=team_id)
+            return team
+        except Team.DoesNotExist:
+            return None
+
+    def calculate_team_points(self, team):
+        team.check_points()
+
+    def get(self, request, *args, **kwargs):
+        team_id = kwargs.get('team_id')
+        # 获取队伍ID
+        team = self.get_object(team_id)
+
+        if not team:
+            return Response(
+                data={"msg": "目标队伍不存在" },
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # 调用计算队伍总分的方法
+        self.calculate_team_points(team)
+
+        updated_team = self.get_object(team_id)
+        if updated_team:
+            points = updated_team.points
+
+            return Response(
+                data={"msg": "队伍总分已计算", "总分为:": points},
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                data={"msg": "队伍分数更新失败"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
