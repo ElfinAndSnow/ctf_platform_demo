@@ -1,0 +1,89 @@
+*** Starting uWSGI 2.0.22 (64bit) on [Sat Oct 28 13:49:48 2023] ***
+compiled with version: 12.2.0 on 28 October 2023 13:46:58
+os: Linux-3.10.0-1160.11.1.el7.x86_64 #1 SMP Fri Dec 18 16:34:56 UTC 2020
+nodename: 28ef1db9965f
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /demo
+writing pidfile to /tmp/demo-master.pid
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+chdir() to demo
+chdir(): No such file or directory [core/uwsgi.c line 2628]
+*** Starting uWSGI 2.0.22 (64bit) on [Sat Oct 28 13:56:29 2023] ***
+compiled with version: 12.2.0 on 28 October 2023 13:46:58
+os: Linux-3.10.0-1160.11.1.el7.x86_64 #1 SMP Fri Dec 18 16:34:56 UTC 2020
+nodename: 4fc5ce2ab0e5
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /demo
+writing pidfile to /tmp/demo-master.pid
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+chdir() to demo
+chdir(): No such file or directory [core/uwsgi.c line 2628]
+*** Starting uWSGI 2.0.22 (64bit) on [Sat Oct 28 14:06:09 2023] ***
+compiled with version: 12.2.0 on 28 October 2023 13:46:58
+os: Linux-3.10.0-1160.11.1.el7.x86_64 #1 SMP Fri Dec 18 16:34:56 UTC 2020
+nodename: 4fc5ce2ab0e5
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /demo
+writing pidfile to /tmp/demo-master.pid
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+chdir() to demo
+chdir(): No such file or directory [core/uwsgi.c line 2628]
+*** Starting uWSGI 2.0.22 (64bit) on [Sat Oct 28 14:18:52 2023] ***
+compiled with version: 12.2.0 on 28 October 2023 14:15:33
+os: Linux-3.10.0-1160.11.1.el7.x86_64 #1 SMP Fri Dec 18 16:34:56 UTC 2020
+nodename: f71d695b9c4e
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /demo
+writing pidfile to /tmp/demo-master.pid
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+chdir() to /demo
+your memory page size is 4096 bytes
+detected max file descriptor number: 1048576
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 0.0.0.0:8000 fd 3
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+Python version: 3.10.13 (main, Oct 12 2023, 10:20:20) [GCC 12.2.0]
+*** Python threads support is disabled. You can enable it with --enable-threads ***
+Python main interpreter initialized at 0x5609e9f51ac0
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 403077 bytes (393 KB) for 2 cores
+*** Operational MODE: preforking ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x5609e9f51ac0 pid: 18 (default app)
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 18)
+spawned uWSGI worker 1 (pid: 19, cores: 1)
+spawned uWSGI worker 2 (pid: 20, cores: 1)
+[pid: 19|app: 0|req: 1/1] 106.39.130.75 () {42 vars in 824 bytes} [Sat Oct 28 14:18:59 2023] GET /swagger => generated 0 bytes in 97 msecs (HTTP/1.1 301) 6 headers in 213 bytes (1 switches on core 0)
+[pid: 20|app: 0|req: 1/2] 106.39.130.75 () {42 vars in 826 bytes} [Sat Oct 28 14:18:59 2023] GET /swagger/ => generated 2159 bytes in 118 msecs (HTTP/1.1 200) 9 headers in 401 bytes (1 switches on core 0)
+[pid: 20|app: 0|req: 2/3] 106.39.130.75 () {44 vars in 846 bytes} [Sat Oct 28 14:19:03 2023] GET /swagger/?format=openapi => generated 24465 bytes in 52 msecs (HTTP/1.1 200) 8 headers in 273 bytes (1 switches on core 0)
+Not Found: /
+[pid: 20|app: 0|req: 3/4] 36.112.29.90 () {44 vars in 833 bytes} [Sat Oct 28 14:23:20 2023] GET / => generated 3192 bytes in 7 msecs (HTTP/1.1 404) 7 headers in 229 bytes (1 switches on core 0)
+Not Found: /favicon.ico
+[pid: 20|app: 0|req: 4/5] 36.112.29.90 () {42 vars in 756 bytes} [Sat Oct 28 14:23:20 2023] GET /favicon.ico => generated 3243 bytes in 5 msecs (HTTP/1.1 404) 7 headers in 229 bytes (1 switches on core 0)

@@ -1,0 +1,104 @@
+2023/10/28 13:48:22 [notice] 1#1: using the "epoll" event method
+2023/10/28 13:48:22 [notice] 1#1: nginx/1.25.2
+2023/10/28 13:48:22 [notice] 1#1: built by gcc 12.2.0 (Debian 12.2.0-14) 
+2023/10/28 13:48:22 [notice] 1#1: OS: Linux 3.10.0-1160.11.1.el7.x86_64
+2023/10/28 13:48:22 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/10/28 13:48:22 [notice] 1#1: start worker processes
+2023/10/28 13:48:22 [notice] 1#1: start worker process 21
+2023/10/28 13:48:22 [notice] 1#1: start worker process 22
+2023/10/28 13:52:12 [error] 22#22: *6 connect() failed (110: Connection timed out) while connecting to upstream, client: 106.39.130.75, server: localhost, request: "GET / HTTP/1.1", upstream: "uwsgi://172.17.0.2:8000", host: "49.232.236.235"
+2023/10/28 13:54:08 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2023/10/28 13:54:08 [notice] 21#21: gracefully shutting down
+2023/10/28 13:54:08 [notice] 22#22: gracefully shutting down
+2023/10/28 13:54:08 [notice] 21#21: exiting
+2023/10/28 13:54:08 [notice] 21#21: exit
+2023/10/28 13:54:08 [notice] 1#1: signal 17 (SIGCHLD) received from 21
+2023/10/28 13:54:08 [notice] 1#1: worker process 21 exited with code 0
+2023/10/28 13:54:08 [notice] 1#1: signal 29 (SIGIO) received
+2023/10/28 13:55:51 [notice] 1#1: using the "epoll" event method
+2023/10/28 13:55:51 [notice] 1#1: nginx/1.25.2
+2023/10/28 13:55:51 [notice] 1#1: built by gcc 12.2.0 (Debian 12.2.0-14) 
+2023/10/28 13:55:51 [notice] 1#1: OS: Linux 3.10.0-1160.11.1.el7.x86_64
+2023/10/28 13:55:51 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/10/28 13:55:51 [notice] 1#1: start worker processes
+2023/10/28 13:55:51 [notice] 1#1: start worker process 20
+2023/10/28 13:55:51 [notice] 1#1: start worker process 21
+2023/10/28 13:59:52 [error] 20#20: *6 connect() failed (110: Connection timed out) while connecting to upstream, client: 36.112.29.90, server: localhost, request: "GET / HTTP/1.1", upstream: "uwsgi://172.17.0.2:8000", host: "49.232.236.235"
+2023/10/28 14:01:09 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2023/10/28 14:01:09 [notice] 20#20: gracefully shutting down
+2023/10/28 14:01:09 [notice] 21#21: gracefully shutting down
+2023/10/28 14:01:09 [notice] 20#20: exiting
+2023/10/28 14:01:09 [notice] 21#21: exiting
+2023/10/28 14:01:09 [notice] 20#20: exit
+2023/10/28 14:01:09 [notice] 21#21: exit
+2023/10/28 14:01:09 [notice] 1#1: signal 17 (SIGCHLD) received from 20
+2023/10/28 14:01:09 [notice] 1#1: worker process 20 exited with code 0
+2023/10/28 14:01:09 [notice] 1#1: signal 29 (SIGIO) received
+2023/10/28 14:01:09 [notice] 1#1: signal 17 (SIGCHLD) received from 21
+2023/10/28 14:01:09 [notice] 1#1: worker process 21 exited with code 0
+2023/10/28 14:01:09 [notice] 1#1: exit
+2023/10/28 14:02:08 [notice] 1#1: using the "epoll" event method
+2023/10/28 14:02:08 [notice] 1#1: nginx/1.25.2
+2023/10/28 14:02:08 [notice] 1#1: built by gcc 12.2.0 (Debian 12.2.0-14) 
+2023/10/28 14:02:08 [notice] 1#1: OS: Linux 3.10.0-1160.11.1.el7.x86_64
+2023/10/28 14:02:08 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/10/28 14:02:08 [notice] 1#1: start worker processes
+2023/10/28 14:02:08 [notice] 1#1: start worker process 21
+2023/10/28 14:02:08 [notice] 1#1: start worker process 22
+2023/10/28 14:04:09 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2023/10/28 14:04:09 [notice] 21#21: gracefully shutting down
+2023/10/28 14:04:09 [notice] 21#21: exiting
+2023/10/28 14:04:09 [notice] 21#21: exit
+2023/10/28 14:04:09 [notice] 22#22: gracefully shutting down
+2023/10/28 14:04:09 [notice] 22#22: exiting
+2023/10/28 14:04:09 [notice] 22#22: exit
+2023/10/28 14:04:09 [notice] 1#1: signal 17 (SIGCHLD) received from 21
+2023/10/28 14:04:09 [notice] 1#1: worker process 21 exited with code 0
+2023/10/28 14:04:09 [notice] 1#1: worker process 22 exited with code 0
+2023/10/28 14:04:09 [notice] 1#1: exit
+2023/10/28 14:04:58 [notice] 1#1: using the "epoll" event method
+2023/10/28 14:04:58 [notice] 1#1: nginx/1.25.2
+2023/10/28 14:04:58 [notice] 1#1: built by gcc 12.2.0 (Debian 12.2.0-14) 
+2023/10/28 14:04:58 [notice] 1#1: OS: Linux 3.10.0-1160.11.1.el7.x86_64
+2023/10/28 14:04:58 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/10/28 14:04:58 [notice] 1#1: start worker processes
+2023/10/28 14:04:58 [notice] 1#1: start worker process 21
+2023/10/28 14:04:58 [notice] 1#1: start worker process 22
+2023/10/28 14:06:14 [error] 21#21: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 106.39.130.75, server: localhost, request: "GET /swagger HTTP/1.1", upstream: "uwsgi://172.19.0.2:8000", host: "49.232.236.235"
+2023/10/28 14:06:14 [error] 21#21: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 106.39.130.75, server: localhost, request: "GET /favicon.ico HTTP/1.1", upstream: "uwsgi://172.19.0.2:8000", host: "49.232.236.235", referrer: "http://49.232.236.235/swagger"
+2023/10/28 14:06:19 [error] 21#21: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 106.39.130.75, server: localhost, request: "GET / HTTP/1.1", upstream: "uwsgi://172.19.0.2:8000", host: "49.232.236.235"
+2023/10/28 14:06:19 [error] 21#21: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 106.39.130.75, server: localhost, request: "GET /favicon.ico HTTP/1.1", upstream: "uwsgi://172.19.0.2:8000", host: "49.232.236.235", referrer: "http://49.232.236.235/"
+2023/10/28 14:06:22 [error] 21#21: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 106.39.130.75, server: localhost, request: "GET / HTTP/1.1", upstream: "uwsgi://172.19.0.2:8000", host: "49.232.236.235"
+2023/10/28 14:06:22 [error] 21#21: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 106.39.130.75, server: localhost, request: "GET /favicon.ico HTTP/1.1", upstream: "uwsgi://172.19.0.2:8000", host: "49.232.236.235", referrer: "http://49.232.236.235/"
+2023/10/28 14:06:22 [error] 21#21: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 106.39.130.75, server: localhost, request: "GET / HTTP/1.1", upstream: "uwsgi://172.19.0.2:8000", host: "49.232.236.235"
+2023/10/28 14:06:22 [error] 21#21: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 106.39.130.75, server: localhost, request: "GET /favicon.ico HTTP/1.1", upstream: "uwsgi://172.19.0.2:8000", host: "49.232.236.235", referrer: "http://49.232.236.235/"
+2023/10/28 14:06:22 [error] 21#21: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 106.39.130.75, server: localhost, request: "GET / HTTP/1.1", upstream: "uwsgi://172.19.0.2:8000", host: "49.232.236.235"
+2023/10/28 14:06:22 [error] 21#21: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 106.39.130.75, server: localhost, request: "GET /favicon.ico HTTP/1.1", upstream: "uwsgi://172.19.0.2:8000", host: "49.232.236.235", referrer: "http://49.232.236.235/"
+2023/10/28 14:06:22 [error] 21#21: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 106.39.130.75, server: localhost, request: "GET / HTTP/1.1", upstream: "uwsgi://172.19.0.2:8000", host: "49.232.236.235"
+2023/10/28 14:06:22 [error] 21#21: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 106.39.130.75, server: localhost, request: "GET /favicon.ico HTTP/1.1", upstream: "uwsgi://172.19.0.2:8000", host: "49.232.236.235", referrer: "http://49.232.236.235/"
+2023/10/28 14:06:22 [error] 21#21: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 106.39.130.75, server: localhost, request: "GET / HTTP/1.1", upstream: "uwsgi://172.19.0.2:8000", host: "49.232.236.235"
+2023/10/28 14:06:22 [error] 21#21: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 106.39.130.75, server: localhost, request: "GET /favicon.ico HTTP/1.1", upstream: "uwsgi://172.19.0.2:8000", host: "49.232.236.235", referrer: "http://49.232.236.235/"
+2023/10/28 14:06:23 [error] 21#21: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 106.39.130.75, server: localhost, request: "GET / HTTP/1.1", upstream: "uwsgi://172.19.0.2:8000", host: "49.232.236.235"
+2023/10/28 14:06:23 [error] 21#21: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 106.39.130.75, server: localhost, request: "GET /favicon.ico HTTP/1.1", upstream: "uwsgi://172.19.0.2:8000", host: "49.232.236.235", referrer: "http://49.232.236.235/"
+2023/10/28 14:06:23 [error] 21#21: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 106.39.130.75, server: localhost, request: "GET / HTTP/1.1", upstream: "uwsgi://172.19.0.2:8000", host: "49.232.236.235"
+2023/10/28 14:06:23 [error] 21#21: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 106.39.130.75, server: localhost, request: "GET /favicon.ico HTTP/1.1", upstream: "uwsgi://172.19.0.2:8000", host: "49.232.236.235", referrer: "http://49.232.236.235/"
+2023/10/28 14:13:20 [error] 21#21: *21 connect() failed (111: Connection refused) while connecting to upstream, client: 83.97.73.87, server: localhost, request: "GET /?XDEBUG_SESSION_START=phpstorm HTTP/1.1", upstream: "uwsgi://172.19.0.2:8000", host: "49.232.236.235:80"
+2023/10/28 14:15:17 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2023/10/28 14:15:17 [notice] 21#21: gracefully shutting down
+2023/10/28 14:15:17 [notice] 22#22: gracefully shutting down
+2023/10/28 14:15:17 [notice] 21#21: exiting
+2023/10/28 14:15:17 [notice] 22#22: exiting
+2023/10/28 14:15:17 [notice] 21#21: exit
+2023/10/28 14:15:17 [notice] 22#22: exit
+2023/10/28 14:15:17 [notice] 1#1: signal 17 (SIGCHLD) received from 22
+2023/10/28 14:15:17 [notice] 1#1: worker process 21 exited with code 0
+2023/10/28 14:15:17 [notice] 1#1: worker process 22 exited with code 0
+2023/10/28 14:15:17 [notice] 1#1: exit
+2023/10/28 14:18:16 [notice] 1#1: using the "epoll" event method
+2023/10/28 14:18:16 [notice] 1#1: nginx/1.25.2
+2023/10/28 14:18:16 [notice] 1#1: built by gcc 12.2.0 (Debian 12.2.0-14) 
+2023/10/28 14:18:16 [notice] 1#1: OS: Linux 3.10.0-1160.11.1.el7.x86_64
+2023/10/28 14:18:16 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2023/10/28 14:18:16 [notice] 1#1: start worker processes
+2023/10/28 14:18:16 [notice] 1#1: start worker process 20
+2023/10/28 14:18:16 [notice] 1#1: start worker process 21
