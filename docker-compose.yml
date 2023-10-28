@@ -1,0 +1,40 @@
+version: "3"
+
+services:
+  web:
+    build: ./backend
+    expose:
+      - "8000"
+    #ports:
+     # - "8000:8000"
+    volumes:
+      - ./backend:/demo
+      - ./compose/uwsgi:/tmp
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
+      - /lib64/libltdl.so.7:/lib64/libltdl.so.7
+  #  links:
+  #    - db
+  #  depends_on:
+  #    - db
+    environment:
+      - DEBUG=False
+    restart: always
+    tty: true
+    stdin_open: true
+
+  nginx:
+    build: ./compose/nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    expose:
+      - "80"
+    volumes:
+      - ./backend/static:/usr/share/nginx/html/static
+      - ./compose/nginx/log:/var/log/nginx
+    links:
+      - web
+    depends_on:
+      - web
+    restart: always
