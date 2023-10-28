@@ -61,6 +61,9 @@ urlpatterns = [
 
     # login, register, token
     path(r'auth/', include('jwtauth.urls')),
+
+    # team
+    path(r'api/', include('team.urls'))
 ]
 
 # urlpatterns += router.urls
