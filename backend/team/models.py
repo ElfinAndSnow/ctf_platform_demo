@@ -18,7 +18,6 @@ class Team(models.Model):
     )
     teammate = models.ManyToManyField(
         User,
-        through='TeamMembership',
         verbose_name="队员",
         blank=True,
         related_name="teams"
@@ -78,8 +77,3 @@ class Team(models.Model):
 
 # TO DO
 # fix the relationship.
-
-
-class TeamMembership(models.Model):
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)

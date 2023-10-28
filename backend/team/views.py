@@ -5,7 +5,7 @@ from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
 
 from team.models import Team
-from team.serializer import TeamSerializer, CustomResponseSerializer
+from team.serializer import TeamSerializer
 from utils.custom_permissions import IsTeamLeader
 
 import random
@@ -106,7 +106,7 @@ def join_team(request, team_id, invitation_token):
         # 检查邀请码是否匹配
     if invitation_token != team.invitation_token:
         return Response(
-            data={"msg": "邀请码无效"},
+            data={"msg": "邀请码错误或无效"},
             status=status.HTTP_400_BAD_REQUEST
         )
 
