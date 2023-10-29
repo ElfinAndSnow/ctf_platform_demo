@@ -152,7 +152,12 @@ class FlagSubmissionSerializer(serializers.ModelSerializer):
         return user_challenge_session
 
 
-# class UserActivationStatusSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ['id', 'username', 'is_active']
+class UserInfoPrivate(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'username',
+            'description',
+        ]
+
