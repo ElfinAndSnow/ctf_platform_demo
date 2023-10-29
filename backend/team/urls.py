@@ -12,4 +12,6 @@ urlpatterns = [
     path(r'CalculateTeamPointsView/<int:team_id>/', views.CalculateTeamPointsView.as_view(), name='CalculateTeamPointsView'),
     path(r'CalculateTeamChallengeView/<int:team_id>/', views.CalculateTeamChallengeView.as_view(),
          name='CalculateTeamChallengeView'),
+    path(r'QueryTeamByIDView/<int:team_id>/', views.QueryTeamByIDView.as_view(), name='QueryTeamByIDView'),
+    path(r'QueryTeamByNameView/<str:team_name>/', views.QueryTeamByNameView.as_view(), name='QueryTeamByNameView'),
 ]

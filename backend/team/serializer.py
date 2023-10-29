@@ -10,3 +10,17 @@ class TeamSerializer(serializers.ModelSerializer):
 
 class CustomResponseSerializer(serializers.Serializer):
     msg = serializers.CharField()
+
+
+class PartialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Team
+        fields = [
+            'id',
+            'name',
+            'description',
+            'points',
+            'challenges_solved',
+            'leader',
+            'teammate',
+        ]
