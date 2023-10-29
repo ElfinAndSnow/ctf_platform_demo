@@ -4,7 +4,9 @@ from rest_framework.response import Response
 from django.db.models import Q
 
 from account.models import User, UserChallengeSession
-from account.serializer import UserInfoSerializer, UsernameUpdateSerializer, UserIDSerializer, UserChallengeSessionCreateRetrieveDestroySerializer, FlagSubmissionSerializer
+from account.serializer import (UserInfoSerializer, UsernameUpdateSerializer,
+                                UserIDSerializer, UserChallengeSessionCreateRetrieveDestroySerializer,
+                                FlagSubmissionSerializer)
 from challenge.models import Challenge
 from utils.custom_permissions import IsAdminOrSessionCreator, IsAdminOrSelf, IsNotPrivateOrSelf, DisallowAny
 
@@ -224,3 +226,7 @@ class UsernameUpdateView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UsernameUpdateSerializer
     permission_classes = [IsAdminOrSelf, IsAuthenticated]
+
+
+
+# class UserActivationsStatusView()

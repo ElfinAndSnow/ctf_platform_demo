@@ -27,6 +27,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
             'is_private',
             'points',
             'team',
+            'is_email_verified',
             'date_joined',
             'solved_challenges',
             'last_login',
@@ -36,6 +37,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
             'id',
             'points',
             'team',
+            'is_email_verified',
             'solved_challenges',
             'last_login',
         ]
@@ -148,3 +150,9 @@ class FlagSubmissionSerializer(serializers.ModelSerializer):
         # session.is_solved_or_expired = True
         # session.save()
         return user_challenge_session
+
+
+# class UserActivationStatusSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ['id', 'username', 'is_active']
