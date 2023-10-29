@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-j8id6*qdi9+4&xj9#*c1jzz%as*p*f+)$j-gfo!*8$*3r-eu&x'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['49.232.236.235']
 
@@ -121,8 +121,12 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ctf',
+        'USER': 'admin',
+        'PASSWORD': 'Test1234!',
+        'HOST': 'db',
+        'PORT': '3306',
     }
 }
 
