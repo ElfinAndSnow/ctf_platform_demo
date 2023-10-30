@@ -5,7 +5,7 @@ from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
 
 from team.models import Team
-from team.serializer import TeamSerializer
+from team.serializer import TeamSerializer, PartialSerializer
 from utils.custom_permissions import IsTeamLeader
 
 import random
@@ -293,7 +293,7 @@ class CalculateTeamChallengeView(generics.GenericAPIView):
 
         if not team:
             return Response(
-                data={"msg": "目标队伍不存在" },
+                data={"msg": "目标队伍不存在"},
                 status=status.HTTP_404_NOT_FOUND
             )
 
@@ -313,3 +313,74 @@ class CalculateTeamChallengeView(generics.GenericAPIView):
                 data={"msg": "队伍总解出题数更新失败"},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+
+class QueryTeamByIDView(generics.GenericAPIView):
+    serializer_class = PartialSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, team_id):
+        try:
+            team = Team.objects.get(pk=team_id)
+            return team
+        except Team.DoesNotExist:
+            return None
+
+    def get(self, request, *args, **kwargs):
+        team_id = kwargs.get('team_id')
+        # 获取队伍ID
+        if team_id < 0 or team_id > 65535:
+            return Response(
+                data={"msg": "队伍ID不在有效查询范围内！"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        team = self.get_object(team_id)
+
+        if not team:
+            return Response(
+                data={"msg": "查询ID对应的队伍不存在"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer_team = self.serializer_class(team)
+        return Response(
+            data=serializer_team.data,
+            status=status.HTTP_200_OK
+        )
+
+
+class QueryTeamByNameView(generics.GenericAPIView):
+    serializer_class = PartialSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, team_name):
+        try:
+            team = Team.objects.get(name=team_name)
+            return team
+        except Team.DoesNotExist:
+            return None
+
+    def get(self, request, *args, **kwargs):
+        team_name = kwargs.get('team_name')
+
+        print("team_name:", team_name)
+
+        if not team_name:
+            return Response(
+                data={"msg": "请提供队伍名称"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        team = self.get_object(team_name)
+
+        if not team:
+            return Response(
+                data={"msg": "未找到名为 '{}' 的队伍".format(team_name)},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        serialized_team = self.serializer_class(team)
+        return Response(
+            data=serialized_team.data,
+            status=status.HTTP_200_OK
+        )

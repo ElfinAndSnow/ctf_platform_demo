@@ -1,6 +1,10 @@
 0*.py
 *.env
 
-# python byte code
-__pycache__
-*.pyc
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# static and media folder
+static/
+media/

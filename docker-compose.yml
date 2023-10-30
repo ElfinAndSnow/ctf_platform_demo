@@ -1,0 +1,59 @@
+version: "3"
+
+volumes:
+  ctf_db_vol:
+
+services:
+ 
+  db:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_DATABASE=ctf
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=Test1234!  
+    volumes:
+      - ctf_db_vol:/var/lib/mysql:rw
+      - ./compose/mysql/conf/my.cnf:/etc/mysql/my.cnf
+      - ./compose/mysql/init:/docker-entrypoint-initdb.d/
+    ports:
+      - "3306:3306"
+    restart: always
+
+  web:
+    build: ./backend
+    expose:
+      - "8000"
+    #ports:
+     # - "8000:8000"
+    volumes:
+      - ./backend:/demo
+      - ./compose/uwsgi:/tmp
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
+      - /lib64/libltdl.so.7:/lib64/libltdl.so.7
+    links:
+      - db
+    depends_on:
+      - db
+    environment:
+      - DEBUG=False
+    restart: always
+    tty: true
+    stdin_open: true
+
+  nginx:
+    build: ./compose/nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    expose:
+      - "80"
+    volumes:
+      - ./backend/static:/usr/share/nginx/html/static
+      - ./compose/nginx/log:/var/log/nginx
+    links:
+      - web
+    depends_on:
+      - web
+    restart: always

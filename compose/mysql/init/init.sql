@@ -1,0 +1,2 @@
+GRANT ALL PRIVILEGES ON myproject.* TO dbuser@"admin" IDENTIFIED BY "Test1234!";
+FLUSH PRIVILEGES;

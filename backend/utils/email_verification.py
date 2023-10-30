@@ -34,7 +34,7 @@ def email_verification(instance: EmailVerification):
         to=[to_email, ],
         from_email=settings.EMAIL_HOST_USER,
     )
-    # email.send()
+    email.send()
     print(to_email)
 
 

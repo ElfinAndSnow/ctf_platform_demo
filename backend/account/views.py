@@ -228,5 +228,23 @@ class UsernameUpdateView(generics.UpdateAPIView):
     permission_classes = [IsAdminOrSelf, IsAuthenticated]
 
 
+class UserInfoPublicView(generics.GenericAPIView):
+    serializer_class = UserInfoSerializer
+    permission_classes = [IsAuthenticated]
 
-# class UserActivationsStatusView()
+    def get(self, request):
+        user = request.user
+        try:
+            serializer_user = self.serializer_class(user)
+            return Response(
+                data=serializer_user.data,
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            error_message = f"自身信息查询失败: {str(e)}"
+            return Response(
+                data={"msg": error_message},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
