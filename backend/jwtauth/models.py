@@ -5,7 +5,7 @@ from utils.models import AbstractTimeLimitedModel
 
 class EmailVerification(AbstractTimeLimitedModel):
     # 默认超时时限5分钟
-    time_limit_second = 300
+    time_limit_second = 10
 
     PURPOSE_CHOICES = (
         ('registration', 'Registration'),
