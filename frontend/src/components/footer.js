@@ -1,5 +1,9 @@
 import '../assets/css/footer.css'
-
+/*
+页脚内容
+1. 项目贡献者
+2. 项目仓库地址
+*/
 export default {
     target: 'footer',
     data: undefined,

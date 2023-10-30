@@ -1,7 +1,15 @@
 import '../assets/css/header.css'
+/*
+页眉内容
+1. logo + slogan
+2. 导航栏
+3. 登录按钮（未登录）
+4. 个人设置按钮 （已登录）
+*/
 export default {
     target: 'header',
     data: {
+        // 登录标志位
         hasLogined: false,
     },
     methods: undefined,
@@ -17,7 +25,7 @@ export default {
             </div>
 
             <a href="#/login" id='login' class="button">登录</a>
-            <label class="icon-burger">
+            <label class="options">
                 <div class="line"></div>
                 <div class="line"></div>
                 <div class="line"></div>
@@ -48,12 +56,12 @@ export default {
         return this.template
     },
     afterMount: function() {
-        //Load images
+        // 载入图标
         import('../assets/images/logo.png').then(logo => {
             document.querySelectorAll('.logo').forEach(img => img.src=logo.default)
         })
 
-        //Add event listener
+        // 下拉菜单
         const dropdown = document.getElementById('dropdown')
         const header = document.querySelector('header')
 
@@ -62,11 +70,7 @@ export default {
                 header.classList.toggle('show-toggler')
             })
         })
-        document.querySelector('.darkmode-toggler').addEventListener('click', ()=>{
-            const mode = document.body.dataset.theme === 'dark' ? '': 'dark'
-            document.body.dataset.theme = mode
-            localStorage.setItem('zctf-darkmode', mode)
-        })
+
         document.addEventListener('click', (e) => {
             if (e.target.tagName === 'LABEL') {
                 return
@@ -79,15 +83,18 @@ export default {
             }
         })
 
-        document.getElementById('login').addEventListener('click', () => {
-            location.hash = 'login'
-        })
-        
-        document.querySelector('.logout').addEventListener('click', () => {
-            localStorage.removeItem('zctf')
+        // 深浅色模式切换
+        document.querySelector('.darkmode-toggler').addEventListener('click', ()=>{
+            const mode = document.body.dataset.theme === 'dark' ? '': 'dark'
+            document.body.dataset.theme = mode
+            localStorage.setItem('zctf-darkmode', mode)
         })
 
-        return null
+        // 登出
+        document.querySelector('.logout').addEventListener('click', () => {
+            localStorage.removeItem('zctf-token')
+            document.body.classList.remove('logined')
+        })
     },
     destroyed: undefined,
 }

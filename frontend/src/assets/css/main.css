@@ -31,7 +31,7 @@ html {
     --icon-size: 30px;
     --switcher-height: 35px;
     --distance: 20px;
-    --challenge-bar-width: 260px;
+    --challenge-bar-width: 240px;
     --challenge-bar-height: 150px;
     --main-margin-top: 2vh;
     --cursor-height: 5px;
@@ -44,6 +44,7 @@ html {
     --plain-color: #4c4948;
     --preloader-bg: #37474f;
     --preloader-color: #fff;
+    --btn-color: #818CF8;
     --btn-hover-color: #7a9ff4;  
     --btn-activate-color: #ff7242;
     --btn-text-color: #32403e;
@@ -74,7 +75,6 @@ html {
     --card-solid-color: #090e18;
     --shadow-color: #888c93;
     --border-color: #827f82;
-    --btn-color: #373b52;
     --btn-hover-color: #787878;
     --btn-text-color: #e8e8e8;
     --title-color: #f1f1f1;
@@ -142,7 +142,7 @@ a {
     height: 4vh;
     width: 70px;
     font-size: 22px;
-    background-color: rgb(23, 144, 23);
+    background-color: var(--btn-color);
 
     color: #fff;
     line-height: 4vh;
@@ -183,7 +183,7 @@ a {
     }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 955px) {
     :root {
         /*font*/
         --title-font-size: 38px;
@@ -195,8 +195,10 @@ a {
         --icon-size: 20px;
         --navbar-height: 8vh;
         --label-height: 5vh;
-        --main-margin-top: -5vh;
+        --main-margin-top: 1vh;
         --cursor-height: 5px;
+        --challenge-bar-height: 120px;
+        --challenge-bar-width: 150px;
 
         /*color*/
         --btn-hover-color: rgb(0,0,0,0); 

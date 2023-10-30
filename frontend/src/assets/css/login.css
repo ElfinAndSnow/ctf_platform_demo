@@ -1,4 +1,4 @@
-#input-area {
+#inputarea {
     width: 40%;
     position: absolute;
     left: 50%;
@@ -9,7 +9,7 @@
     justify-content: start;
 }
 
-#input-area #header {
+#inputarea #header {
     display: flex;
     width: 100%;
     height: 45px;
@@ -17,11 +17,11 @@
     align-items: center;
 }
 
-#input-area .hr {
+#inputarea .hr {
     width: 100%;
 }
 
-#login-btn, #register-btn {
+#loginbar, #registerbar {
     width: 50%;
     text-align: center;
     margin: auto 0;
@@ -30,27 +30,36 @@
 }
 
 
-#loginForm, #registerForm {
+#loginform, #registerform {
     width: 100%;
     display: flex;
+    margin-top: 20px;
     flex-direction: column;
     justify-content: start;
 }
 
-#loginForm.hide, #registerForm.hide {
+#loginform.hide, #registerform.hide {
     display: none;
+}
+
+.alert {
+    color: red;
+    font-size: 15px;
+    height: 20px;
+    white-space: nowrap;
 }
 
 
 .coolinput {
     display: flex;
     flex-direction: column;
-    position: static;
-    margin: 10px auto;
+    position: relative;
+    margin: 0 auto;
     width: 60%;
+    height: 95px;
 }
 
-.coolinput label.text {
+.coolinput label {
     font-size: 15px;
     color: #818CF8;
     font-weight: 700;
@@ -69,6 +78,17 @@
     background: var(--card-solid-color);
     color: var(--pure-color);
 }
+.coolinput svg {
+    width: 40px;
+    height: 40px;
+    position: absolute;   
+    left: 100%;
+    top: 30%;            
+}
+
+svg path {
+    pointer-events: none;
+}
 
 .coolinput input:focus {
     outline: none;
@@ -79,10 +99,10 @@ form .button {
 }
 
 @media (max-width:955px) {
-    #input-area {
-        width: 80%;
+    #inputarea {
+        width: 100%;
     }
     .coolinput {
-        width: 90%;
+        width: 80%;
     }
 }

@@ -1,6 +1,10 @@
 import echarts from "../utils/echarts.js";
 import '../assets/css/ranking.css'
-
+/*
+排名内容
+1. 总分前七队伍随时间变化的积分折线图
+2. 所有队伍的总分、各题解题情况
+ */
 export default {
   target: 'main',
   data: {

@@ -1,6 +1,12 @@
 import {verify} from '../api/api.js'
 import '../assets/css/challenge.css'
-
+/*
+题库内容
+1. 信息榜 （用户名、战队、队伍积分、解题数、排名）
+2. 题目区 
+    - 题目分类选择器 （All, Misc, Web, Reverse, Pwn, Crypto)
+    - 题目框 （题目标题、分值、类别）
+*/
 export default {
     target: 'main',
     data: {
@@ -18,7 +24,6 @@ export default {
                 }
                 card.classList.add("hide")
             })
-    
         }
     },
     template: `
@@ -150,6 +155,5 @@ export default {
     },
     destroyed: function() {
         document.getElementById('switch-bar').removeEventListener('click', this.methods.filterCards)
-        console.log('destoryed')
     }
 }

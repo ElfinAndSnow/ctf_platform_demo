@@ -35,7 +35,7 @@ nav #links {
     text-align: center;
 }
 
-nav .icon-burger {
+nav .options {
     display: none;
     position: absolute;
     top: 50%;
@@ -43,7 +43,7 @@ nav .icon-burger {
     transform: translateY(-50%);
 }
 
-.icon-burger .line {
+.options .line {
     background-color: var(--btn-text-color);
     width: 25px;
     height: 5px;
@@ -85,6 +85,10 @@ a .icon {
     right: 2vw;
 }
 
+.logined header nav #login {
+    display: none;
+}
+
 header #dropdown {
     width: 190px;
     background-color: var(--dropdown-color);
@@ -100,7 +104,11 @@ header #dropdown {
     z-index: 1;
 }
 
-header.show-toggler #dropdown {
+.logined header nav #dropdown {
+    display: block;
+}
+
+.logined header.show-toggler #dropdown {
     opacity: 1;
     transform: scale(1.0);
     pointer-events: all;
@@ -138,13 +146,17 @@ header.show-toggler #dropdown {
 }
 
 .userinfo {
-    display: flex;
+    display: none;
     align-items: center;
     position: absolute;
     right: 4vw;
     transition: all 0.2s ease-in-out;
     color: var(--btn-text-color);
     cursor: pointer;
+}
+
+.logined header nav .userinfo {
+    display: flex;
 }
 
 .userinfo svg {
@@ -171,19 +183,19 @@ header.show-toggler #dropdown {
     nav #links {
         display: none;
     }
-    nav .icon-burger {
+    .logined header nav .options {
         display: block;
     }
-    .show-toggler nav .icon-burger .line:nth-child(1) {
+    .show-toggler nav .options .line:nth-child(1) {
         transform: translateY(10px) rotate(225deg);
     }
-    .show-toggler nav .icon-burger .line:nth-child(3) {
+    .show-toggler nav .options .line:nth-child(3) {
         transform: translateY(-10px) rotate(-225deg);
     }
-    .show-toggler nav .icon-burger .line:nth-child(2) {
+    .show-toggler nav .options .line:nth-child(2) {
         opacity: 0;
     }
-    header .userinfo {
+    .logined header nav .userinfo {
         display: none;
     }
     header #dropdown {
