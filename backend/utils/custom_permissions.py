@@ -66,8 +66,8 @@ class IsTeamMate(permissions.BasePermission):
     def has_permission(self, request, view):
         # 在列表视图中检查用户是否是队员
         team = view.get_object()
-        return request.user in team.teammate.all()
+        return request.user in team.members.all()
 
     def has_object_permission(self, request, view, obj):
         # 在对象级别视图中检查用户是否是队员
-        return request.user in obj.teammate.all()
+        return request.user in obj.members.all()

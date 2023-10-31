@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from team.models import Team
 from team.serializer import TeamSerializer, PartialSerializer
-from utils.custom_permissions import IsTeamLeader
+from utils.custom_permissions import IsTeamLeader, IsTeamMate
 
 import random
 import string
@@ -26,6 +26,9 @@ def create_team(request, team_name):
 
         try:
             team = Team(name=team_name, leader=user)
+            team.save()
+
+            team.members.add(user)
             team.save()
 
             user.team = team
@@ -86,7 +89,7 @@ class DeleteTeamView(generics.DestroyAPIView):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def join_team(request, team_id, invitation_token):
+def join_team_id(request, team_id, invitation_token):
     user = request.user
 
     if user.team:
@@ -111,7 +114,44 @@ def join_team(request, team_id, invitation_token):
         )
 
         # 成为战队队员
-    team.teammate.add(user)
+    team.members.add(user)
+    user.team = team
+    user.save()
+
+    return Response(
+        data={"msg": "成功加入战队"},
+        status=status.HTTP_200_OK
+    )
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def join_team_name(request, team_name, invitation_token):
+    user = request.user
+
+    if user.team:
+        return Response(
+            data={"msg": "你已经是战队的成员了"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    try:
+        team = Team.objects.get(name=team_name)
+    except Team.DoesNotExist:
+        return Response(
+            data={"msg": "目标战队不存在"},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+        # 检查邀请码是否匹配
+    if invitation_token != team.invitation_token:
+        return Response(
+            data={"msg": "邀请码错误或无效"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+        # 成为战队队员
+    team.members.add(user)
     user.team = team
     user.save()
 
@@ -143,8 +183,8 @@ class RemoveMemberView(generics.DestroyAPIView):
                     status=status.HTTP_404_NOT_FOUND
                 )
 
-            if user in team.teammate.all():
-                team.teammate.remove(user)
+            if user in team.members.all():
+                team.members.remove(user)
                 user.team = None
                 user.save()
                 return Response(
@@ -192,7 +232,7 @@ class ChangeTeamLeaderView(generics.UpdateAPIView):
             )
 
         # Change the team leader by adding the current leader to teammates
-        team.teammate.add(request.user)
+        team.members.add(request.user)
 
         # Set the new leader
         team.leader = new_leader
@@ -382,5 +422,65 @@ class QueryTeamByNameView(generics.GenericAPIView):
         serialized_team = self.serializer_class(team)
         return Response(
             data=serialized_team.data,
+            status=status.HTTP_200_OK
+        )
+
+
+class TeamInfoForMemberView(generics.GenericAPIView):
+    queryset = Team.objects.all()
+    serializer_class = TeamSerializer
+    permission_classes = [IsAuthenticated, IsTeamMate]
+
+    def get_object(self):
+        try:
+            team = self.request.user.team
+        except Team.DoesNotExist:
+            return None
+        return team
+
+    def get(self, request, *args, **kwargs):
+        team = self.get_object()
+        if not team:
+            return Response(
+                data={"msg": "你所属的队伍不存在"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        serialized_team = self.serializer_class(team)
+
+        return Response(
+            data=serialized_team.data,
+            status=status.HTTP_200_OK
+        )
+
+
+class UpdateTeamScoresAndChallengesView(generics.GenericAPIView):
+    queryset = Team.objects.all()
+    serializer_class = TeamSerializer
+    permission_classes = [IsAuthenticated, IsTeamMate]
+
+    def get_object(self):
+        try:
+            team = self.request.user.team
+        except Team.DoesNotExist:
+            return None
+        return team
+
+    def calculate_team_challenges(self, team):
+        return team.check_challenges()
+
+    def get(self, request, *args, **kwargs):
+        team = self.get_object()
+        if not team:
+            return Response(
+                data={"msg": "你所属的队伍不存在"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        points = team.points
+        challenges = self.calculate_team_challenges(team)
+
+        return Response(
+            data={"msg": "队伍总分及解出题数已经更新", "scores:": points, "challenges_solved:": challenges},
             status=status.HTTP_200_OK
         )

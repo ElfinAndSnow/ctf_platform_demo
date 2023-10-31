@@ -36,13 +36,14 @@ class EmailVerificationCreateView(generics.CreateAPIView):
         return serializer.save()
 
     def create(self, request, *args, **kwargs):
-        # These should be implemented in serializer's validate()
-        print("pk: " + str(request.user.id))
-        if str(request.user.id) != request.data.get('user'):
-            return Response(
-                data={"detail": "You can only create verification for yourself!"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+    #     # These should be implemented in serializer's validate()
+    #     print("pk: " + str(request.user.id))
+    #     # if str(request.user.id) != request.data.get('user'):
+    #     if request.user.id != request.data.get('user'):
+    #         return Response(
+    #             data={"detail": "You can only create verification for yourself!"},
+    #             status=status.HTTP_400_BAD_REQUEST
+    #         )
 
         user = request.user
         for instance in user.email_verifications.all():

@@ -10,8 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import datetime
-import os
+# import os
 from pathlib import Path
+import environ
+env = environ.Env()
+env.read_env()
 # from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -21,7 +24,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-j8id6*qdi9+4&xj9#*c1jzz%as*p*f+)$j-gfo!*8$*3r-eu&x'
+# SECRET_KEY = 'django-insecure-j8id6*qdi9+4&xj9#*c1jzz%as*p*f+)$j-gfo!*8$*3r-eu&x'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -177,14 +181,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # EMAIL_VERIFICATION_REGISTRATION_SECRET_KEY = "OYbJ7Cne7b5PBZYM_E_38T8VgpYYsqNrawghVnO_FAY"
 # EMAIL_VERIFICATION_PASSWORD_RESET_SECRET_KEY = "plHWNLROAEDDSVQFAYOLcHWm1N85sL5EoP3FJ7SQKEo"
 
-# load_dotenv()
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_USE_SSL = True
-EMAIL_HOST = os.getenv('smtp.163.com')
-EMAIL_PORT = os.getenv('587')
-
-EMAIL_HOST_USER = os.getenv('CTFValidator@163.com')
-EMAIL_HOST_PASSWORD = os.getenv('BOGNYWRWQQPUMWWR')
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_PORT = env('EMAIL_PORT')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {

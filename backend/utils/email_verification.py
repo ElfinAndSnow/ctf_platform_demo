@@ -24,6 +24,7 @@ def email_verification(instance: EmailVerification):
     body = "Hi " + username + "!\n"
     body += "You can verify through this code:\n"
     body += instance.code
+    body += "If you are not registered on the site, please ignore this email.\n"
 
     print(body)
 
