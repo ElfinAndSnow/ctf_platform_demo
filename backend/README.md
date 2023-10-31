@@ -13,7 +13,7 @@
 from django.core.management.utils import get_random_secret_key
 get_random_secret_key()
 ```
-   - Created .[env] in [backend/backend/], together with settings py files
+   - Created .env in backend/backend/, together with settings py files
 ```python
 EMAIL_HOST_USER = xxx@xxx.com
 EMAIL_HOST_PASSWORD = xxxxxxxx  
@@ -28,7 +28,7 @@ DB_PASSWORD = xxxxxxxx
 DB_HOST = xxx.xxx.xxx.xxx
 DB_PORT = xxxx
 ```
- - If you are in development env, you need to add `--settings backnend.settings_dev` after commands below. E.g. `python manage.py runserver --settings backend.settings_dev`
+ - If you are in development env, you need to add `--settings backend.settings_dev` after commands below. E.g. `python manage.py runserver --settings backend.settings_dev`
  - Create cache table: `python manage.py createcachetable`
  - Make migration files: `python manage.py makemigrations`
  - Migrate to SQL: `python manage.py migrate`
