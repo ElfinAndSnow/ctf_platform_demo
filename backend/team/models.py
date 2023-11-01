@@ -16,13 +16,6 @@ class Team(models.Model):
         null=True,
         blank=True
     )
-    teammate = models.ManyToManyField(
-        User,
-        verbose_name="队员",
-        blank=True,
-        related_name="teams"
-    )
-    # 邀请码部分待修改
     invitation_token = models.CharField(
         verbose_name="邀请码",
         default="",
@@ -35,8 +28,7 @@ class Team(models.Model):
 
     def check_points(self):
         self.points = 0
-        for user in self.teammate.all():
-            # self.points += user.check_points()
+        for user in self.members.all():
             for challenge in user.solved_challenges.all():
                 if challenge not in self.solved_challenges_team.all():
                     self.solved_challenges_team.add(challenge)
@@ -47,20 +39,18 @@ class Team(models.Model):
 
     def check_challenges(self):
         self.challenges_solved = 0
-        for user in self.teammate.all():
+        for user in self.members.all():
             for challenge in user.solved_challenges.all():
                 if challenge not in self.solved_challenges_team.all():
                     self.solved_challenges_team.add(challenge)
         for challenge in self.solved_challenges_team.all():
             self.challenges_solved += 1
         self.save()
-        return self.points
+        return self.challenges_solved
 
     def get_leader(self):
         return self.leader
 
-    def get_teammates(self):
-        return User.objects.filter(teams=self)
     # 战队不能单纯总和队员总分，应当根据队员解题的并集
     # 由此应当在题目中建立另一个ManyToMany字段solved_by_teams，指向Team
     # 在check每个队员的points后再check全队的points
@@ -74,6 +64,3 @@ class Team(models.Model):
     def __str__(self):
         team_info = f"Team ID: {self.id}, Name: {self.name}, Leader ID: {self.leader.id}"
         return team_info
-
-# TO DO
-# fix the relationship.
