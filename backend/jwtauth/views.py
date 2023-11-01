@@ -36,22 +36,6 @@ class EmailVerificationCreateView(generics.CreateAPIView):
         return serializer.save()
 
     def create(self, request, *args, **kwargs):
-        # These should be implemented in serializer's validate()
-        print("pk: " + str(request.user.id))
-        if str(request.user.id) != request.data.get('user'):
-            return Response(
-                data={"detail": "You can only create verification for yourself!"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        user = request.user
-        for instance in user.email_verifications.all():
-            if not (instance.is_verified and instance.is_expired):
-                return Response(
-                    data={"detail": "Please wait for your last verification code expires."},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-
         print(request.data)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -64,7 +48,6 @@ class EmailVerificationCreateView(generics.CreateAPIView):
         }
         purpose = request.data['purpose']
         email_verification(instance=instance)
-
 
         return Response(
             {"detail": "An email including a verify code has been sent to your email."},
