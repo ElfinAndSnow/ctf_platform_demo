@@ -4,8 +4,8 @@ from utils.models import AbstractTimeLimitedModel
 
 
 class EmailVerification(AbstractTimeLimitedModel):
-    # 默认超时时限5分钟
-    time_limit_second = 300
+    # 默认超时时限2分钟
+    time_limit_second = 120
 
     PURPOSE_CHOICES = (
         ('registration', 'Registration'),
@@ -35,3 +35,9 @@ class EmailVerification(AbstractTimeLimitedModel):
             return True
         else:
             return False
+
+    def save(
+        self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
+        self.time_limit = self.time_limit_second
+        super().save(force_insert=False, force_update=False, using=None, update_fields=None)
