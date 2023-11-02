@@ -204,7 +204,7 @@ class FlagSubmissionView(generics.CreateAPIView):
 class UserInfoViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserInfoSerializer
-    permission_classes = [IsNotPrivateOrSelf, IsActivatedUser, IsAuthenticated]
+    permission_classes = [IsNotPrivateOrSelf, IsAuthenticated]
     # 要根据访问的用户重写get_permissions
     # 同时在自定义权限里增加一些权限
 
@@ -226,12 +226,12 @@ class UserInfoViewSet(viewsets.ModelViewSet):
 class UsernameUpdateView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UsernameUpdateSerializer
-    permission_classes = [IsAdminOrSelf, IsActivatedUser, IsAuthenticated]
+    permission_classes = [IsAdminOrSelf, IsAuthenticated]
 
 
 class UserInfoPublicView(generics.GenericAPIView):
     serializer_class = UserInfoSerializer
-    permission_classes = [IsActivatedUser, IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user
