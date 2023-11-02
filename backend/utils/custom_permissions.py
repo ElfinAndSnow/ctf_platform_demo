@@ -45,6 +45,8 @@ class DisallowAny(permissions.BasePermission):
 
 
 class IsActivatedUser(permissions.BasePermission):
+    message = 'Your account is not activated.'
+
     def has_permission(self, request, view):
         return request.user.is_email_verified
 

@@ -8,12 +8,14 @@ from account.serializer import (UserInfoSerializer, UsernameUpdateSerializer,
                                 UserIDSerializer, UserChallengeSessionCreateRetrieveDestroySerializer,
                                 FlagSubmissionSerializer)
 from challenge.models import Challenge
-from utils.custom_permissions import IsAdminOrSessionCreator, IsAdminOrSelf, IsNotPrivateOrSelf, DisallowAny
+from utils.custom_permissions import IsAdminOrSessionCreator, IsAdminOrSelf, IsNotPrivateOrSelf, DisallowAny, \
+    IsActivatedUser
 
 
 class UserIDByUsernameView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserIDSerializer
+    permission_classes = [IsAdminOrSelf, IsActivatedUser, IsAuthenticated]
 
     def get_object(self):
         username = self.kwargs['username']
@@ -24,7 +26,7 @@ class UserChallengeSessionCreateRetrieveDestroyViewSet(viewsets.ModelViewSet):
     queryset = UserChallengeSession
     serializer_class = UserChallengeSessionCreateRetrieveDestroySerializer
     # TODO Change permission class to IsActivatedUser
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsActivatedUser, IsAuthenticated]
 
     def retrieve(self, request, *args, **kwargs):
         user = request.user
@@ -119,7 +121,7 @@ class UserChallengeSessionCreateRetrieveDestroyViewSet(viewsets.ModelViewSet):
 class UserChallengeSessionGetView(generics.GenericAPIView):
     queryset = UserChallengeSession
     serializer_class = UserChallengeSessionCreateRetrieveDestroySerializer
-    permission_classes = [IsAdminOrSessionCreator]
+    permission_classes = [IsAdminOrSessionCreator, IsActivatedUser, IsAuthenticated]
 
     # def get(self, request, *args, **kwargs):
     #     return list(self, request, *args, **kwargs)
@@ -170,12 +172,10 @@ class UserChallengeSessionGetView(generics.GenericAPIView):
     #     )
 
 
-
-
 class FlagSubmissionView(generics.CreateAPIView):
     queryset = UserChallengeSession
     serializer_class = FlagSubmissionSerializer
-    permission_classes = [IsAdminOrSessionCreator]
+    permission_classes = [IsAdminOrSessionCreator, IsActivatedUser, IsAuthenticated]
 
     def perform_create(self, serializer):
         user_challenge_session = serializer.save()
@@ -204,9 +204,10 @@ class FlagSubmissionView(generics.CreateAPIView):
 class UserInfoViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserInfoSerializer
-    permission_classes = [IsNotPrivateOrSelf, IsAuthenticated]
+    permission_classes = [IsNotPrivateOrSelf, IsActivatedUser, IsAuthenticated]
     # 要根据访问的用户重写get_permissions
     # 同时在自定义权限里增加一些权限
+
     def get_permissions(self):
         if self.action == 'create':
             permission_classes = [DisallowAny]
@@ -225,12 +226,12 @@ class UserInfoViewSet(viewsets.ModelViewSet):
 class UsernameUpdateView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UsernameUpdateSerializer
-    permission_classes = [IsAdminOrSelf, IsAuthenticated]
+    permission_classes = [IsAdminOrSelf, IsActivatedUser, IsAuthenticated]
 
 
 class UserInfoPublicView(generics.GenericAPIView):
     serializer_class = UserInfoSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsActivatedUser, IsAuthenticated]
 
     def get(self, request):
         user = request.user
