@@ -1,5 +1,5 @@
 from rest_framework import generics, status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from account.models import User
@@ -9,7 +9,7 @@ from jwtauth.serializer import RegistrationSerializer, PasswordResetSerializer, 
 from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
 from account.models import User
-from utils.custom_permissions import IsSelf, IsAdminOrSessionCreator
+from utils.custom_permissions import IsSelf, IsAdminOrSessionCreator, IsActivatedUser
 from utils.email_verification import email_verification
 
 from django.core.mail import send_mail, send_mass_mail
@@ -24,12 +24,12 @@ class RegistrationView(generics.CreateAPIView):
 class PasswordResetView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = PasswordResetSerializer
-    permission_classes = [IsSelf, ]
+    permission_classes = [IsSelf, IsAuthenticated]
 
 
 class EmailVerificationCreateView(generics.CreateAPIView):
     queryset = EmailVerification
-    permission_classes = [IsAdminOrSessionCreator, ]
+    permission_classes = [IsAdminOrSessionCreator, IsAuthenticated]
     serializer_class = EmailVerificationCreateSerializer
 
     def perform_create(self, serializer):
@@ -58,7 +58,7 @@ class EmailVerificationCreateView(generics.CreateAPIView):
 
 class AccountActivationView(generics.CreateAPIView):
     serializer_class = CodeVerificationSerializer
-    permission_classes = [IsSelf, ]
+    permission_classes = [IsSelf, IsAuthenticated]
 
     def perform_create(self, serializer):
         instance = serializer.save()

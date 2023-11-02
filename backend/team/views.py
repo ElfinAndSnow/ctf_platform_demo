@@ -6,14 +6,14 @@ from rest_framework.permissions import IsAuthenticated
 
 from team.models import Team
 from team.serializer import TeamSerializer, PartialSerializer
-from utils.custom_permissions import IsTeamLeader, IsTeamMate
+from utils.custom_permissions import IsTeamLeader, IsTeamMate, IsActivatedUser
 
 import random
 import string
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsActivatedUser, IsAuthenticated])
 def create_team(request, team_name):
     if request.method == 'POST':
         user = request.user
@@ -52,7 +52,7 @@ def create_team(request, team_name):
 
 class DeleteTeamView(generics.DestroyAPIView):
     serializer_class = TeamSerializer
-    permission_classes = [IsAuthenticated, IsTeamLeader]
+    permission_classes = [IsActivatedUser, IsAuthenticated, IsTeamLeader]
 
     def get_object(self):
         try:
@@ -88,7 +88,7 @@ class DeleteTeamView(generics.DestroyAPIView):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsActivatedUser, IsAuthenticated])
 def join_team_id(request, team_id, invitation_token):
     user = request.user
 
@@ -125,7 +125,7 @@ def join_team_id(request, team_id, invitation_token):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsActivatedUser, IsAuthenticated])
 def join_team_name(request, team_name, invitation_token):
     user = request.user
 
@@ -163,7 +163,7 @@ def join_team_name(request, team_name, invitation_token):
 
 class RemoveMemberView(generics.DestroyAPIView):
     serializer_class = TeamSerializer
-    permission_classes = [IsAuthenticated, IsTeamLeader]  # 请替换IsTeamLeader为实际的权限类
+    permission_classes = [IsActivatedUser, IsAuthenticated, IsTeamLeader]  # 请替换IsTeamLeader为实际的权限类
     lookup_url_kwarg = 'user_id'  # 这将匹配URL中的user_id参数
 
     def get_object(self):
@@ -205,7 +205,7 @@ class RemoveMemberView(generics.DestroyAPIView):
 
 class ChangeTeamLeaderView(generics.UpdateAPIView):
     serializer_class = TeamSerializer
-    permission_classes = [IsAuthenticated, IsTeamLeader]  # Replace IsTeamLeader with your actual permission class
+    permission_classes = [IsActivatedUser, IsAuthenticated, IsTeamLeader]  # Replace IsTeamLeader with your actual permission class
     lookup_url_kwarg = 'user_id'  # This will match the user_id parameter in the URL
 
     def get_object(self):
@@ -250,7 +250,7 @@ class ChangeTeamLeaderView(generics.UpdateAPIView):
 
 class GenerateInvitationCodeView(generics.CreateAPIView):
     serializer_class = TeamSerializer
-    permission_classes = [IsAuthenticated, IsTeamLeader]  # 请替换IsTeamLeader为实际的权限类
+    permission_classes = [IsActivatedUser, IsAuthenticated, IsTeamLeader]  # 请替换IsTeamLeader为实际的权限类
 
     def get_object(self):
         team = self.request.user.team
@@ -275,7 +275,7 @@ class GenerateInvitationCodeView(generics.CreateAPIView):
 
 class CalculateTeamPointsView(generics.GenericAPIView):
     serializer_class = TeamSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsActivatedUser, IsAuthenticated]
 
     def get_object(self, team_id):
         try:
@@ -318,7 +318,7 @@ class CalculateTeamPointsView(generics.GenericAPIView):
 
 class CalculateTeamChallengeView(generics.GenericAPIView):
     serializer_class = TeamSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsActivatedUser, IsAuthenticated]
 
     def get_object(self, team_id):
         try:
@@ -361,7 +361,7 @@ class CalculateTeamChallengeView(generics.GenericAPIView):
 
 class QueryTeamByIDView(generics.GenericAPIView):
     serializer_class = PartialSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsActivatedUser, IsAuthenticated]
 
     def get_object(self, team_id):
         try:
@@ -395,7 +395,7 @@ class QueryTeamByIDView(generics.GenericAPIView):
 
 class QueryTeamByNameView(generics.GenericAPIView):
     serializer_class = PartialSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsActivatedUser, IsAuthenticated]
 
     def get_object(self, team_name):
         try:
@@ -433,7 +433,7 @@ class QueryTeamByNameView(generics.GenericAPIView):
 class TeamInfoForMemberView(generics.GenericAPIView):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
-    permission_classes = [IsAuthenticated, IsTeamMate]
+    permission_classes = [IsActivatedUser, IsAuthenticated, IsTeamMate]
 
     def get_object(self):
         try:
@@ -461,7 +461,7 @@ class TeamInfoForMemberView(generics.GenericAPIView):
 class UpdateTeamScoresAndChallengesView(generics.GenericAPIView):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
-    permission_classes = [IsAuthenticated, IsTeamMate]
+    permission_classes = [IsActivatedUser, IsAuthenticated, IsTeamMate]
 
     def get_object(self):
         try:
