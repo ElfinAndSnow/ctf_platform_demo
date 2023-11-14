@@ -64,3 +64,19 @@ class Team(models.Model):
     def __str__(self):
         team_info = f"Team ID: {self.id}, Name: {self.name}, Leader ID: {self.leader.id}"
         return team_info
+
+
+class TeamScore(models.Model):
+    team = models.ForeignKey('team.Team', on_delete=models.CASCADE)
+    challenge = models.ForeignKey('challenge.Challenge', on_delete=models.CASCADE)
+    solved_at = models.DateTimeField(verbose_name="解题时间", auto_now_add=True)
+    solved_by = models.ForeignKey('account.User', on_delete=models.CASCADE)
+    current_points = models.IntegerField(default=0, blank=True)
+
+    def __str__(self):
+        return (str(self.id) +
+                " | " +
+                str(self.team) +
+                ", " +
+                str(self.challenge) + ", " +
+                str(self.current_points)) + ", " + str(self.solved_at)
