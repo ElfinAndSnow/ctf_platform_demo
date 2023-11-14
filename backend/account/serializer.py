@@ -1,7 +1,7 @@
 from rest_framework import serializers, status
 
 from challenge.serializer import ChallengeSerializer
-from .models import User, UserChallengeSession
+from .models import User, UserChallengeSession, Score
 
 
 class UserInfoSerializer(serializers.ModelSerializer):
@@ -161,3 +161,22 @@ class UserInfoPrivate(serializers.ModelSerializer):
             'description',
         ]
 
+
+class ScoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Score
+        fields = [
+            'solved_at',
+            'current_points',
+        ]
+
+
+class UserScoreSerializer(serializers.ModelSerializer):
+    score_set = ScoreSerializer(many=True)
+
+    class Meta:
+        model = User
+        fields = [
+            'username',
+            'score_set',
+        ]
