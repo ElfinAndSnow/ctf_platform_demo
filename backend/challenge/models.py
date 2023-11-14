@@ -10,8 +10,18 @@ class Challenge(models.Model):
     # timer = models.PositiveIntegerField(null=True, blank=True)
     flag = models.CharField(max_length=100, null=False, blank=True)
     # 记录解出该题的用户
-    solved_by = models.ManyToManyField('account.User', related_name="solved_challenges", blank=True)
-    solved_by_teams = models.ManyToManyField('team.team', related_name="solved_challenges_team", blank=True)
+    solved_by = models.ManyToManyField(
+        'account.User',
+        related_name="solved_challenges",
+        blank=True,
+        through='account.Score'
+    )
+    solved_by_teams = models.ManyToManyField(
+        'team.Team',
+        related_name="solved_challenges_team",
+        blank=True,
+        through='team.TeamScore'
+    )
 
     image_name = models.CharField(verbose_name="镜像名称", max_length=127, null=True, blank=True)
 
