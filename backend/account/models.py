@@ -34,6 +34,11 @@ class User(AbstractUser):
             points = challenge.points
             self.points += points
         self.save()
+
+        # 保存当前成绩
+        score = Score.objects.filter(user=self).last()
+        score.current_points = self.points
+        score.save()
         return self.points
 
     def __str__(self):
@@ -144,3 +149,18 @@ class UserChallengeSession(AbstractTimeLimitedModel):
         _str += self.challenge.name + "_"
         _str += str(self.created_at)
         return _str
+
+
+class Score(models.Model):
+    user = models.ForeignKey('account.User', on_delete=models.CASCADE)
+    challenge = models.ForeignKey('challenge.Challenge', on_delete=models.CASCADE)
+    solved_at = models.DateTimeField(verbose_name="解题时间", auto_now_add=True)
+    current_points = models.IntegerField(default=0, blank=True)
+
+    def __str__(self):
+        return (str(self.id) +
+                " | " +
+                str(self.user) +
+                ", " +
+                str(self.challenge) + ", " +
+                str(self.current_points)) + ", " + str(self.solved_at)

@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import TeamScoreListView
 
 urlpatterns = [
     path('create_team/<str:team_name>/', views.create_team, name='create_team'),
@@ -19,4 +20,5 @@ urlpatterns = [
     path(r'TeamInfoForMemberView', views.TeamInfoForMemberView.as_view(), name='TeamInfoForMemberView'),
     path(r'UpdateTeamScoresAndChallengesView', views.UpdateTeamScoresAndChallengesView.as_view(),
          name='UpdateTeamScoresAndChallengesView'),
+    path(r'team-scores/', TeamScoreListView.as_view()),
 ]

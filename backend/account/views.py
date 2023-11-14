@@ -3,10 +3,10 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from django.db.models import Q
 
-from account.models import User, UserChallengeSession
+from account.models import User, UserChallengeSession, Score
 from account.serializer import (UserInfoSerializer, UsernameUpdateSerializer,
                                 UserIDSerializer, UserChallengeSessionCreateRetrieveDestroySerializer,
-                                FlagSubmissionSerializer)
+                                FlagSubmissionSerializer, ScoreSerializer, UserScoreSerializer)
 from challenge.models import Challenge
 from utils.custom_permissions import IsAdminOrSessionCreator, IsAdminOrSelf, IsNotPrivateOrSelf, DisallowAny, \
     IsActivatedUser
@@ -30,9 +30,8 @@ class UserChallengeSessionCreateRetrieveDestroyViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         user = request.user
-        try:
-            session = UserChallengeSession.objects.filter(user=user).last()
-        except UserChallengeSession.DoesNotExist:
+        session = UserChallengeSession.objects.filter(user=user).last()
+        if not session:
             return Response(
                 data={"detail": "You haven't created a session yet."},
                 status=status.HTTP_400_BAD_REQUEST
@@ -73,8 +72,8 @@ class UserChallengeSessionCreateRetrieveDestroyViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # 如果用户已创建某一题目的session且is_solved_or_expired=False，则禁止对该题创建新session
-        user_challenge_sessions_created = UserChallengeSession.objects.filter(user=user, challenge=challenge)
+        # 如果用户已创建某session且未解决且未超时，则禁止创建新session
+        user_challenge_sessions_created = UserChallengeSession.objects.filter(user=user)
         print("user_challenge_sessions_created:" + str(user_challenge_sessions_created))
         # filter返回一个存有若干个UserChallengeSession的QuerySet
         # user_challenge_sessions_created:
@@ -249,3 +248,13 @@ class UserInfoPublicView(generics.GenericAPIView):
             )
 
 
+class ScoreListView(generics.ListAPIView):
+    queryset = Score.objects.all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = ScoreSerializer
+
+
+class UserScoreListView(generics.ListAPIView):
+    queryset = User.objects.order_by('-points')
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserScoreSerializer
