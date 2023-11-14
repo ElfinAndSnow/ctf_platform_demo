@@ -5,7 +5,7 @@ from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
 
 from team.models import Team
-from team.serializer import TeamSerializer, PartialSerializer
+from team.serializer import TeamSerializer, PartialSerializer, TeamScoreSerializer
 from utils.custom_permissions import IsTeamLeader, IsTeamMate, IsActivatedUser
 
 import random
@@ -328,7 +328,7 @@ class CalculateTeamChallengeView(generics.GenericAPIView):
             return None
 
     def calculate_team_challenges(self, team):
-        team.check_challenges()
+        team.check_points()
 
     def get(self, request, *args, **kwargs):
         team_id = kwargs.get('team_id')
@@ -471,7 +471,7 @@ class UpdateTeamScoresAndChallengesView(generics.GenericAPIView):
         return team
 
     def calculate_team_challenges(self, team):
-        return team.check_challenges()
+        return team.check_points()[1]   # @return integer
 
     def get(self, request, *args, **kwargs):
         team = self.get_object()
@@ -488,3 +488,9 @@ class UpdateTeamScoresAndChallengesView(generics.GenericAPIView):
             data={"msg": "队伍总分及解出题数已经更新", "scores:": points, "challenges_solved:": challenges},
             status=status.HTTP_200_OK
         )
+
+
+class TeamScoreListView(generics.ListAPIView):
+    queryset = Team.objects.order_by('-points')
+    permission_classes = [IsAuthenticated]
+    serializer_class = TeamScoreSerializer

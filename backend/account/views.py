@@ -3,10 +3,10 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from django.db.models import Q
 
-from account.models import User, UserChallengeSession
+from account.models import User, UserChallengeSession, Score
 from account.serializer import (UserInfoSerializer, UsernameUpdateSerializer,
                                 UserIDSerializer, UserChallengeSessionCreateRetrieveDestroySerializer,
-                                FlagSubmissionSerializer)
+                                FlagSubmissionSerializer, ScoreSerializer, UserScoreSerializer)
 from challenge.models import Challenge
 from utils.custom_permissions import IsAdminOrSessionCreator, IsAdminOrSelf, IsNotPrivateOrSelf, DisallowAny, \
     IsActivatedUser
@@ -248,3 +248,13 @@ class UserInfoPublicView(generics.GenericAPIView):
             )
 
 
+class ScoreListView(generics.ListAPIView):
+    queryset = Score.objects.all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = ScoreSerializer
+
+
+class UserScoreListView(generics.ListAPIView):
+    queryset = User.objects.order_by('-points')
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserScoreSerializer
