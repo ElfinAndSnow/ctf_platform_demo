@@ -28,14 +28,21 @@ class Team(models.Model):
 
     def check_points(self):
         self.points = 0
+        self.challenges_solved = 0
         for user in self.members.all():
             for challenge in user.solved_challenges.all():
                 if challenge not in self.solved_challenges_team.all():
-                    self.solved_challenges_team.add(challenge)
+                    self.solved_challenges_team.add(challenge, through_defaults={'solved_by': user})
         for challenge in self.solved_challenges_team.all():
             self.points += challenge.points
+            self.challenges_solved += 1
         self.save()
-        return self.points
+
+        # 保存当前TeamScore
+        score = TeamScore.objects.filter(team=self).last()
+        score.current_points = self.points
+        score.save()
+        return self.points, self.challenges_solved
 
     def check_challenges(self):
         self.challenges_solved = 0
