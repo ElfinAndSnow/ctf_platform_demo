@@ -27,4 +27,6 @@ class ChallengeSerializer(serializers.ModelSerializer):
             'description',
             'is_solved_by_current_user',
             'is_solved_by_current_team',
+            'points',
+            'file',
         ]
