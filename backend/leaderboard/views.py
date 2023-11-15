@@ -11,11 +11,11 @@ from utils.custom_permissions import IsActivatedUser
 class UserPointsLeaderBoardListView(generics.ListAPIView):
     queryset = User.objects.order_by('-points')
     serializer_class = UserPointsLeaderBoardListSerializer
-    permission_classes = [IsActivatedUser, IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsActivatedUser]
 
 
 class TeamPointsLeaderBoardListView(generics.ListAPIView):
     queryset = Team.objects.order_by('-points')
     serializer_class = TeamPointsLeaderBoardListSerializer
-    permission_classes = [IsActivatedUser, IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsActivatedUser]
 
