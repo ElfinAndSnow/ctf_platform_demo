@@ -70,6 +70,23 @@
     transform: translateX(-50%);
 }
 
+#prompt {
+    /* 字体颜色 */
+    color: green;
+    /* 居中 */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#open {
+    bottom: 10px;
+}
+
+#close {
+    bottom: 5vh;
+}
+
 .popup .input {
     display: flex;
     gap: 5px; 

@@ -11,6 +11,7 @@ export default {
                 input.placehoder = 'this challenge was solved'
             }
         },
+        // 展示会话视图
         showSessionView: function() {
             const content = document.querySelector('.content')
             content.innerHTML += '<b id="addr">题目地址：</b>'
@@ -24,6 +25,7 @@ export default {
             // 隐藏创建实例按钮
             document.getElementById('open').style.display = 'none'
         },
+        // 若已有会话和本题会话相同，直接展示会话信息
         showExistedSession: function() {
             if (sessionStorage.getItem('zctf-challenge-id') === document.querySelector('.overlay').dataset.id){
                 this.showSessionView()
@@ -50,6 +52,7 @@ export default {
                         return
                     }
                 }
+                // 展示会话视图
                 if (typeof res.address !== 'undefined') {
                     // 显示更多信息
                     sessionStorage.setItem('zctf-challenge-addr', res.address)
@@ -128,32 +131,49 @@ export default {
         return this.template
     },
     afterMount: function() {
-        this.methods.component = this
         const overlay = document.querySelector('.overlay')
-        this.methods.showExistedSession()
-        // 已解出则禁止输入
-        this.methods.isSolved()
-        // 填入题目详情
         const popup = document.querySelector('.popup')
+        
+        // 填入题目基本详情
         popup.querySelector('h1').innerText = overlay.dataset.title
         popup.querySelector('#description+p').innerText = overlay.dataset.ds
-        // 开启实例按钮
-        const createSessionFunc = () => {
-            this.methods.createSession()
+
+        // 题未解出视图
+        if (document.querySelector('.overlay').dataset.status === '0'){
+            this.methods.showExistedSession()
+            // 已解出则禁止输入
+            this.methods.isSolved()
+            // 开启实例按钮
+            const createSessionFunc = () => {
+                this.methods.createSession()
+            }
+            document.getElementById('open').addEventListener('click', this.methods.createSession())
+            // 销毁实例按钮
+            document.getElementById('close').addEventListener('click', this.methods.deleteSession)
+            // 提交flag
+            document.querySelector('#flag+.button').addEventListener('click', this.methods.submitFlag)
         }
-        document.getElementById('open').addEventListener('click', this.methods.createSession())
-        // 销毁实例按钮
-        document.getElementById('close').addEventListener('click', this.methods.deleteSession)
-        // 提交flag
-        document.querySelector('#flag+.button').addEventListener('click', this.methods.submitFlag)
+        
+        // 题已解出视图
+        else {
+            // 隐藏开启实例按钮
+            document.getElementById('open').style.display = 'none'
+            // 添加题目已被解出提示信息
+            const p = document.createElement('p')
+            p.setAttribute('id', 'prompt')
+            p.innerText = '该题已被解出！'
+            document.querySelector('.content').appendChild(p)
+        }
         // 关闭会话
         popup.querySelector('.popup>header>label').addEventListener('click', this.destory)
 
     },
     destroyed: function() {
-        document.getElementById('open').removeEventListener('click', this.methods.createSession())
-        document.getElementById('close').removeEventListener('click', this.methods.deleteSession)
-        document.querySelector('#flag+.button').removeEventListener('click', this.methods.submitFlag)
+        if (document.querySelector('.overlay').dataset.status === '0'){
+            document.getElementById('open').removeEventListener('click', this.methods.createSession())
+            document.getElementById('close').removeEventListener('click', this.methods.deleteSession)
+            document.querySelector('#flag+.button').removeEventListener('click', this.methods.submitFlag)
+        }
         document.querySelector('.popup>header>label').removeEventListener('click', this.destory)
         // 移除弹窗
         document.body.removeChild(document.querySelector('.overlay'))
