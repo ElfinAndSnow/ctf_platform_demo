@@ -95,6 +95,7 @@ class UserChallengeSession(AbstractTimeLimitedModel):
             print(f"Image {image_name} not found!")
         for k in image.attrs['ContainerConfig']['ExposedPorts']:
             port_inside = k
+            break
         container = client.containers.run(
             image=image_name,
             detach=True,
