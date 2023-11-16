@@ -47,7 +47,7 @@ export default {
         this.data.typerID = setInterval(()=>{
             typing.innerHTML = content.slice(0,i) + '<span class="blinking-cursor">|</span>'
             i++
-            if (i === content.length){
+            if (i === content.length+1){
                 clearInterval(this.data.typerID)
             }
         }, 50)
