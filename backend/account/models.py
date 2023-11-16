@@ -110,7 +110,7 @@ class UserChallengeSession(AbstractTimeLimitedModel):
         client = docker.from_env()
         try:
             container = client.containers.get(container_id=self.container_id)
-            container.stop()
+            container.kill()
             container.remove()
         except docker.errors.NotFound:
             print(f"Container '{self.container_id}' not found.")
