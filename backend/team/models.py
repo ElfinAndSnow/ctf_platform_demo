@@ -16,13 +16,6 @@ class Team(models.Model):
         null=True,
         blank=True
     )
-    teammate = models.ManyToManyField(
-        User,
-        verbose_name="队员",
-        blank=True,
-        related_name="teams"
-    )
-    # 邀请码部分待修改
     invitation_token = models.CharField(
         verbose_name="邀请码",
         default="",
@@ -35,32 +28,36 @@ class Team(models.Model):
 
     def check_points(self):
         self.points = 0
-        for user in self.teammate.all():
-            # self.points += user.check_points()
+        self.challenges_solved = 0
+        for user in self.members.all():
             for challenge in user.solved_challenges.all():
                 if challenge not in self.solved_challenges_team.all():
-                    self.solved_challenges_team.add(challenge)
+                    self.solved_challenges_team.add(challenge, through_defaults={'solved_by': user})
         for challenge in self.solved_challenges_team.all():
             self.points += challenge.points
+            self.challenges_solved += 1
         self.save()
-        return self.points
+
+        # 保存当前TeamScore
+        score = TeamScore.objects.filter(team=self).last()
+        score.current_points = self.points
+        score.save()
+        return self.points, self.challenges_solved
 
     def check_challenges(self):
         self.challenges_solved = 0
-        for user in self.teammate.all():
+        for user in self.members.all():
             for challenge in user.solved_challenges.all():
                 if challenge not in self.solved_challenges_team.all():
                     self.solved_challenges_team.add(challenge)
         for challenge in self.solved_challenges_team.all():
             self.challenges_solved += 1
         self.save()
-        return self.points
+        return self.challenges_solved
 
     def get_leader(self):
         return self.leader
 
-    def get_teammates(self):
-        return User.objects.filter(teams=self)
     # 战队不能单纯总和队员总分，应当根据队员解题的并集
     # 由此应当在题目中建立另一个ManyToMany字段solved_by_teams，指向Team
     # 在check每个队员的points后再check全队的points
@@ -75,5 +72,18 @@ class Team(models.Model):
         team_info = f"Team ID: {self.id}, Name: {self.name}, Leader ID: {self.leader.id}"
         return team_info
 
-# TO DO
-# fix the relationship.
+
+class TeamScore(models.Model):
+    team = models.ForeignKey('team.Team', on_delete=models.CASCADE)
+    challenge = models.ForeignKey('challenge.Challenge', on_delete=models.CASCADE)
+    solved_at = models.DateTimeField(verbose_name="解题时间", auto_now_add=True)
+    solved_by = models.ForeignKey('account.User', on_delete=models.CASCADE)
+    current_points = models.IntegerField(default=0, blank=True)
+
+    def __str__(self):
+        return (str(self.id) +
+                " | " +
+                str(self.team) +
+                ", " +
+                str(self.challenge) + ", " +
+                str(self.current_points)) + ", " + str(self.solved_at)

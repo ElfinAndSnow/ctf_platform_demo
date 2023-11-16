@@ -3,17 +3,19 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from django.db.models import Q
 
-from account.models import User, UserChallengeSession
+from account.models import User, UserChallengeSession, Score
 from account.serializer import (UserInfoSerializer, UsernameUpdateSerializer,
                                 UserIDSerializer, UserChallengeSessionCreateRetrieveDestroySerializer,
-                                FlagSubmissionSerializer)
+                                FlagSubmissionSerializer, ScoreSerializer, UserScoreSerializer)
 from challenge.models import Challenge
-from utils.custom_permissions import IsAdminOrSessionCreator, IsAdminOrSelf, IsNotPrivateOrSelf, DisallowAny
+from utils.custom_permissions import IsAdminOrSessionCreator, IsAdminOrSelf, IsNotPrivateOrSelf, DisallowAny, \
+    IsActivatedUser
 
 
 class UserIDByUsernameView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserIDSerializer
+    permission_classes = [IsAuthenticated, IsAdminOrSelf, IsActivatedUser]
 
     def get_object(self):
         username = self.kwargs['username']
@@ -24,13 +26,12 @@ class UserChallengeSessionCreateRetrieveDestroyViewSet(viewsets.ModelViewSet):
     queryset = UserChallengeSession
     serializer_class = UserChallengeSessionCreateRetrieveDestroySerializer
     # TODO Change permission class to IsActivatedUser
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsActivatedUser]
 
     def retrieve(self, request, *args, **kwargs):
         user = request.user
-        try:
-            session = UserChallengeSession.objects.filter(user=user).last()
-        except UserChallengeSession.DoesNotExist:
+        session = UserChallengeSession.objects.filter(user=user).last()
+        if not session:
             return Response(
                 data={"detail": "You haven't created a session yet."},
                 status=status.HTTP_400_BAD_REQUEST
@@ -71,8 +72,8 @@ class UserChallengeSessionCreateRetrieveDestroyViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # 如果用户已创建某一题目的session且is_solved_or_expired=False，则禁止对该题创建新session
-        user_challenge_sessions_created = UserChallengeSession.objects.filter(user=user, challenge=challenge)
+        # 如果用户已创建某session且未解决且未超时，则禁止创建新session
+        user_challenge_sessions_created = UserChallengeSession.objects.filter(user=user)
         print("user_challenge_sessions_created:" + str(user_challenge_sessions_created))
         # filter返回一个存有若干个UserChallengeSession的QuerySet
         # user_challenge_sessions_created:
@@ -119,7 +120,7 @@ class UserChallengeSessionCreateRetrieveDestroyViewSet(viewsets.ModelViewSet):
 class UserChallengeSessionGetView(generics.GenericAPIView):
     queryset = UserChallengeSession
     serializer_class = UserChallengeSessionCreateRetrieveDestroySerializer
-    permission_classes = [IsAdminOrSessionCreator]
+    permission_classes = [IsAuthenticated, IsAdminOrSessionCreator, IsActivatedUser]
 
     # def get(self, request, *args, **kwargs):
     #     return list(self, request, *args, **kwargs)
@@ -170,12 +171,10 @@ class UserChallengeSessionGetView(generics.GenericAPIView):
     #     )
 
 
-
-
 class FlagSubmissionView(generics.CreateAPIView):
     queryset = UserChallengeSession
     serializer_class = FlagSubmissionSerializer
-    permission_classes = [IsAdminOrSessionCreator]
+    permission_classes = [IsAuthenticated, IsAdminOrSessionCreator, IsActivatedUser]
 
     def perform_create(self, serializer):
         user_challenge_session = serializer.save()
@@ -204,16 +203,17 @@ class FlagSubmissionView(generics.CreateAPIView):
 class UserInfoViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserInfoSerializer
-    permission_classes = [IsNotPrivateOrSelf, IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsNotPrivateOrSelf]
     # 要根据访问的用户重写get_permissions
     # 同时在自定义权限里增加一些权限
+
     def get_permissions(self):
         if self.action == 'create':
             permission_classes = [DisallowAny]
         if self.action == 'list' or self.action == 'retrieve':
-            permission_classes = [IsNotPrivateOrSelf, IsAuthenticated]
+            permission_classes = [IsAuthenticated, IsNotPrivateOrSelf]
         else:
-            permission_classes = [IsAdminOrSelf, IsAuthenticated]
+            permission_classes = [IsAuthenticated, IsAdminOrSelf]
         return [permission() for permission in permission_classes]
 
     # 验证is_private应转移到序列化器中进行
@@ -225,7 +225,7 @@ class UserInfoViewSet(viewsets.ModelViewSet):
 class UsernameUpdateView(generics.UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UsernameUpdateSerializer
-    permission_classes = [IsAdminOrSelf, IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAdminOrSelf]
 
 
 class UserInfoPublicView(generics.GenericAPIView):
@@ -235,7 +235,7 @@ class UserInfoPublicView(generics.GenericAPIView):
     def get(self, request):
         user = request.user
         try:
-            serializer_user = self.serializer_class(user)
+            serializer_user = self.get_serializer(user)
             return Response(
                 data=serializer_user.data,
                 status=status.HTTP_200_OK
@@ -248,3 +248,13 @@ class UserInfoPublicView(generics.GenericAPIView):
             )
 
 
+class ScoreListView(generics.ListAPIView):
+    queryset = Score.objects.all()
+    permission_classes = [IsAuthenticated]
+    serializer_class = ScoreSerializer
+
+
+class UserScoreListView(generics.ListAPIView):
+    queryset = User.objects.order_by('-points')
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserScoreSerializer
