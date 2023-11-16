@@ -1,4 +1,5 @@
 import datetime
+import socket
 
 import docker
 from django.contrib.auth.models import AbstractUser
@@ -15,6 +16,7 @@ class User(AbstractUser):
     description = models.TextField(verbose_name="个人简介", null=True, blank=True)
     is_private = models.BooleanField(verbose_name="个人信息隐私状态", null=True, default=False)
     is_email_verified = models.BooleanField(verbose_name="是否已邮箱验证", null=True, default=False)
+
     # enable_password_reset = models.BooleanField(verbose_name="可否更改密码", null=True, default=False)
 
     # 隐藏的字段
@@ -69,26 +71,28 @@ class UserChallengeSession(AbstractTimeLimitedModel):
     port_inside = models.CharField(verbose_name="容器内部端口/protocol", max_length=127, default="80/tcp", null=True)
     address = models.CharField(verbose_name="题目地址", max_length=127, null=True, blank=True)
 
+    def is_port_in_use(self, port):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            try:
+                s.bind(('localhost', port))
+            except socket.error:
+                return True  # Port is already in use
+            return False  # Port is available
+
     def distribute_port(self):
-        _port = 50000
-        sessions = UserChallengeSession.objects.filter(is_solved=False).order_by('-port')
-        for session in sessions:
-            is_expired = True
-            if not session.is_expired:
-                is_expired = session.expiration_verification()
+        for port in range(40001, 50001):
+            # test port occupancy using socket
 
-            print(is_expired)
-            if is_expired:
-                continue
-            if session.port == _port:
-                _port -= 1
-
-        self.port = _port
+            if not self.is_port_in_use(port):
+                self.port = port
+                break
 
     def create_container(self, request):
+        image_name = self.challenge.image_name
+        if not image_name:
+            return
         client = docker.from_env()
         port = self.port
-        image_name = self.challenge.image_name
         try:
             image = client.images.get(image_name)
         except docker.errors.ImageNotFound:
@@ -96,6 +100,8 @@ class UserChallengeSession(AbstractTimeLimitedModel):
         for k in image.attrs['ContainerConfig']['ExposedPorts']:
             port_inside = k
             break
+        if self.port_inside:
+            port_inside = self.port_inside
         container = client.containers.run(
             image=image_name,
             detach=True,
@@ -107,10 +113,13 @@ class UserChallengeSession(AbstractTimeLimitedModel):
         self.save()
 
     def destroy_container(self):
+        image_name = self.challenge.image_name
+        if not image_name:
+            return
         client = docker.from_env()
         try:
             container = client.containers.get(container_id=self.container_id)
-            container.stop()
+            container.kill()
             container.remove()
         except docker.errors.NotFound:
             print(f"Container '{self.container_id}' not found.")
