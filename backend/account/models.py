@@ -1,4 +1,5 @@
 import datetime
+import socket
 
 import docker
 from django.contrib.auth.models import AbstractUser
@@ -69,21 +70,21 @@ class UserChallengeSession(AbstractTimeLimitedModel):
     port_inside = models.CharField(verbose_name="容器内部端口/protocol", max_length=127, default="80/tcp", null=True)
     address = models.CharField(verbose_name="题目地址", max_length=127, null=True, blank=True)
 
+    def is_port_in_use(self, port):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            try:
+                s.bind(('localhost', port))
+            except socket.error:
+                return True  # Port is already in use
+            return False  # Port is available
+
     def distribute_port(self):
-        _port = 50000
-        sessions = UserChallengeSession.objects.filter(is_solved=False).order_by('-port')
-        for session in sessions:
-            is_expired = True
-            if not session.is_expired:
-                is_expired = session.expiration_verification()
+        for port in range(40001, 50001):
+            # test port occupancy using socket
 
-            print(is_expired)
-            if is_expired:
-                continue
-            if session.port == _port:
-                _port -= 1
-
-        self.port = _port
+            if not self.is_port_in_use(port):
+                self.port = port
+                break
 
     def create_container(self, request):
         client = docker.from_env()
