@@ -49,6 +49,9 @@ async function getEmailVerification() {
         if (err.detail[0] === 'Please wait for your last verification code expires.'){
             window.alert('请稍后再重新登录以获取新激活码！')
         }
+        localStorage.removeItem('zctf-access')
+        localStorage.removeItem('zctf-refresh')
+        document.body.classList.remove('logined')
         flag = true
     })
     // 放回成功标志位
@@ -74,6 +77,9 @@ async function accountActivate(data){
     .catch(err => {
         // 激活失败
         window.alert('激活失败！请重新登录以输入激活码')
+        localStorage.removeItem('zctf-access')
+        localStorage.removeItem('zctf-refresh')
+        document.body.classList.remove('logined')
     })
     return flag
 }
@@ -163,14 +169,12 @@ export async function login(data, alert = null) {
         // 获取用户信息
         flag = await getUserInfo()
         // 判断用户是否激活
-        if(!JSON.parse(sessionStorage.getItem('zctf-userinfo')).is_email_verified){
+        if(flag&&!JSON.parse(sessionStorage.getItem('zctf-userinfo')).is_email_verified){
             // 未激活，获取邮箱激活码
             flag = await getEmailVerification()
+
             // 获取激活码失败，重新登录
             if (flag){
-                location.hash = '#/login'
-                localStorage.removeItem('zctf-access')
-                localStorage.removeItem('zctf-refresh')
                 return
             }
 
@@ -191,10 +195,6 @@ export async function login(data, alert = null) {
                 localStorage.removeItem('zctf-access')
                 localStorage.removeItem('zctf-refresh')
                 return
-            }
-            // 激活码验证失败，让用户重新输入
-            if (!flag){
-                window.alert('激活码错误，请重新稍后重新登录以获取新激活码！')
             }
         }
     }
