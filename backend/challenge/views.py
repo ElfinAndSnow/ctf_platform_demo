@@ -14,13 +14,13 @@ from utils.custom_permissions import IsActivatedUser
 class ChallengeListView(generics.ListAPIView):
     queryset = Challenge.objects.all()
     serializer_class = ChallengeSerializer
-    permission_classes = [IsActivatedUser, IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsActivatedUser]
 
 
 class ChallengeRetrieveView(generics.RetrieveAPIView):
     queryset = Challenge.objects.all()
     serializer_class = ChallengeSerializer
-    permission_classes = [IsActivatedUser, IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsActivatedUser]
 
 
 class PassThroughRenderer(renderers.BaseRenderer):
@@ -65,3 +65,4 @@ class ChallengeFileDownloadViewSet(viewsets.ReadOnlyModelViewSet):
         response['Content-Disposition'] = 'attachment; filename="%s"' % instance.file.name
 
         return response
+      
