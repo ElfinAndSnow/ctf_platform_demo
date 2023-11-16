@@ -1,4 +1,4 @@
-import {verify, getChallengeList} from '../api/api.js'
+import {getChallengeList} from '../api/api.js'
 import render from '../utils/render.js'
 import '../assets/css/challenge.css'
 /*
@@ -57,7 +57,7 @@ export default {
                     <div class="challenge-bar ${item.type.toLowerCase()} ${item.is_solved_by_current_user||item.is_solved_by_current_team?'issolved':''}" data-id="${item.id}" data-ds="${item.description}">
                         <h1>${item.name}</h1>
                         <div class="hr"></div>
-                        <h2> 100 pts </h2>
+                        <h2> ${item.points} pts </h2>
                     </div>
                 `
             })
