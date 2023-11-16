@@ -16,6 +16,7 @@ class User(AbstractUser):
     description = models.TextField(verbose_name="个人简介", null=True, blank=True)
     is_private = models.BooleanField(verbose_name="个人信息隐私状态", null=True, default=False)
     is_email_verified = models.BooleanField(verbose_name="是否已邮箱验证", null=True, default=False)
+
     # enable_password_reset = models.BooleanField(verbose_name="可否更改密码", null=True, default=False)
 
     # 隐藏的字段
@@ -87,9 +88,11 @@ class UserChallengeSession(AbstractTimeLimitedModel):
                 break
 
     def create_container(self, request):
+        image_name = self.challenge.image_name
+        if not image_name:
+            return
         client = docker.from_env()
         port = self.port
-        image_name = self.challenge.image_name
         try:
             image = client.images.get(image_name)
         except docker.errors.ImageNotFound:
@@ -97,6 +100,8 @@ class UserChallengeSession(AbstractTimeLimitedModel):
         for k in image.attrs['ContainerConfig']['ExposedPorts']:
             port_inside = k
             break
+        if self.port_inside:
+            port_inside = self.port_inside
         container = client.containers.run(
             image=image_name,
             detach=True,
@@ -108,6 +113,9 @@ class UserChallengeSession(AbstractTimeLimitedModel):
         self.save()
 
     def destroy_container(self):
+        image_name = self.challenge.image_name
+        if not image_name:
+            return
         client = docker.from_env()
         try:
             container = client.containers.get(container_id=self.container_id)
