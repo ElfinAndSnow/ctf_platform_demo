@@ -48,21 +48,43 @@ export default {
                     document.querySelector('.popup>header>label').addEventListener('click', destroy)
                 })
             }                                                                          
-        }
+        },
+        appendChallengeList: async function(page) {
+            let challenges = await getChallengeList(page)
+            const challengeList = document.getElementById('challenge-list')
+            challenges.forEach(item => {
+                challengeList.innerHTML += `
+                    <div class="challenge-bar ${item.type.toLowerCase()} ${item.is_solved_by_current_user||item.is_solved_by_current_team?'issolved':''}" data-id="${item.id}" data-ds="${item.description}">
+                        <h1>${item.name}</h1>
+                        <div class="hr"></div>
+                        <h2> 100 pts </h2>
+                    </div>
+                `
+            })
+        },
+        showInfoBoard: () => {
+            const userInfo = JSON.parse(sessionStorage.getItem('zctf-userinfo'))
+            console.log(userInfo)
+            document.getElementById('username').innerText = userInfo.username || 'UserName'
+            document.getElementById('team').innerText = userInfo.team || 'No Team'
+            document.getElementById('score').innerText = userInfo.points || 'None Point'
+            const solved = userInfo.solved_challenges.length
+            document.getElementById('solved').innerText = String(solved)
+        } 
     },
     template: `
         <div class="view">
         <div id="aside-bar" class="card">
-            <h1>UserName</h1>
-            <h3>TEAM</h3>
+            <h1 id="username"></h1>
+            <h3 id="team"></h3>
             <div class="hr"></div>
-            <h1>XXX</h1>
+            <h1 id="score"></h1>
             <h3>SCORE</h3>
             <div class="hr"></div>
-            <h1>XXX</h1>
+            <h1 id="rank"></h1>
             <h3>TOTAL RANK</h3>
             <div class="hr"></div>
-            <h1>XXX</h1>
+            <h1 id="solved"></h1>
             <h3>SOLVED</h3>
         </div>
         <div id="challenge-bank" class="card">
@@ -111,21 +133,11 @@ export default {
         return this.template
     },
     afterMount: function() {
-        // 获取题目列表并渲染
-        async function getChallengeObjs() {
-            let challenges = await getChallengeList(1)
-            const challengeList = document.getElementById('challenge-list')
-            challenges.forEach(item => {
-                challengeList.innerHTML += `
-                    <div class="challenge-bar ${item.type.toLowerCase()} ${item.is_solved_by_current_user||item.is_solved_by_current_team?'issolved':''}" data-id="${item.id}" data-ds="${item.description}">
-                        <h1>${item.name}</h1>
-                        <div class="hr"></div>
-                        <h2> 100 pts </h2>
-                    </div>
-                `
-            })
-        }
-        getChallengeObjs()
+        // 获取首页题目列表并渲染
+        this.methods.appendChallengeList(1)
+        // 渲染信息板
+        this.methods.showInfoBoard()
+
         const switchBar = document.getElementById("switch-bar");
         switchBar.addEventListener('click', this.methods.filterCards)
         document.getElementById('challenge-list').addEventListener('click', this.methods.popWindow)
