@@ -235,7 +235,7 @@ class UserInfoPublicView(generics.GenericAPIView):
     def get(self, request):
         user = request.user
         try:
-            serializer_user = self.serializer_class(user)
+            serializer_user = self.get_serializer(user)
             return Response(
                 data=serializer_user.data,
                 status=status.HTTP_200_OK
