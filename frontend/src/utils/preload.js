@@ -8,7 +8,9 @@ export async function preload(){
     const isLogined = await verify()
     if (isLogined) {
         document.body.classList.add('logined')
+        await getUserInfo()
     }
+
 
     // 载入加载动画
     document.onreadystatechange = () => {

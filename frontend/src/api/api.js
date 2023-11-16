@@ -4,7 +4,7 @@ import requests from '../utils/requests.js'
 const loader = document.querySelector('.box')
 
 // 获取用户个人信息
-async function getUserInfo() {
+export async function getUserInfo() {
     let flag = false
     // configure message
     const configToGetUserInfo = {
@@ -125,11 +125,8 @@ export async function verify() {
         })
     }
 
-    if (flag){
-        // 验证成功请求获取用户信息
-        await getUserInfo()
-    }
-    else {
+    // 验证失败
+    if (!flag){
         // 删除本地token
         localStorage.removeItem('zctf-access')
         localStorage.removeItem('zctf-refresh')
