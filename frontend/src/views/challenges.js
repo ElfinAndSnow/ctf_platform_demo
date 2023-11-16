@@ -64,7 +64,6 @@ export default {
         },
         showInfoBoard: () => {
             const userInfo = JSON.parse(sessionStorage.getItem('zctf-userinfo'))
-            console.log(userInfo)
             document.getElementById('username').innerText = userInfo.username || 'UserName'
             document.getElementById('team').innerText = userInfo.team || 'No Team'
             document.getElementById('score').innerText = userInfo.points || 'None Point'

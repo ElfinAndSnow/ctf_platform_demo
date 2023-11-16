@@ -69,7 +69,6 @@ export default {
         // 提交flag
         submitFlag: async function() {
             const flag = document.getElementById('flag').value
-            console.log(flag)
             let result = await flagSubmission(flag)
             if (result){
                 window.alert('flag正确！')
