@@ -44,11 +44,6 @@ nav .options {
 }
 
 .options .line {
-    background-color: var(--btn-text-color);
-    width: 25px;
-    height: 5px;
-    border-radius: 3px;
-    margin: 5px;
     transition: all 0.2s ease-in-out;
     pointer-events: none;
 }
@@ -93,7 +88,7 @@ header #dropdown {
     width: 190px;
     background-color: var(--dropdown-color);
     position: absolute;
-    right: 0;
+    right: 1vw;
     top: var(--navbar-height);
     border-radius: 5px;
     border: 1px solid var(--edge-color);

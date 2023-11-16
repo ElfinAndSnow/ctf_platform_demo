@@ -1,4 +1,4 @@
-export default function requests(config, preloader = null){
+export default function requests(config, loader = null){
     // 设置API的基地址
     const BaseURL = "http://49.232.236.235:80"
     return new Promise((resolve,reject)=>{
@@ -16,16 +16,18 @@ export default function requests(config, preloader = null){
 
         // 处理请求结果
         xhr.addEventListener('readystatechange', ()=>{
-            if (xhr.readyState === xhr.OPENED) {
-                // 加载动画启动
-                if (preloader !== null){
-                    preloader.style.display = 'block'
-                }
+            if (xhr.readyState === xhr.OPENED && loader !== null){
+                // 启动加载动画
+                console.log(loader)
+                console.log(xhr.readyState)
+                loader.style.display = 'block'
             }
-            else if (xhr.readyState === xhr.DONE) {
-                // 加载动画结束
-                if (preloader !== null){
-                    preloader.style.display = 'none'
+            if (xhr.readyState === xhr.DONE) {
+                // 关闭加载动画
+                if (loader !== null){
+                    console.log(loader)
+                    console.log(xhr.readyState)
+                    loader.style.display = 'none'
                 }
                 // 正常请求结果处理
                 if(xhr.status>=200 && xhr.status<300){
@@ -33,7 +35,7 @@ export default function requests(config, preloader = null){
                 }
                 // 异常请求结果处理
                 else{
-                    reject(new Error(xhr.response))
+                    reject(JSON.parse(xhr.response))
                 }
             }
         })

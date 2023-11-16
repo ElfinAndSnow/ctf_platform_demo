@@ -31,7 +31,7 @@ export default async function router() {
               view = render(module.default)
             })
           },
-          noVerify: false,
+          noVerify: true,
         },
         '/login': {
           render: () => {
@@ -40,16 +40,17 @@ export default async function router() {
             })
           },
           noVerify: true,
-        }
+        },
     };
-    
+
     function handleHashChange() {
       const hash = window.location.hash.slice(1) === '/' ? '/home' : location.hash.slice(1);
       if (hash in routes){
         routerGuard(hash)
       }
       else {
-        history.back(-1)
+        window.alert('访问了不存在的页面，将返回首页')
+        window.location.hash = '#/home'
       }
     }
 
@@ -57,7 +58,6 @@ export default async function router() {
     async function routerGuard(hash) {
       const isLogined = await verify()
       const route = routes[hash]
-      console.log('isLogined is '+ isLogined)
       if (route.noVerify){
         navTo(route)
       }
@@ -82,8 +82,7 @@ export default async function router() {
     // 注册路由
     window.addEventListener('DOMContentLoaded', () => {
       window.addEventListener('hashchange', handleHashChange)
-      window.history.pushState('','',location.hash === ''? '#/':location.hash)
+      window.history.pushState('','',location.hash === ''? '#/home':location.hash)
       handleHashChange()
     })
-
 }

@@ -2,7 +2,7 @@
     width: 40%;
     position: absolute;
     left: 50%;
-    top: 40%;
+    top: 50%;
     transform: translate(-50%,-50%);
     display: flex;
     flex-direction: column;
@@ -26,7 +26,7 @@
     text-align: center;
     margin: auto 0;
     font-size: var(--global-font-size);
-    color: #818CF8;
+    color: var(--btn-color);
 }
 
 
@@ -50,7 +50,7 @@
 }
 
 
-.coolinput {
+.forminput {
     display: flex;
     flex-direction: column;
     position: relative;
@@ -59,9 +59,9 @@
     height: 95px;
 }
 
-.coolinput label {
+.forminput label {
     font-size: 15px;
-    color: #818CF8;
+    color: var(--btn-color);
     font-weight: 700;
     position: relative;
     top: 10px;
@@ -70,15 +70,15 @@
     width: fit-content;
 }
 
-.coolinput input {
+.forminput input {
     padding: 11px 10px;
     font-size: 15px;
-    border: 2px #818CF8 solid;
+    border: 2px var(--btn-color) solid;
     border-radius: 5px;
     background: var(--card-solid-color);
     color: var(--pure-color);
 }
-.coolinput svg {
+.forminput svg {
     width: 40px;
     height: 40px;
     position: absolute;   
@@ -90,7 +90,7 @@ svg path {
     pointer-events: none;
 }
 
-.coolinput input:focus {
+.forminput input:focus {
     outline: none;
 }
 
@@ -102,7 +102,7 @@ form .button {
     #inputarea {
         width: 100%;
     }
-    .coolinput {
+    .forminput {
         width: 80%;
     }
 }

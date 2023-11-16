@@ -23,6 +23,7 @@ const config = {
           template: path.resolve(__dirname, 'src/main.html'),
           filename: path.resolve(__dirname, 'dist/main.html'),
           favicon: './src/assets/images/favicon.ico',
+          useCdn: process.env.NODE_ENV === 'production',
       }),
       new MiniCssExtractPlugin()
   ],
@@ -65,6 +66,12 @@ const config = {
 
 if (process.env.NODE_ENV === 'development'){
   config.devtool = 'cheap-module-eval-source-map'
+}
+
+if (process.env.NODE_ENV === 'production'){
+  config.externals = {
+    'echarts': 'echarts'
+  }
 }
 
 module.exports = config

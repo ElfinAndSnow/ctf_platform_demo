@@ -9,19 +9,16 @@ export async function preload(){
     if (isLogined) {
         document.body.classList.add('logined')
     }
-    else {
-        document.body.classList.remove('logined')
-    }
 
     // 载入加载动画
     document.onreadystatechange = () => {
         const loader = document.querySelector(".box")
         switch (document.readyState) {
-            case 'complete': 
-                loader.style.display = 'none'
-            break
-            case 'loading':
+            case 'loading': 
                 loader.style.display = 'block'
+            break
+            case 'complete':
+                loader.style.display = 'none'
         }
     }
 }

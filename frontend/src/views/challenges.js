@@ -1,4 +1,5 @@
-import {verify} from '../api/api.js'
+import {verify, getChallengeList} from '../api/api.js'
+import render from '../utils/render.js'
 import '../assets/css/challenge.css'
 /*
 题库内容
@@ -7,11 +8,9 @@ import '../assets/css/challenge.css'
     - 题目分类选择器 （All, Misc, Web, Reverse, Pwn, Crypto)
     - 题目框 （题目标题、分值、类别）
 */
+
 export default {
     target: 'main',
-    data: {
-
-    },
     methods: {
         filterCards : (e) => {
             document.querySelector("#switch-bar .active").classList.remove("active")
@@ -24,9 +23,35 @@ export default {
                 }
                 card.classList.add("hide")
             })
+        },
+        // 调用弹窗
+        popWindow: (e) => {
+            if (e.target.classList.contains('challenge-bar')){
+                // 创建弹窗，并render
+                const overlay = document.createElement('section')
+                overlay.classList.add('overlay')
+                overlay.setAttribute('data-id', e.target.dataset.id)
+                overlay.setAttribute('data-ds', e.target.dataset.ds)
+                overlay.setAttribute('data-title', e.target.querySelector('h1').innerText)
+                overlay.setAttribute('data-status', e.target.classList.contains('issolved')?'1':'0')
+                document.body.appendChild(overlay)
+                let popup = null
+                import('../components/popup.js').then((module) => {
+                    popup = render(module.default)
+                    // 绑定题目id
+                    document.querySelector('.popup').setAttribute('data-id', e.target.dataset.id)
+                    // 绑定关闭弹窗
+                    const destroy = () => {
+                        // 让this指向popup本身,直接绑定监听this会指向label
+                        popup.destroyed()
+                    }
+                    document.querySelector('.popup>header>label').addEventListener('click', destroy)
+                })
+            }                                                                          
         }
     },
     template: `
+        <div class="view">
         <div id="aside-bar" class="card">
             <h1>UserName</h1>
             <h3>TEAM</h3>
@@ -51,92 +76,27 @@ export default {
             </div>
             <div class="hr"></div>
             <div id="challenge-list">
-                <div class="challenge-bar misc">
+                <div class="challenge-bar misc issolved">
                     <h1>Title is too long to see</h1>
                     <div class="hr"></div>
                     <h2> 100 pts </h2>
                 </div>
-                <div class="challenge-bar web">
+                <div class="challenge-bar web issolved">
                     <h1>Title</h1>
                     <div class="hr"></div>
                     <h2> 100 pts </h2>
                 </div>
-                <div class="challenge-bar reverse">
+                <div class="challenge-bar reverse issolved">
                     <h1>Title</h1>
                     <div class="hr"></div>
                     <h2> 100 pts </h2>
                 </div>
-                <div class="challenge-bar pwn">
+                <div class="challenge-bar pwn issolved">
                     <h1>Title</h1>
                     <div class="hr"></div>
                     <h2> 100 pts </h2>
                 </div>
-                <div class="challenge-bar crypto">
-                    <h1>Title</h1>
-                    <div class="hr"></div>
-                    <h2> 100 pts </h2>
-                </div>
-                <div class="challenge-bar">
-                    <h1>Title</h1>
-                    <div class="hr"></div>
-                    <h2> 100 pts </h2>
-                </div>
-                <div class="challenge-bar">
-                    <h1>Title</h1>
-                    <div class="hr"></div>
-                    <h2> 100 pts </h2>
-                </div>
-                <div class="challenge-bar">
-                    <h1>Title</h1>
-                    <div class="hr"></div>
-                    <h2> 100 pts </h2>
-                </div>
-                <div class="challenge-bar">
-                    <h1>Title</h1>
-                    <div class="hr"></div>
-                    <h2> 100 pts </h2>
-                </div>
-                <div class="challenge-bar">
-                    <h1>Title</h1>
-                    <div class="hr"></div>
-                    <h2> 100 pts </h2>
-                </div>
-                <div class="challenge-bar">
-                    <h1>Title</h1>
-                    <div class="hr"></div>
-                    <h2> 100 pts </h2>
-                </div>
-                <div class="challenge-bar">
-                    <h1>Title</h1>
-                    <div class="hr"></div>
-                    <h2> 100 pts </h2>
-                </div>
-                <div class="challenge-bar">
-                    <h1>Title</h1>
-                    <div class="hr"></div>
-                    <h2> 100 pts </h2>
-                </div>
-                <div class="challenge-bar">
-                    <h1>Title</h1>
-                    <div class="hr"></div>
-                    <h2> 100 pts </h2>
-                </div>
-                <div class="challenge-bar">
-                    <h1>Title</h1>
-                    <div class="hr"></div>
-                    <h2> 100 pts </h2>
-                </div>
-                <div class="challenge-bar">
-                    <h1>Title</h1>
-                    <div class="hr"></div>
-                    <h2> 100 pts </h2>
-                </div>
-                <div class="challenge-bar">
-                    <h1>Title</h1>
-                    <div class="hr"></div>
-                    <h2> 100 pts </h2>
-                </div>
-                <div class="challenge-bar">
+                <div class="challenge-bar crypto issolved">
                     <h1>Title</h1>
                     <div class="hr"></div>
                     <h2> 100 pts </h2>
@@ -145,15 +105,33 @@ export default {
         <div id="page-navigation">
         </div>
         </div>
+        </div>
     `,
     beforeMount: function() {
         return this.template
     },
     afterMount: function() {
+        // 获取题目列表并渲染
+        async function getChallengeObjs() {
+            let challenges = await getChallengeList(1)
+            const challengeList = document.getElementById('challenge-list')
+            challenges.forEach(item => {
+                challengeList.innerHTML += `
+                    <div class="challenge-bar ${item.type.toLowerCase()} ${item.is_solved_by_current_user||item.is_solved_by_current_team?'issolved':''}" data-id="${item.id}" data-ds="${item.description}">
+                        <h1>${item.name}</h1>
+                        <div class="hr"></div>
+                        <h2> 100 pts </h2>
+                    </div>
+                `
+            })
+        }
+        getChallengeObjs()
         const switchBar = document.getElementById("switch-bar");
         switchBar.addEventListener('click', this.methods.filterCards)
+        document.getElementById('challenge-list').addEventListener('click', this.methods.popWindow)
     },
     destroyed: function() {
         document.getElementById('switch-bar').removeEventListener('click', this.methods.filterCards)
+        document.getElementById('challenge-list').removeEventListener('click', this.methods.popWindow)
     }
 }
