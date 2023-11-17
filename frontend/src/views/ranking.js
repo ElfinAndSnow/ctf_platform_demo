@@ -8,7 +8,7 @@ import '../assets/css/ranking.css'
 export default {
   target: 'main',
   data: {
-    chartTaget: '#chart',
+    chartTaget: '.chart',
     chart: {},
     option: {},
   },
@@ -70,8 +70,18 @@ export default {
   },
   template: `
     <div id="rank">
-      <div id="chart" class="card"></div>
-      <div id="ranking-table"></div>
+      <div class="radio-inputs">
+        <label class="radio">
+          <input type="radio" name="radio" checked="">
+          <span class="name">个人排名</span>
+        </label>
+        <label class="radio">
+          <input type="radio" name="radio">
+          <span class="name">战队排名</span>
+        </label>
+      </div>
+      <div class="card chart"></div>
+      <div class="card table" style="display:></div>
     </div>
   `,
   beforeMount: function() {

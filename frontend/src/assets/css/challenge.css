@@ -135,11 +135,85 @@
 }
 
 .challenge-bar * {
+    /* 使点击子元素无效 */
     pointer-events: none;
 }
 
 .issolved {
     background-color: var(--solved-color);
+}
+
+#pagination {
+    /* 大小、居中 */
+    width: 150px;
+    height: 60px;
+    margin: 0 auto;
+    /* 弹性盒子,子元素居中 */
+    display: grid;
+    grid-template-columns: 50px auto 50px;
+    gap: 5px;
+}
+
+.page-switcher {
+    /* 大小、颜色 */
+    height: 50px;
+    font-size: 20px;
+    background-color: var(--chat-gpt-color);
+    color: var(--pure-color);
+    /* 样式 */
+    border-radius: 10px;
+    /* 文字居中 */
+    text-align: center;
+    line-height: 50px;
+    /* 行为 */
+    cursor: pointer;
+}
+
+#pagenum {
+    /* 大小 */
+    min-width: 100px;
+    height: 30px;
+    /* 居中 */
+    display: block;
+    text-align: center;
+    line-height: 30px;
+    margin: 0 auto;
+    /* 颜色 */
+    color: var(--pure-color);
+}
+
+#pageinput {
+    /* 大小 */
+    width: 120px;
+    height: 50px;
+    /* 居中 */
+    margin: 0 auto;
+    /* 弹性盒子 */
+    display: flex;
+    justify-content: center;
+    /* padding */
+    padding: 10px;
+}
+
+#pageinput * {
+    height: 30px;
+    display: block;
+}
+
+#pageinput input {
+    width: 50px;
+    /* 文字居中 */
+    text-align: center;
+    /* 取消outline */
+    outline: none;
+}
+
+#pageinput button {
+    width: 60px;
+    line-height: 30px;
+    border: none;
+    background-color: var(--btn-color);
+    color: var(--pure-color);
 }
 
 @media (max-width: 955px) {

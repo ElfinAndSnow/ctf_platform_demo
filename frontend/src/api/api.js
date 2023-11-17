@@ -267,7 +267,10 @@ export async function getChallengeList(page) {
     }
     await requests(configToGetChallenges, loader)
     .then(res => {
+        // 返回题目信息
         challenges = res.results
+        // 存储总题目数
+        sessionStorage.setItem('zctf-challenge-num', res.count)
     })
     .catch(err => {
         window.alert('服务端错误，获取题目列表失败！')

@@ -2,17 +2,74 @@
     width: 100%;
 }
 
-#rank #chart {
+/* 单选框 */
+.radio-inputs {
+    /* 位置：左右居中，距离顶部一定距离 */
+    margin-top: 4vh;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    /* 弹性盒子 */
+    display: flex;
+    flex-wrap: wrap;
+    /* 外形样式：圆角矩阵 */
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: var(--chat-gpt-color);
+    box-sizing: border-box;
+    box-shadow: 0 0 0px 1px rgba(0, 0, 0, 0.06);
+    width: 300px;
+    /* 字体大小 */
+    font-size: 14px;
+}
+
+.radio-inputs .radio {
+    flex: 1 1 auto;
+    text-align: center;
+}
+
+.radio-inputs .radio input {
+    display: none;
+}
+
+.radio-inputs .radio .name {
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    border: none;
+    padding: .5rem 0;
+    color: var(--pure-color);
+    transition: all .15s ease-in-out;
+}
+
+.radio-inputs .radio input:checked + .name {
+    background-color: var(--chat-user-color);
+    font-weight: 600;
+}
+
+/* 折线图 */
+.chart {
+    /* 宽高 */
     width: 90%;
     height: 30vh;
+    /* 颜色&&样式 */
     background-color: var(--card-color);
     border: 1px solid var(--edge-color);
     border-radius: 1vw;
+    /* margin&padding */
     margin: 0 auto;
+    padding-top: 20px;
+}
+
+/* 表格 */
+.table {
+
 }
 
 @media (max-width: 800px) {
-    #rank #chart {
+    .chart {
         width: 100%;
     }
 }

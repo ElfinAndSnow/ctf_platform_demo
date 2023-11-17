@@ -53,9 +53,11 @@ export default {
             }                                                                          
         },
         appendChallengeList: async function(page) {
+            // 获取题目列表
             let challenges = await getChallengeList(page)
             const challengeList = document.getElementById('challenge-list')
             challenges.forEach(item => {
+                // 添加题目信息
                 challengeList.innerHTML += `
                     <div class="challenge-bar ${item.type.toLowerCase()} ${item.is_solved_by_current_user||item.is_solved_by_current_team?'issolved':''}" data-id="${item.id}" data-ds="${item.description}">
                         <h1>${item.name}</h1>
@@ -64,9 +66,14 @@ export default {
                     </div>
                 `
             })
+            // 显示总页数和题数
+            const num = sessionStorage.getItem('zctf-challenge-num')
+            // 每页最多10题
+            document.getElementById('pagenum').innerText = `共${parseInt(num/10)+1}页，总共${num}题`
         },
         showInfoBoard: () => {
             const userInfo = JSON.parse(sessionStorage.getItem('zctf-userinfo'))
+            console.log(userInfo)
             document.getElementById('username').innerText = userInfo.username || 'UserName'
             document.getElementById('team').innerText = userInfo.team || 'No Team'
             document.getElementById('score').innerText = userInfo.points || 'None Point'
@@ -76,59 +83,67 @@ export default {
     },
     template: `
         <div class="view">
-        <div id="aside-bar" class="card">
-            <h1 id="username"></h1>
-            <h3 id="team"></h3>
-            <div class="hr"></div>
-            <h1 id="score"></h1>
-            <h3>SCORE</h3>
-            <div class="hr"></div>
-            <h1 id="rank"></h1>
-            <h3>TOTAL RANK</h3>
-            <div class="hr"></div>
-            <h1 id="solved"></h1>
-            <h3>SOLVED</h3>
-        </div>
-        <div id="challenge-bank" class="card">
-            <div id="switch-bar">
-                <a class="active" data-filter="all">All</a><div class="vl"></div>
-                <a data-filter="misc">Misc</a><div class="vl"></div>
-                <a data-filter="web">Web</a><div class="vl"></div>
-                <a data-filter="reverse">Reverse</a><div class="vl"></div>
-                <a data-filter="pwn">Pwn</a><div class="vl"></div>
-                <a data-filter="crypto">Crypto</a>
+            <div id="aside-bar" class="card">
+                <h1 id="username"></h1>
+                <h3 id="team"></h3>
+                <div class="hr"></div>
+                <h1 id="score"></h1>
+                <h3>SCORE</h3>
+                <div class="hr"></div>
+                <h1 id="rank"></h1>
+                <h3>TOTAL RANK</h3>
+                <div class="hr"></div>
+                <h1 id="solved"></h1>
+                <h3>SOLVED</h3>
             </div>
-            <div class="hr"></div>
-            <div id="challenge-list">
-                <div class="challenge-bar misc issolved">
-                    <h1>Title is too long to see</h1>
-                    <div class="hr"></div>
-                    <h2> 100 pts </h2>
+            <div id="challenge-bank" class="card">
+                <div id="switch-bar">
+                    <a class="active" data-filter="all">All</a><div class="vl"></div>
+                    <a data-filter="misc">Misc</a><div class="vl"></div>
+                    <a data-filter="web">Web</a><div class="vl"></div>
+                    <a data-filter="reverse">Reverse</a><div class="vl"></div>
+                    <a data-filter="pwn">Pwn</a><div class="vl"></div>
+                    <a data-filter="crypto">Crypto</a>
                 </div>
-                <div class="challenge-bar web issolved">
-                    <h1>Title</h1>
-                    <div class="hr"></div>
-                    <h2> 100 pts </h2>
+                <div class="hr"></div>
+                <div id="challenge-list">
+                    <div class="challenge-bar misc issolved">
+                        <h1>Title is too long to see</h1>
+                        <div class="hr"></div>
+                        <h2> 100 pts </h2>
+                    </div>
+                    <div class="challenge-bar web issolved">
+                        <h1>Title</h1>
+                        <div class="hr"></div>
+                        <h2> 100 pts </h2>
+                    </div>
+                    <div class="challenge-bar reverse issolved">
+                        <h1>Title</h1>
+                        <div class="hr"></div>
+                        <h2> 100 pts </h2>
+                    </div>
+                    <div class="challenge-bar pwn issolved">
+                        <h1>Title</h1>
+                        <div class="hr"></div>
+                        <h2> 100 pts </h2>
+                    </div>
+                    <div class="challenge-bar crypto issolved">
+                        <h1>Title</h1>
+                        <div class="hr"></div>
+                        <h2> 100 pts </h2>
+                    </div>
                 </div>
-                <div class="challenge-bar reverse issolved">
-                    <h1>Title</h1>
-                    <div class="hr"></div>
-                    <h2> 100 pts </h2>
+                <p id="pagenum"></p>
+                <div id="pagination">
+                    <div class="page-switcher" id="prev">&lt;</div>
+                    <div class="page-switcher" id="page">1</div>
+                    <div class="page-switcher" id="next">&gt;</div>
                 </div>
-                <div class="challenge-bar pwn issolved">
-                    <h1>Title</h1>
-                    <div class="hr"></div>
-                    <h2> 100 pts </h2>
-                </div>
-                <div class="challenge-bar crypto issolved">
-                    <h1>Title</h1>
-                    <div class="hr"></div>
-                    <h2> 100 pts </h2>
-                </div>
-             </div>
-        <div id="page-navigation">
-        </div>
-        </div>
+                <form id="pageinput" style="display: none">
+                    <input type="text" placeholder="页码" value="1">
+                    <button>确认</button>
+                </form>
+            </div>
         </div>
     `,
     beforeMount: function() {

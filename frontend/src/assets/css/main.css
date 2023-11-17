@@ -59,7 +59,7 @@ html {
     --challenge-bar-color: #aedde6;
     --solved-color: #39f07c69;
     --pure-color: #000;
-    --chat-user-color: #ececf1;
+    --chat-user-color: #dbdbde;
     --chat-gpt-color: #f7f7f8;
 
     /*background image*/
@@ -91,7 +91,7 @@ html {
     --challenge-bar-color: #32333a;
     --pure-color: #fff;
     --chat-user-color: #202123;
-    --chat-gpt-color: #343541;
+    --chat-gpt-color: #34353a;
 
     --background-image: url(../images/dark.png)
 }
