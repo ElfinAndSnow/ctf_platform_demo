@@ -1,5 +1,6 @@
 from django.http import FileResponse
 from django.shortcuts import render
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, viewsets, renderers, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -7,7 +8,7 @@ from rest_framework.response import Response
 
 from account.models import UserChallengeSession
 from challenge.models import Challenge
-from challenge.serializer import ChallengeSerializer
+from challenge.serializer import ChallengeSerializer, EmptySerializer
 from utils.custom_permissions import IsActivatedUser
 
 
@@ -15,6 +16,8 @@ class ChallengeListView(generics.ListAPIView):
     queryset = Challenge.objects.all()
     serializer_class = ChallengeSerializer
     permission_classes = [IsAuthenticated, IsActivatedUser]
+    filter_backends = [DjangoFilterBackend, ]
+    filterset_fields = ['type', ]
 
 
 class ChallengeRetrieveView(generics.RetrieveAPIView):
@@ -34,6 +37,12 @@ class PassThroughRenderer(renderers.BaseRenderer):
 class ChallengeFileDownloadViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Challenge.objects.all()
     permission_classes = [IsAuthenticated, IsActivatedUser]
+
+    # To avoid assertion error
+    # AssertionError:
+    # 'ChallengeFileDownloadViewSet' should either include a `serializer_class` attribute,
+    # or override the `get_serializer_class()` method.
+    serializer_class = EmptySerializer
 
     @action(methods=['get'], detail=True, renderer_classes=(PassThroughRenderer,))
     def download(self, request, *args, **kwargs):
