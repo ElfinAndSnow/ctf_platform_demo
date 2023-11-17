@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from account.models import UserChallengeSession
 from challenge.models import Challenge
-from challenge.serializer import ChallengeSerializer
+from challenge.serializer import ChallengeSerializer, EmptySerializer
 from utils.custom_permissions import IsActivatedUser
 
 
@@ -34,6 +34,12 @@ class PassThroughRenderer(renderers.BaseRenderer):
 class ChallengeFileDownloadViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Challenge.objects.all()
     permission_classes = [IsAuthenticated, IsActivatedUser]
+
+    # To avoid assertion error
+    # AssertionError:
+    # 'ChallengeFileDownloadViewSet' should either include a `serializer_class` attribute,
+    # or override the `get_serializer_class()` method.
+    serializer_class = EmptySerializer
 
     @action(methods=['get'], detail=True, renderer_classes=(PassThroughRenderer,))
     def download(self, request, *args, **kwargs):

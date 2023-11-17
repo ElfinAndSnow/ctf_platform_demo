@@ -35,3 +35,9 @@ class ChallengeSerializer(serializers.ModelSerializer):
             'points',
             # 'file',
         ]
+
+
+class EmptySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Challenge
+        fields = []
