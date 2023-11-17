@@ -325,7 +325,7 @@ export async function deleteChallengeSession() {
 }
 
 // flag提交
-export async function flagSubmission(flag) {
+export async function submitFlag(flag) {
     // 提交结果
     let result = false
     const configToSubmitFlag = {
@@ -344,6 +344,12 @@ export async function flagSubmission(flag) {
     .catch(err => {
 
     })
+
+    if (result){
+        // 更新用户信息
+        await getUserInfo()
+    }
+
     return result
 }
 

@@ -69,7 +69,7 @@ export default {
             document.getElementById('score').innerText = userInfo.points || 'None Point'
             const solved = userInfo.solved_challenges.length
             document.getElementById('solved').innerText = String(solved)
-        } 
+        }
     },
     template: `
         <div class="view">

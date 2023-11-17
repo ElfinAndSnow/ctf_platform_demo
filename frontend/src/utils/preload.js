@@ -1,5 +1,5 @@
 import '../assets/css/loader.css'
-import { verify } from '../api/api.js'
+import { verify, getUserInfo } from '../api/api.js'
 // 预加载器
 export async function preload(){
     // 使用用户上次选择的深浅色模式

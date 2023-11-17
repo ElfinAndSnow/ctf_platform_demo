@@ -1,5 +1,5 @@
 import '../assets/css/popup.css'
-import { createChallengeSession, deleteChallengeSession, flagSubmission } from '../api/api'
+import { createChallengeSession, deleteChallengeSession, submitFlag } from '../api/api'
 export default {
     target: '.overlay',
     methods: {
@@ -69,9 +69,11 @@ export default {
         // 提交flag
         submitFlag: async function() {
             const flag = document.getElementById('flag').value
-            let result = await flagSubmission(flag)
+            let result = await submitFlag(flag)
             if (result){
                 window.alert('flag正确！')
+                // 刷新页面
+                location.reload()
             }
             else {
                 window.alert('flag错误！')
