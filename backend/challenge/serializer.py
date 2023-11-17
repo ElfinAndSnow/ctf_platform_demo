@@ -6,6 +6,7 @@ from challenge.models import Challenge
 class ChallengeSerializer(serializers.ModelSerializer):
     is_solved_by_current_user = serializers.SerializerMethodField('_get_is_solved_by_current_user')
     is_solved_by_current_team = serializers.SerializerMethodField('_get_is_solved_by_current_team')
+    has_file = serializers.SerializerMethodField('_get_has_file')
 
     def _get_is_solved_by_current_user(self, obj):
         user = self.context['request'].user
@@ -18,6 +19,9 @@ class ChallengeSerializer(serializers.ModelSerializer):
         team = user.team
         return team in obj.solved_by_teams.all()
 
+    def _get_has_file(self, obj):
+        return bool(obj.file)
+
     class Meta:
         model = Challenge
         fields = [
@@ -27,6 +31,13 @@ class ChallengeSerializer(serializers.ModelSerializer):
             'description',
             'is_solved_by_current_user',
             'is_solved_by_current_team',
+            'has_file',
             'points',
-            'file',
+            # 'file',
         ]
+
+
+class EmptySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Challenge
+        fields = []

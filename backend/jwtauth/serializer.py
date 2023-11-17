@@ -137,6 +137,7 @@ class PasswordResetSerializer(serializers.ModelSerializer):
         # print(attrs)
         return attrs
 
+    # In view, get_serializer pass an instance to this update method
     def update(self, instance, validated_data):
         print(self.context['request'].user)
         print("verify create")

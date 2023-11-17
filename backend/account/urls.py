@@ -21,6 +21,6 @@ urlpatterns = [
     path(r'', include(router.urls)),
     path(r'users/update-username/<int:pk>/', UsernameUpdateView.as_view()),
     path(r'UserInfoPublicView', UserInfoPublicView.as_view(), name='UserInfoPublicView'),
-    path(r'scores/', ScoreListView.as_view()),
+    # path(r'scores/', ScoreListView.as_view()),
     path(r'user-scores/', UserScoreListView.as_view()),
 ]

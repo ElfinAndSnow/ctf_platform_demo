@@ -13,6 +13,7 @@ import datetime
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'django_cron',
+    'django_filters',
     'utils',
     'challenge',
     'team',
@@ -65,6 +67,16 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
+    'DEFAULT_THROTTLE_CLASSES':
+        [
+            'rest_framework.throttling.AnonRateThrottle',
+            'rest_framework.throttling.UserRateThrottle',
+        ],
+    'DEFAULT_THROTTLE_RATES':
+        {
+            'anon': '5/minute',
+            'user': '30/minute',
+        }
 }
 
 AUTH_USER_MODEL = 'account.User'  # 自定义用户模型
