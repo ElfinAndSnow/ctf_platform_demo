@@ -10,6 +10,7 @@ from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
 from account.models import User
 from utils.custom_permissions import IsSelf, IsAdminOrSessionCreator, IsActivatedUser
+from utils.custom_throttles import AuthAnonThrottle
 from utils.email_verification import email_verification
 
 from django.core.mail import send_mail, send_mass_mail
@@ -19,6 +20,7 @@ class RegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegistrationSerializer
     permission_classes = [AllowAny, ]
+    throttle_classes = [AuthAnonThrottle]
 
 
 class PasswordResetView(generics.UpdateAPIView):

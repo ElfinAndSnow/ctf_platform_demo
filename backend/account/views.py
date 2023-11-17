@@ -10,6 +10,7 @@ from account.serializer import (UserInfoSerializer, UsernameUpdateSerializer,
 from challenge.models import Challenge
 from utils.custom_permissions import IsAdminOrSessionCreator, IsAdminOrSelf, IsNotPrivateOrSelf, DisallowAny, \
     IsActivatedUser
+from utils.custom_throttles import SessionThrottle
 
 
 class UserIDByUsernameView(generics.RetrieveAPIView):
@@ -25,8 +26,8 @@ class UserIDByUsernameView(generics.RetrieveAPIView):
 class UserChallengeSessionCreateRetrieveDestroyViewSet(viewsets.ModelViewSet):
     queryset = UserChallengeSession
     serializer_class = UserChallengeSessionCreateRetrieveDestroySerializer
-    # TODO Change permission class to IsActivatedUser
     permission_classes = [IsAuthenticated, IsActivatedUser]
+    throttle_classes = [SessionThrottle]
 
     def retrieve(self, request, *args, **kwargs):
         user = request.user
@@ -175,6 +176,7 @@ class FlagSubmissionView(generics.CreateAPIView):
     queryset = UserChallengeSession
     serializer_class = FlagSubmissionSerializer
     permission_classes = [IsAuthenticated, IsAdminOrSessionCreator, IsActivatedUser]
+    throttle_classes = [SessionThrottle]
 
     def perform_create(self, serializer):
         user_challenge_session = serializer.save()
