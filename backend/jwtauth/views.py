@@ -23,10 +23,22 @@ class RegistrationView(generics.CreateAPIView):
     throttle_classes = [AuthAnonThrottle]
 
 
-class PasswordResetView(generics.UpdateAPIView):
+class PasswordResetView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = PasswordResetSerializer
     permission_classes = [IsAuthenticated, IsSelf]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(instance=request.user, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(
+            {"detail": "You have successfully reset your password."},
+            status=status.HTTP_200_OK,
+            headers=headers
+        )
 
 
 class EmailVerificationCreateView(generics.CreateAPIView):
