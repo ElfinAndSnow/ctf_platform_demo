@@ -41,6 +41,8 @@
     height: var(--switcher-height);
     margin: var(--distance) auto;
     box-sizing: border-box;
+    cursor: pointer;
+    
 }
 
 #switch-bar a {

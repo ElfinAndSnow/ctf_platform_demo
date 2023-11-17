@@ -13,16 +13,19 @@ export default {
     target: 'main',
     methods: {
         filterCards : (e) => {
-            document.querySelector("#switch-bar .active").classList.remove("active")
-            const filterableCards = document.querySelectorAll(".challenge-bar");
-            e.target.classList.add("active")
-    
-            filterableCards.forEach(card => {
-                if(card.classList.contains(e.target.dataset.filter) || e.target.dataset.filter === "all") {
-                    return card.classList.remove('hide')
-                }
-                card.classList.add("hide")
-            })
+            // 防止同时点击多个标签出现报错
+            if (document.getElementById('switch-bar')!==e.target){
+                document.querySelector("#switch-bar .active").classList.remove("active")
+                const filterableCards = document.querySelectorAll(".challenge-bar");
+                e.target.classList.add("active")
+        
+                filterableCards.forEach(card => {
+                    if(card.classList.contains(e.target.dataset.filter) || e.target.dataset.filter === "all") {
+                        return card.classList.remove('hide')
+                    }
+                    card.classList.add("hide")
+                })
+            }
         },
         // 调用弹窗
         popWindow: (e) => {

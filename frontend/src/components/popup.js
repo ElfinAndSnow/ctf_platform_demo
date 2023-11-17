@@ -3,14 +3,6 @@ import { createChallengeSession, deleteChallengeSession, submitFlag } from '../a
 export default {
     target: '.overlay',
     methods: {
-        // 是否解出
-        isSolved: function() {
-            if (document.querySelector('.overlay').dataset.status === '1'){
-                const input = document.getElementById('flag')
-                input.disabled = true
-                input.placehoder = 'this challenge was solved'
-            }
-        },
         // 展示会话视图
         showSessionView: function() {
             const content = document.querySelector('.content')
@@ -40,7 +32,7 @@ export default {
                 let res = await createChallengeSession(parseInt(document.querySelector('.overlay').dataset.id))
                 // 若已有会话存在
                 if (res?.status){
-                    const flag = window.confirm('当前已有会话存在，是否销毁旧会话以创建该题会话')
+                    const flag = window.confirm('当前已有开启的实例存在，是否销毁已有实例以创建该题实例')
                     if (flag){
                         // 销毁会话
                         await deleteChallengeSession()
@@ -142,8 +134,6 @@ export default {
         // 题未解出视图
         if (document.querySelector('.overlay').dataset.status === '0'){
             this.methods.showExistedSession()
-            // 已解出则禁止输入
-            this.methods.isSolved()
             // 开启实例按钮
             const createSessionFunc = () => {
                 this.methods.createSession()
