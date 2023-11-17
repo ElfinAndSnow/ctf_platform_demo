@@ -1,5 +1,6 @@
 from django.http import FileResponse
 from django.shortcuts import render
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, viewsets, renderers, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -15,6 +16,8 @@ class ChallengeListView(generics.ListAPIView):
     queryset = Challenge.objects.all()
     serializer_class = ChallengeSerializer
     permission_classes = [IsAuthenticated, IsActivatedUser]
+    filter_backends = [DjangoFilterBackend, ]
+    filterset_fields = ['type', ]
 
 
 class ChallengeRetrieveView(generics.RetrieveAPIView):
