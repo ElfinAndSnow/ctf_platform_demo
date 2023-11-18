@@ -3,6 +3,19 @@ import requests from '../utils/requests.js'
 // 加载动画组件
 const loader = document.querySelector('.box')
 
+// 状态异常处理
+function errHandler(userAlert = true, warning = '状态异常，请重新登录') {
+    if (userAlert) {
+        window.alert(warning)
+    }
+    // 登出
+    localStorage.removeItem('zctf-access')
+    localStorage.removeItem('zctf-refresh')
+    document.body.classList.remove('logined')
+    // 跳转到登录界面
+    window.location.hash = '#/login'
+}
+
 // 获取用户个人信息
 export async function getUserInfo() {
     let flag = false
@@ -20,10 +33,7 @@ export async function getUserInfo() {
     })
     .catch(err => {
         // 报错，重新登录
-        window.alert('本地状态获取错误，请重新登录')
-        localStorage.removeItem('zctf-access')
-        localStorage.removeItem('zctf-refresh')
-        location.hash = '#/login'
+        errHandler()
     })
     return flag
 }
@@ -47,11 +57,11 @@ async function getEmailVerification() {
     .catch(err => {
         // 激活码未过期
         if (err.detail[0] === 'Please wait for your last verification code expires.'){
-            window.alert('请稍后再重新登录以获取新激活码！')
+            errHandler(true, '冷却时间未结束，请稍后登录再进行激活')
         }
-        localStorage.removeItem('zctf-access')
-        localStorage.removeItem('zctf-refresh')
-        document.body.classList.remove('logined')
+        else {
+            errHandler(true, '服务器故障！请稍后再登录')
+        }
         flag = true
     })
     // 放回成功标志位
@@ -76,10 +86,7 @@ async function accountActivate(data){
     })
     .catch(err => {
         // 激活失败
-        window.alert('激活失败！请重新登录以输入激活码')
-        localStorage.removeItem('zctf-access')
-        localStorage.removeItem('zctf-refresh')
-        document.body.classList.remove('logined')
+        errHandler(true, '激活失败，请稍后重新登录进行激活！')
     })
     return flag
 }
@@ -87,6 +94,7 @@ async function accountActivate(data){
 // token验证
 export async function verify() {
     if (localStorage.getItem('zctf-access') === null){
+        errHandler(trur, '请登录')
         return false
     }
     
@@ -124,14 +132,9 @@ export async function verify() {
             //die silently (flag = false)
         })
     }
-
     // 验证失败
     if (!flag){
-        // 删除本地token
-        localStorage.removeItem('zctf-access')
-        localStorage.removeItem('zctf-refresh')
-        // 未登录视图
-        document.body.classList.remove('logined')
+        errHandler(true, '请登录')
     }
     return flag
 
@@ -186,11 +189,7 @@ export async function login(data, alert = null) {
             }
             // 用户放弃激活，则重新登录
             else {
-                window.alert('激活失败！')
-                location.hash = '#/login'
-                // 删除登录获取的token，并跳出登录认证
-                localStorage.removeItem('zctf-access')
-                localStorage.removeItem('zctf-refresh')
+                errHandler(true, '激活失败')
                 return
             }
         }
@@ -199,7 +198,7 @@ export async function login(data, alert = null) {
     if (flag){
         window.alert('登录成功！')
         document.body.classList.add('logined')
-        window.history.back(-1)
+        window.location.hash = '#/home'
     }
 }
 
@@ -356,6 +355,27 @@ export async function submitFlag(flag) {
     return result
 }
 
+// 用户排名
+export async function getUserRanking(page) {
+    let results = null
+    const configToGetUserRanking = {
+        method: 'GET',
+        url: '/api/user-scores/',
+        params: {
+            page
+        },
+        token: localStorage.getItem('zctf-access')
+    }
+    await requests(configToGetUserRanking)
+    .then(res => {
+        sessionStorage.setItem('zctf-usernum', res.count)
+        results = res.results
+    })
+    .catch(err => {
+        errHandler()
+    })
+    return results
+}
 // 战队排名
 export async function getTeamRanking(page) {
     const configToGetTeamRanking = {
