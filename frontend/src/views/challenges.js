@@ -12,19 +12,18 @@ import '../assets/css/challenge.css'
 export default {
     target: 'main',
     methods: {
-        filterCards : (e) => {
+        // 分类器
+        switchChallengeType: (e) => {
             // 防止同时点击多个标签出现报错
             if (document.getElementById('switch-bar')!==e.target){
-                document.querySelector("#switch-bar .active").classList.remove("active")
-                const filterableCards = document.querySelectorAll(".challenge-bar");
-                e.target.classList.add("active")
-        
-                filterableCards.forEach(card => {
-                    if(card.classList.contains(e.target.dataset.filter) || e.target.dataset.filter === "all") {
-                        return card.classList.remove('hide')
-                    }
-                    card.classList.add("hide")
+                // 移除展示的题目
+                document.querySelectorAll('.challenge-bar').forEach(item => {
+                    document.getElementById('challenge-list').removeChild(item)
                 })
+                // 获取题目列表
+                // 标签激活状态变化
+                document.querySelector("#switch-bar .active").classList.remove("active")
+                e.target.classList.add("active")
             }
         },
         // 调用弹窗
@@ -69,17 +68,16 @@ export default {
             // 显示总页数和题数
             const num = sessionStorage.getItem('zctf-challenge-num')
             // 每页最多10题
-            document.getElementById('pagenum').innerText = `共${parseInt(num/10)+1}页，总共${num}题`
+            document.querySelector('.pagenum').innerText = `共${parseInt(num/10)+1}页，总共${num}题`
         },
         showInfoBoard: () => {
             const userInfo = JSON.parse(sessionStorage.getItem('zctf-userinfo'))
-            console.log(userInfo)
             document.getElementById('username').innerText = userInfo.username || 'UserName'
             document.getElementById('team').innerText = userInfo.team || 'No Team'
             document.getElementById('score').innerText = userInfo.points || 'None Point'
             const solved = userInfo.solved_challenges.length
             document.getElementById('solved').innerText = String(solved)
-        }
+        },
     },
     template: `
         <div class="view">
@@ -106,41 +104,15 @@ export default {
                     <a data-filter="crypto">Crypto</a>
                 </div>
                 <div class="hr"></div>
-                <div id="challenge-list">
-                    <div class="challenge-bar misc issolved">
-                        <h1>Title is too long to see</h1>
-                        <div class="hr"></div>
-                        <h2> 100 pts </h2>
-                    </div>
-                    <div class="challenge-bar web issolved">
-                        <h1>Title</h1>
-                        <div class="hr"></div>
-                        <h2> 100 pts </h2>
-                    </div>
-                    <div class="challenge-bar reverse issolved">
-                        <h1>Title</h1>
-                        <div class="hr"></div>
-                        <h2> 100 pts </h2>
-                    </div>
-                    <div class="challenge-bar pwn issolved">
-                        <h1>Title</h1>
-                        <div class="hr"></div>
-                        <h2> 100 pts </h2>
-                    </div>
-                    <div class="challenge-bar crypto issolved">
-                        <h1>Title</h1>
-                        <div class="hr"></div>
-                        <h2> 100 pts </h2>
-                    </div>
-                </div>
-                <p id="pagenum"></p>
-                <div id="pagination">
+                <div id="challenge-list"></div>
+                <p class="pagenum"></p>
+                <div class="pagination" id="">
                     <div class="page-switcher" id="prev">&lt;</div>
                     <div class="page-switcher" id="page">1</div>
                     <div class="page-switcher" id="next">&gt;</div>
                 </div>
-                <form id="pageinput" style="display: none">
-                    <input type="text" placeholder="页码" value="1">
+                <form class="pageinput" style="display: none">
+                    <input type="text" placeholder="页码">
                     <button>确认</button>
                 </form>
             </div>
@@ -156,11 +128,11 @@ export default {
         this.methods.showInfoBoard()
 
         const switchBar = document.getElementById("switch-bar");
-        switchBar.addEventListener('click', this.methods.filterCards)
+        switchBar.addEventListener('click', this.methods.switchChallengeType)
         document.getElementById('challenge-list').addEventListener('click', this.methods.popWindow)
     },
     destroyed: function() {
-        document.getElementById('switch-bar').removeEventListener('click', this.methods.filterCards)
+        document.getElementById('switch-bar').removeEventListener('click', this.methods.switchChallengeType)
         document.getElementById('challenge-list').removeEventListener('click', this.methods.popWindow)
     }
 }

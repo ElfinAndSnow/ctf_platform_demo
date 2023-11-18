@@ -61,6 +61,8 @@ html {
     --pure-color: #000;
     --chat-user-color: #dbdbde;
     --chat-gpt-color: #f7f7f8;
+    --switcher-color: #b7dfe6;
+    --switcher-activate-color: #9ec8ce;
 
     /*background image*/
     --background-image: url(../images/light.png);
@@ -92,6 +94,8 @@ html {
     --pure-color: #fff;
     --chat-user-color: #202123;
     --chat-gpt-color: #34353a;
+    --switcher-color: #3e3e57;
+    --switcher-activate-color: #1f1f29;
 
     --background-image: url(../images/dark.png)
 }
@@ -181,8 +185,81 @@ a {
     background-color: var(--selected-color);
 }
 
-.hide {
-    display: none;
+.pagenum {
+    /* 大小 */
+    min-width: 100px;
+    height: 30px;
+    /* 居中 */
+    display: block;
+    text-align: center;
+    line-height: 30px;
+    margin: 0 auto;
+    /* 颜色 */
+    color: var(--pure-color);
+}
+
+.pagination {
+    /* 大小、居中 */
+    width: 150px;
+    height: 60px;
+    margin: 0 auto;
+    /* 弹性盒子,子元素居中 */
+    display: grid;
+    grid-template-columns: 50px auto 50px;
+    gap: 5px;
+}
+
+.page-switcher {
+    /* 大小、颜色 */
+    height: 50px;
+    font-size: 20px;
+    background-color: var(--switcher-color);
+    color: var(--pure-color);
+    /* 样式 */
+    border-radius: 10px;
+    /* 文字居中 */
+    text-align: center;
+    line-height: 50px;
+    /* 行为 */
+    cursor: pointer;
+}
+
+.page-switcher:active {
+    background-color: var(--switcher-activate-color);
+}
+
+.pageinput {
+    /* 大小 */
+    width: 120px;
+    height: 50px;
+    /* 居中 */
+    margin: 0 auto;
+    /* 弹性盒子 */
+    display: flex;
+    justify-content: center;
+    /* padding */
+    padding: 10px;
+}
+
+.pageinput * {
+    height: 30px;
+    display: block;
+}
+
+.pageinput input {
+    width: 50px;
+    /* 文字居中 */
+    text-align: center;
+    /* 取消outline */
+    outline: none;
+}
+
+.pageinput button {
+    width: 60px;
+    line-height: 30px;
+    border: none;
+    background-color: var(--btn-color);
+    color: var(--pure-color);
 }
 
 

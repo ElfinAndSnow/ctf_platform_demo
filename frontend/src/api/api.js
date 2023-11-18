@@ -94,7 +94,7 @@ async function accountActivate(data){
 // token验证
 export async function verify() {
     if (localStorage.getItem('zctf-access') === null){
-        errHandler(trur, '请登录')
+        errHandler(true, '请登录')
         return false
     }
     
@@ -351,7 +351,6 @@ export async function submitFlag(flag) {
         // 更新用户信息
         await getUserInfo()
     }
-
     return result
 }
 
@@ -378,9 +377,10 @@ export async function getUserRanking(page) {
 }
 // 战队排名
 export async function getTeamRanking(page) {
+    let results = null
     const configToGetTeamRanking = {
         method: 'GET',
-        url: '/api/leaderboard/teams/',
+        url: '/api/team-scores/',
         params: {
             // 页码
             page
@@ -389,11 +389,11 @@ export async function getTeamRanking(page) {
     }
     await requests(configToGetTeamRanking)
     .then(res => {
-        // 保存数据
-        sessionStorage.setItem('zctf-team-rank', JSON.stringify(res))
+        sessionStorage.setItem('zctf-teamnum', res.count)
+        results = res.results
     })
     .catch(err => {
-        // 数据获取失败
-        sessionStorage.setItem('zctf-team-rank',  '0')
+        errHandler()
     })
+    return results
 } 

@@ -95,6 +95,7 @@ export default {
             localStorage.removeItem('zctf-access')
             localStorage.removeItem('zctf-refresh')
             document.body.classList.remove('logined')
+            window.location.hash = '#/home'
         })
     },
     destroyed: undefined,

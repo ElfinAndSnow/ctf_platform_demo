@@ -15,16 +15,15 @@
     /* 外形样式：圆角矩阵 */
     border-radius: 10px;
     overflow: hidden;
-    background-color: var(--chat-gpt-color);
+    background-color: var(--switcher-color);
     box-sizing: border-box;
-    box-shadow: 0 0 0px 1px rgba(0, 0, 0, 0.06);
     width: 300px;
     /* 字体大小 */
     font-size: 14px;
 }
 
 .radio-inputs .radio {
-    flex: 1 1 auto;
+    flex: 1 1;
     text-align: center;
 }
 
@@ -45,31 +44,33 @@
 }
 
 .radio-inputs .radio input:checked + .name {
-    background-color: var(--chat-user-color);
-    font-weight: 600;
+    background-color: var(--switcher-activate-color);
+    font-weight: 600;   
+}
+
+.rank {
+    /* 定位 */
+    width: 90%;
+    /* 居中 */
+    margin: 3vh auto;
 }
 
 /* 折线图 */
 .chart {
     /* 宽高 */
-    width: 90%;
-    height: 30vh;
-    /* 颜色&&样式 */
-    background-color: var(--card-color);
-    border: 1px solid var(--edge-color);
-    border-radius: 1vw;
+    width: 100%;
+    height: 40vh;
     /* margin&padding */
-    margin: 0 auto;
     padding-top: 20px;
 }
 
 /* 表格 */
-.table {
+/* .table {
 
-}
+} */
 
 @media (max-width: 800px) {
-    .chart {
+    .rank {
         width: 100%;
     }
 }

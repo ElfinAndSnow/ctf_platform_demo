@@ -31,7 +31,7 @@ export default async function router() {
               view = render(module.default)
             })
           },
-          noVerify: true,
+          noVerify: false,
         },
         '/login': {
           render: () => {
@@ -56,17 +56,15 @@ export default async function router() {
 
     // 路由守卫
     async function routerGuard(hash) {
-      const isLogined = await verify()
       const route = routes[hash]
       if (route.noVerify){
         navTo(route)
       }
-      else if (isLogined){
-        navTo(route)
-      }
       else {
-        window.alert('请先登录再访问该页面')
-        location.hash = '#/login'
+        const isLogined = await verify()
+        if (isLogined){
+          navTo(route)
+        }
       }
     }
     // 路由跳转实现

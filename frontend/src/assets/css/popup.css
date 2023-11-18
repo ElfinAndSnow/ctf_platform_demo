@@ -105,6 +105,9 @@
     border: none;
     outline: none;
     resize: none;
+    /* 文字垂直居中 */
+    line-height: 4vh;
+    white-space: nowrap;
 }
 
 .popup .hr {
