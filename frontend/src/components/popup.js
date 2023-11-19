@@ -135,6 +135,7 @@ export default {
     afterMount: function() {
         const overlay = document.querySelector('.overlay')
         const popup = document.querySelector('.popup')
+        this.methods.createSession = this.methods.createSession()
         
         // 填入题目基本详情
         popup.querySelector('h1').innerText = overlay.dataset.title
@@ -147,7 +148,7 @@ export default {
             const createSessionFunc = () => {
                 this.methods.createSession()
             }
-            document.getElementById('open').addEventListener('click', this.methods.createSession())
+            document.getElementById('open').addEventListener('click', this.methods.createSession)
             // 销毁实例按钮
             document.getElementById('close').addEventListener('click', this.methods.deleteSession)
             // 提交flag
@@ -170,7 +171,7 @@ export default {
     },
     destroyed: function() {
         if (document.querySelector('.overlay').dataset.status === '0'){
-            document.getElementById('open').removeEventListener('click', this.methods.createSession())
+            document.getElementById('open').removeEventListener('click', this.methods.createSession)
             document.getElementById('close').removeEventListener('click', this.methods.deleteSession)
             document.querySelector('#flag+.button').removeEventListener('click', this.methods.submitFlag)
         }

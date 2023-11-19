@@ -12,19 +12,53 @@ import '../assets/css/challenge.css'
 export default {
     target: 'main',
     methods: {
-        // 分类器
-        switchChallengeType: (e) => {
-            // 防止同时点击多个标签出现报错
-            if (document.getElementById('switch-bar')!==e.target){
-                // 移除展示的题目
-                document.querySelectorAll('.challenge-bar').forEach(item => {
-                    document.getElementById('challenge-list').removeChild(item)
-                })
-                // 标签激活状态变化
-                document.querySelector("#switch-bar .active").classList.remove("active")
-                e.target.classList.add("active")
-                // 获取题目列表
+        // 获取题目列表
+        appendChallengeList: async function(page, type = 'all') {
+            let challenges = await getChallengeList(page, type)
+            const challengeList = document.getElementById('challenge-list')
+            challenges.forEach(item => {
+                // 添加题目信息
+                challengeList.innerHTML += `
+                    <div class="challenge-bar ${item.type.toLowerCase()} ${item.is_solved_by_current_user||item.is_solved_by_current_team?'issolved':''}" data-id="${item.id}" data-ds="${item.description}">
+                        <h1>${item.name}</h1>
+                        <div class="hr"></div>
+                        <h2> ${item.points} pts </h2>
+                    </div>
+                `
+            })
+            // 显示总页数和题数
+            const num = sessionStorage.getItem('zctf-challenge-num')
+            // 每页最多10题
+            document.querySelector('.pagenum').innerText = `共${parseInt(num/10)+1}页，总共${num}题`
+        },
+        showInfoBoard: () => {
+            const userInfo = JSON.parse(sessionStorage.getItem('zctf-userinfo'))
+            document.getElementById('username').innerText = userInfo.username || 'UserName'
+            document.getElementById('team').innerText = userInfo.team || 'No Team'
+            document.getElementById('score').innerText = userInfo.points || 'None Point'
+            const solved = userInfo.solved_challenges.length
+            document.getElementById('solved').innerText = String(solved)
+        },
+            // 分类器
+        switchChallengeType: function() {
+            const self = this
+            return async function(e){
+                // 防止同时点击多个标签出现报错
+                if (document.getElementById('switch-bar')!==e.target){
+                    console.log(e.target)
+                    // 移除展示的题目
+                    document.querySelectorAll('.challenge-bar').forEach(item => {
+                        document.getElementById('challenge-list').removeChild(item)
+                    })
+                    // 标签激活状态变化
+                    document.querySelector("#switch-bar .active").classList.remove("active")
+                    e.target.classList.add("active")
+                    // 获取题目列表
+                    const type = e.target.innerText
+                    await self.appendChallengeList(1, type)
+                }
             }
+            
         },
         // 调用弹窗
         popWindow: (e) => {
@@ -51,33 +85,7 @@ export default {
                 })
             }                                                                          
         },
-        appendChallengeList: async function(page) {
-            // 获取题目列表
-            let challenges = await getChallengeList(page)
-            const challengeList = document.getElementById('challenge-list')
-            challenges.forEach(item => {
-                // 添加题目信息
-                challengeList.innerHTML += `
-                    <div class="challenge-bar ${item.type.toLowerCase()} ${item.is_solved_by_current_user||item.is_solved_by_current_team?'issolved':''}" data-id="${item.id}" data-ds="${item.description}">
-                        <h1>${item.name}</h1>
-                        <div class="hr"></div>
-                        <h2> ${item.points} pts </h2>
-                    </div>
-                `
-            })
-            // 显示总页数和题数
-            const num = sessionStorage.getItem('zctf-challenge-num')
-            // 每页最多10题
-            document.querySelector('.pagenum').innerText = `共${parseInt(num/10)+1}页，总共${num}题`
-        },
-        showInfoBoard: () => {
-            const userInfo = JSON.parse(sessionStorage.getItem('zctf-userinfo'))
-            document.getElementById('username').innerText = userInfo.username || 'UserName'
-            document.getElementById('team').innerText = userInfo.team || 'No Team'
-            document.getElementById('score').innerText = userInfo.points || 'None Point'
-            const solved = userInfo.solved_challenges.length
-            document.getElementById('solved').innerText = String(solved)
-        },
+        
     },
     template: `
         <div class="view">
@@ -122,6 +130,7 @@ export default {
         return this.template
     },
     afterMount: function() {
+        this.methods.switchChallengeType = this.methods.switchChallengeType()
         // 获取首页题目列表并渲染
         this.methods.appendChallengeList(1)
         // 渲染信息板
