@@ -13,7 +13,7 @@ export default {
 
     },
     template: `
-        <div id="intro" class="card">
+        <div id="intro">
             <div id='qs'>
                 <h1>ZCTF</h1>
                 <h3>一个CTF平台</h3>

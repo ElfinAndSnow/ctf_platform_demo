@@ -253,16 +253,20 @@ export function register(data, loginbar, usernameAlert, emailAlert, pwdToRegiste
 }
 
 // 获取题目列表（含详情）
-export async function getChallengeList(page) {
+export async function getChallengeList(page, type = 'all') {
     let challenges = {}
     const configToGetChallenges = {
         method: 'GET',
         url: '/api/challenges/',
         params: {
             // 页码
-            page
+            page,
         },
         token: localStorage.getItem('zctf-access'),
+    }
+    // 添加type属性 misc/web/pwn...
+    if (type !== 'all'){
+        configToGetChallenges.params.type = type
     }
     await requests(configToGetChallenges, loader)
     .then(res => {
@@ -301,15 +305,29 @@ export async function createChallengeSession(id) {
     .catch(err => {
         if(err.detail === 'You have created a session for this challenge!'){
             result = {
-                status: true
+                status: '1'
+            }
+        }
+        else {
+            result = {
+                status: '2',
+                detail: err.detail,
             }
         }
     })
     return result
 }
 
+// 附件件下载
+export async function downloadFile() {
+    const configToDownloadFile = {
+        method: 'GET'
+    } 
+}
+
 // 销毁题目会话
 export async function deleteChallengeSession() {
+    let res = null
     const configToDeleteSession = {
         method: 'DELETE',
         url: '/api/challenge-session/',
@@ -319,11 +337,19 @@ export async function deleteChallengeSession() {
     }
     await requests(configToDeleteSession, loader)
     .then(res => {
-        // die silently
+        // 成功
+        res = {
+            status: true,
+        }
     })
     .catch(err => {
-        // die silently
+        // 失败
+        res = {
+            status: false,
+            detail: err.detail
+        }
     })
+    return res
 }
 
 // flag提交

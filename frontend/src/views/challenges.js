@@ -20,10 +20,10 @@ export default {
                 document.querySelectorAll('.challenge-bar').forEach(item => {
                     document.getElementById('challenge-list').removeChild(item)
                 })
-                // 获取题目列表
                 // 标签激活状态变化
                 document.querySelector("#switch-bar .active").classList.remove("active")
                 e.target.classList.add("active")
+                // 获取题目列表
             }
         },
         // 调用弹窗

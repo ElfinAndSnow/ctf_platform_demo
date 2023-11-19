@@ -31,7 +31,7 @@ export default {
                 // id是int型
                 let res = await createChallengeSession(parseInt(document.querySelector('.overlay').dataset.id))
                 // 若已有会话存在
-                if (res?.status){
+                if (res?.status === '1'){
                     const flag = window.confirm('当前已有开启的实例存在，是否销毁已有实例以创建该题实例')
                     if (flag){
                         // 销毁会话
@@ -44,8 +44,11 @@ export default {
                         return
                     }
                 }
+                else if (res?.status === '2'){
+                    window.alert(res.detail)
+                }
                 // 展示会话视图
-                if (typeof res.address !== 'undefined') {
+                if (typeof res?.address !== 'undefined') {
                     // 显示更多信息
                     sessionStorage.setItem('zctf-challenge-addr', res.address)
                     self.showSessionView(res.address)
@@ -73,7 +76,9 @@ export default {
         },
         // 销毁会话
         deleteSession: async function() {
-            await deleteChallengeSession()
+            const res = await deleteChallengeSession()
+            // 删除成功
+            if (res.status){
             // 隐藏flag输入框
             document.querySelector('.popup>.input').style.display = 'none'
             // 隐藏实例销毁按钮
@@ -95,6 +100,10 @@ export default {
             sessionStorage.removeItem('zctf-challenge-title')
             sessionStorage.removeItem('zctf-challenge-description')
             sessionStorage.removeItem('zctf-challenge-status')
+            }
+            else {
+                window.alert(res.detail)
+            }
         },  
             
     },
