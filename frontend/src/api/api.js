@@ -4,7 +4,7 @@ import requests from '../utils/requests.js'
 const loader = document.querySelector('.box')
 
 // 状态异常处理
-function errHandler(userAlert = true, warning = '状态异常，请重新登录') {
+export function errHandler(userAlert = true, warning = '状态异常，请重新登录') {
     if (userAlert) {
         window.alert(warning)
     }
@@ -12,6 +12,7 @@ function errHandler(userAlert = true, warning = '状态异常，请重新登录'
     localStorage.removeItem('zctf-access')
     localStorage.removeItem('zctf-refresh')
     document.body.classList.remove('logined')
+    sessionStorage.removeItem('zctf-status')
     // 跳转到登录界面
     window.location.hash = '#/login'
 }
@@ -93,6 +94,9 @@ async function accountActivate(data){
 
 // token验证
 export async function verify() {
+    if (sessionStorage.getItem('zctf-status') === '1'){
+        return true
+    }
     if (localStorage.getItem('zctf-access') === null){
         errHandler(true, '请登录')
         return false
@@ -135,6 +139,9 @@ export async function verify() {
     // 验证失败
     if (!flag){
         errHandler(true, '请登录')
+    }
+    else {
+        sessionStorage.setItem('zctf-status', '1')
     }
     return flag
 
@@ -198,6 +205,7 @@ export async function login(data, alert = null) {
     if (flag){
         window.alert('登录成功！')
         document.body.classList.add('logined')
+        sessionStorage.setItem('zctf-status', '1')
         window.location.hash = '#/home'
     }
 }
@@ -253,7 +261,7 @@ export function register(data, loginbar, usernameAlert, emailAlert, pwdToRegiste
 }
 
 // 获取题目列表（含详情）
-export async function getChallengeList(page, type = 'all') {
+export async function getChallengeList(page, type = 'All') {
     let challenges = {}
     const configToGetChallenges = {
         method: 'GET',
@@ -265,7 +273,7 @@ export async function getChallengeList(page, type = 'all') {
         token: localStorage.getItem('zctf-access'),
     }
     // 添加type属性 misc/web/pwn...
-    if (type !== 'all'){
+    if (type !== 'All'){
         configToGetChallenges.params.type = type
     }
     await requests(configToGetChallenges, loader)

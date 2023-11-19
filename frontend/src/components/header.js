@@ -1,4 +1,5 @@
 import '../assets/css/header.css'
+import { errHandler } from '../api/api'
 /*
 页眉内容
 1. logo + slogan
@@ -92,10 +93,7 @@ export default {
 
         // 登出
         document.querySelector('.logout').addEventListener('click', () => {
-            localStorage.removeItem('zctf-access')
-            localStorage.removeItem('zctf-refresh')
-            document.body.classList.remove('logined')
-            window.location.hash = '#/home'
+            errHandler(false)
         })
     },
     destroyed: undefined,
