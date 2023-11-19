@@ -333,10 +333,29 @@ export function downloadFile() {
         method: 'GET',
         url: `/api/challenge-file-download/${id}/`,
         token: localStorage.getItem('zctf-access'),
+        has_file: true
     }
     requests(configToDownloadFile)
-    .then()
-    .catch()
+    .then(res => {
+        // 生成临时链接
+        const downloadUrl = URL.createObjectURL(res)
+
+        // 创建一个隐藏的<a>标签
+        const a = document.createElement('a')
+        a.href = downloadUrl
+        a.download = 'challenge.zip'
+
+        // 模拟点击下载
+        document.body.appendChild(a)
+        a.click()
+        a.remove()
+
+        // 清理临时链接
+        URL.revokeObjectURL(downloadUrl)
+    })
+    .catch(err => {
+        console.log(err)
+    })
 }
 
 // 销毁题目会话

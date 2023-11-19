@@ -126,6 +126,20 @@
     display: inline;
 }
 
+#download {
+    /* 字体样式 */
+    text-decoration: underline;
+    font-style: italic;
+    /* 鼠标行为 */
+    cursor:pointer;
+    /* 颜色 */
+    color: var(--btn-color);
+}
+
+#download:hover {
+    color: var(--btn-hover-color);
+}
+
 @media (max-width: 800px) {
     .popup {
         width: 90vw;

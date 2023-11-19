@@ -14,6 +14,11 @@ export default function requests(config, loader = null){
         // 确定请求的方式和接口地址
         xhr.open(config.method||"GET", BaseURL+config.url)
 
+        // 用Blob对象处理文件下载
+        if (config.has_file){
+            xhr.responseType = 'blob'
+        }
+
         // 处理请求结果
         xhr.addEventListener('readystatechange', ()=>{
             if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -23,7 +28,12 @@ export default function requests(config, loader = null){
                 }
                 // 正常请求结果处理
                 if(xhr.status>=200 && xhr.status<300){
-                    resolve(JSON.parse(xhr.response))
+                    if (config.has_file){
+                        resolve(xhr.response)
+                    }
+                    else {
+                        resolve(JSON.parse(xhr.response))
+                    }
                 }
                 // 异常请求结果处理
                 else{
