@@ -50,7 +50,7 @@ services:
     expose:
       - "80"
     volumes:
-      - ./backend/static:/usr/share/nginx/html/static
+      - ./backend/static:/usr/share/nginx/html/static/
       - ./compose/nginx/log:/var/log/nginx
     links:
       - web
