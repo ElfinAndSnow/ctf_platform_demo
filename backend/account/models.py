@@ -90,6 +90,8 @@ class UserChallengeSession(AbstractTimeLimitedModel):
     def create_container(self, request):
         image_name = self.challenge.image_name
         if not image_name:
+            self.is_container_removed = True
+            self.save()
             return
         client = docker.from_env()
         port = self.port
@@ -102,7 +104,13 @@ class UserChallengeSession(AbstractTimeLimitedModel):
             break
         if self.port_inside:
             port_inside = self.port_inside
+        container_name = (
+                str(self.id) + "-" +
+                str(self.user.username) + "-" +
+                str(self.challenge.name)
+        )
         container = client.containers.run(
+            name=container_name,
             image=image_name,
             detach=True,
             ports={port_inside: port}
