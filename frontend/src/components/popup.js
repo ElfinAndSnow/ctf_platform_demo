@@ -1,15 +1,21 @@
 import '../assets/css/popup.css'
-import { createChallengeSession, deleteChallengeSession, submitFlag } from '../api/api'
+import { createChallengeSession, deleteChallengeSession, submitFlag, downloadFile } from '../api/api'
 export default {
     target: '.overlay',
     methods: {
         // 展示会话视图
         showSessionView: function() {
             const content = document.querySelector('.content')
-            content.innerHTML += '<b id="addr">题目地址：</b>'
-            const addr = document.createElement('p')
-            addr.innerText = sessionStorage.getItem('zctf-challenge-addr')
-            document.getElementById('addr').after(addr)
+            // 如有附件，显示下载按钮
+            if (document.querySelector('.overlay').dataset.file === '1'){
+                document.getElementById('download').style.display = 'block'
+            }
+            //如有地址，显示地址
+            if (typeof sessionStorage.getItem('zctf-challenge-addr') !== 'undefined'){
+                const addr = document.querySelector('#addr+p')
+                addr.style.display = 'block'
+                addr.innerText = sessionStorage.getItem('zctf-challenge-addr')
+            }
             // 显示flag输入框
             document.querySelector('.popup>.input').style.display = 'block'
             // 显示会话销毁按钮
@@ -37,12 +43,10 @@ export default {
                         // 销毁会话
                         await deleteChallengeSession()
                         // 再创建会话
-                        res = await createChallengeSession(parseInt(document.querySelector('.overlay').dataset.id))
+                        await self.openSession()
                     }
                     // 中止创建会话
-                    else {
-                        return
-                    }
+                    return
                 }
                 else if (res?.status === '2'){
                     window.alert(res.detail)
@@ -51,7 +55,7 @@ export default {
                 if (typeof res?.address !== 'undefined') {
                     // 显示更多信息
                     sessionStorage.setItem('zctf-challenge-addr', res.address)
-                    self.showSessionView(res.address)
+                    self.showSessionView()
                     // 会话存入sessionStorage
                     const overlay = document.querySelector('.overlay')
                     sessionStorage.setItem('zctf-challenge-id', overlay.dataset.id)
@@ -64,42 +68,31 @@ export default {
         // 提交flag
         submitFlag: async function() {
             const flag = document.getElementById('flag').value
-            let result = await submitFlag(flag)
-            if (result){
-                window.alert('flag正确！')
-                // 刷新页面
-                location.reload()
-            }
-            else {
-                window.alert('flag错误！')
-            }
+            await submitFlag(flag)
         },
         // 销毁会话
         deleteSession: async function() {
             const res = await deleteChallengeSession()
             // 删除成功
-            if (res.status){
-            // 隐藏flag输入框
-            document.querySelector('.popup>.input').style.display = 'none'
-            // 隐藏实例销毁按钮
-            document.getElementById('close').style.display = 'none'
-            // 显示实例开启按钮
-            document.getElementById('open').style.display = 'block'
-            // 移除题目地址
-            const content = document.querySelector('.content')
-            const p = content.querySelector('#addr+p')
-            const addr = content.querySelector('#addr')
-            if (typeof p !== 'undefined'){
-                content.removeChild(p)
-            }
-            if (typeof addr !== 'undefined'){
-                content.removeChild(addr)
-            }
-            // 销毁已有会话信息
-            sessionStorage.removeItem('zctf-challenge-id')
-            sessionStorage.removeItem('zctf-challenge-title')
-            sessionStorage.removeItem('zctf-challenge-description')
-            sessionStorage.removeItem('zctf-challenge-status')
+            if (res?.status){
+                // 隐藏flag输入框
+                document.querySelector('.popup>.input').style.display = 'none'
+                // 隐藏实例销毁按钮
+                document.getElementById('close').style.display = 'none'
+                // 显示实例开启按钮
+                document.getElementById('open').style.display = 'block'
+                // 移除题目地址
+                document.getElementById('addr').style.display = 'none'
+                document.querySelector('#addr+p').innerText = ''
+                // 移除文件下载按钮
+                if (document.querySelector('.overlay').dataset.file === '1'){
+                    document.getElementById('download').style.display = 'none'
+                }
+                // 销毁已有会话信息
+                sessionStorage.removeItem('zctf-challenge-id')
+                sessionStorage.removeItem('zctf-challenge-title')
+                sessionStorage.removeItem('zctf-challenge-description')
+                sessionStorage.removeItem('zctf-challenge-status')
             }
             else {
                 window.alert(res.detail)
@@ -120,6 +113,9 @@ export default {
                 <div class="content">
                     <b id='description'>描述：</b>
                     <p></p>
+                    <a id="download" style="display: none">下载附件</a>
+                    <b id="addr" style="display: none">题目地址：</b>
+                    <p></p>
                 </div>
                 <div class="button" id="open">开启实例</div>
                 <div class="button" id="close" style="display: none">销毁实例</div>
@@ -135,7 +131,8 @@ export default {
     afterMount: function() {
         const overlay = document.querySelector('.overlay')
         const popup = document.querySelector('.popup')
-        this.methods.createSession = this.methods.createSession()
+        // 放置createSession返回的函数
+        this.methods.openSession = this.methods.createSession()
         
         // 填入题目基本详情
         popup.querySelector('h1').innerText = overlay.dataset.title
@@ -144,11 +141,10 @@ export default {
         // 题未解出视图
         if (document.querySelector('.overlay').dataset.status === '0'){
             this.methods.showExistedSession()
+            // 下载附件按钮
+            document.getElementById('download').addEventListener('click', downloadFile)
             // 开启实例按钮
-            const createSessionFunc = () => {
-                this.methods.createSession()
-            }
-            document.getElementById('open').addEventListener('click', this.methods.createSession)
+            document.getElementById('open').addEventListener('click', this.methods.openSession)
             // 销毁实例按钮
             document.getElementById('close').addEventListener('click', this.methods.deleteSession)
             // 提交flag
@@ -171,11 +167,15 @@ export default {
     },
     destroyed: function() {
         if (document.querySelector('.overlay').dataset.status === '0'){
-            document.getElementById('open').removeEventListener('click', this.methods.createSession)
+            document.getElementById('open').removeEventListener('click', this.methods.openSession)
             document.getElementById('close').removeEventListener('click', this.methods.deleteSession)
             document.querySelector('#flag+.button').removeEventListener('click', this.methods.submitFlag)
+            const download = document.getElementById('download')
+            if (typeof download !== 'undefined'){
+                download.removeEventListener('click', downloadFile)
+            }
         }
-        document.querySelector('.popup>header>label').removeEventListener('click', this.destory)
+        document.querySelector('.popup>header>label').removeEventListener('click', this.destoryed)
         // 移除弹窗
         document.body.removeChild(document.querySelector('.overlay'))
     }

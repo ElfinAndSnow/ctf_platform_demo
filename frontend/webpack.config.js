@@ -2,6 +2,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const miniSVGDataURI = require("mini-svg-data-uri");
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const path = require('path');
 
 
@@ -9,6 +10,10 @@ const config = {
   mode: 'production',
 //  起点或是应用程序的起点入口
   entry:  path.resolve(__dirname, "src/index.js"),
+  include: path.resolve(__dirname, "./src"),
+  resolve:{
+    modules: [path.resolve(__dirname, "./node_modules")]
+  },
   output: {
       // 编译后的输出路径
       // 注意此处必须是绝对路径，不然 webpack 将会抛错（使用 Node.js 的 path 模块）
@@ -25,31 +30,32 @@ const config = {
           favicon: './src/assets/images/favicon.ico',
           useCdn: process.env.NODE_ENV === 'production',
       }),
-      new MiniCssExtractPlugin()
+      new MiniCssExtractPlugin(),
+      new BundleAnalyzerPlugin(),
   ],
   module: {
       rules: [
           {
-              test: /\.css$/i,
-              use: [MiniCssExtractPlugin.loader, "css-loader"],
+            test: /\.css$/i,
+            use: [MiniCssExtractPlugin.loader, "css-loader"],
           },
           {
-              test: /\.(png|jpg|jpeg)$/i,
-              type: "asset",
-              generator: {
-                  filename: 'assets/[hash][ext]'
-              },
+            test: /\.(png|jpg|jpeg)$/i,
+            type: "asset",
+            generator: {
+                filename: 'assets/[hash][ext]'
+            },
           },
           {
-              test: /\.svg$/i,
-              type: "asset/inline",
-              generator: {
-                dataUrl(content) {
-                  content = content.toString();
-                  return miniSVGDataURI(content);
-                },
+            test: /\.svg$/i,
+            type: "asset/inline",
+            generator: {
+              dataUrl(content) {
+                content = content.toString();
+                return miniSVGDataURI(content);
               },
             },
+          },
       ],
   },
   performance: {
@@ -65,7 +71,7 @@ const config = {
 }
 
 if (process.env.NODE_ENV === 'development'){
-  config.devtool = 'cheap-module-eval-source-map'
+  config.devtool = 'eval-cheap-module-source-map'
 }
 
 if (process.env.NODE_ENV === 'production'){

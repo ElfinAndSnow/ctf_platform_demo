@@ -116,7 +116,7 @@ export async function verify() {
         flag = true
     })
     .catch(err => {
-        //die silently
+        // die silently
     })
     if (!flag){
         // refresh access
@@ -326,16 +326,22 @@ export async function createChallengeSession(id) {
     return result
 }
 
-// 附件件下载
-export async function downloadFile() {
+// 附件下载
+export function downloadFile() {
+    const id = document.querySelector('.overlay').dataset.id
     const configToDownloadFile = {
-        method: 'GET'
-    } 
+        method: 'GET',
+        url: `/api/challenge-file-download/${id}/`,
+        token: localStorage.getItem('zctf-access'),
+    }
+    requests(configToDownloadFile)
+    .then()
+    .catch()
 }
 
 // 销毁题目会话
 export async function deleteChallengeSession() {
-    let res = null
+    let response = null
     const configToDeleteSession = {
         method: 'DELETE',
         url: '/api/challenge-session/',
@@ -346,24 +352,22 @@ export async function deleteChallengeSession() {
     await requests(configToDeleteSession, loader)
     .then(res => {
         // 成功
-        res = {
+        response = {
             status: true,
         }
     })
     .catch(err => {
         // 失败
-        res = {
+        response = {
             status: false,
             detail: err.detail
         }
     })
-    return res
+    return response
 }
 
 // flag提交
 export async function submitFlag(flag) {
-    // 提交结果
-    let result = false
     const configToSubmitFlag = {
         method: 'POST',
         url: '/api/flag-submission',
@@ -375,17 +379,13 @@ export async function submitFlag(flag) {
     }
     await requests(configToSubmitFlag, loader)
     .then(res => {
-        result = true
+        window.alert('flag正确！')
+        // 刷新页面
+        location.reload()
     })
     .catch(err => {
-
+        window.alert(err.detail)
     })
-
-    if (result){
-        // 更新用户信息
-        await getUserInfo()
-    }
-    return result
 }
 
 // 用户排名
@@ -409,6 +409,7 @@ export async function getUserRanking(page) {
     })
     return results
 }
+
 // 战队排名
 export async function getTeamRanking(page) {
     let results = null

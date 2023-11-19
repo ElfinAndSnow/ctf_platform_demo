@@ -44,7 +44,6 @@ export default {
           data
         })
       })
-      console.log(series)
       // 折线图配置信息
       const option = {
         // 图例组件

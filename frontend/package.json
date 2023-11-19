@@ -12,13 +12,17 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "babel-core": "^4.7.16",
     "css-loader": "^6.8.1",
     "css-minimizer-webpack-plugin": "^5.0.1",
     "html-webpack-plugin": "^5.5.3",
+    "i": "^0.3.7",
     "mini-css-extract-plugin": "^2.7.6",
     "mini-svg-data-uri": "^1.4.4",
     "style-loader": "^3.3.3",
+    "thread-loader": "^4.0.2",
     "webpack": "^5.88.2",
+    "webpack-bundle-analyzer": "^4.10.1",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.1"
   },

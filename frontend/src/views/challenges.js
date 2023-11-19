@@ -13,13 +13,13 @@ export default {
     target: 'main',
     methods: {
         // 获取题目列表
-        appendChallengeList: async function(page, type = 'all') {
+        appendChallengeList: async function(page, type = 'All') {
             let challenges = await getChallengeList(page, type)
             const challengeList = document.getElementById('challenge-list')
             challenges.forEach(item => {
                 // 添加题目信息
                 challengeList.innerHTML += `
-                    <div class="challenge-bar ${item.type.toLowerCase()} ${item.is_solved_by_current_user||item.is_solved_by_current_team?'issolved':''}" data-id="${item.id}" data-ds="${item.description}">
+                    <div class="challenge-bar ${item.type.toLowerCase()} ${item.is_solved_by_current_user||item.is_solved_by_current_team?'issolved':''}" data-id="${item.id}" data-ds="${item.description}" data-file="${item.has_file?'1':'0'}">
                         <h1>${item.name}</h1>
                         <div class="hr"></div>
                         <h2> ${item.points} pts </h2>
@@ -31,21 +31,21 @@ export default {
             // 每页最多10题
             document.querySelector('.pagenum').innerText = `共${parseInt(num/10)+1}页，总共${num}题`
         },
+        // 信息板渲染
         showInfoBoard: () => {
             const userInfo = JSON.parse(sessionStorage.getItem('zctf-userinfo'))
             document.getElementById('username').innerText = userInfo.username || 'UserName'
             document.getElementById('team').innerText = userInfo.team || 'No Team'
-            document.getElementById('score').innerText = userInfo.points || 'None Point'
+            document.getElementById('score').innerText = userInfo.points
             const solved = userInfo.solved_challenges.length
-            document.getElementById('solved').innerText = String(solved)
+            document.getElementById('solved').innerText = solved
         },
-            // 分类器
+        // 分类器
         switchChallengeType: function() {
             const self = this
             return async function(e){
                 // 防止同时点击多个标签出现报错
                 if (document.getElementById('switch-bar')!==e.target){
-                    console.log(e.target)
                     // 移除展示的题目
                     document.querySelectorAll('.challenge-bar').forEach(item => {
                         document.getElementById('challenge-list').removeChild(item)
@@ -70,6 +70,7 @@ export default {
                 overlay.setAttribute('data-ds', e.target.dataset.ds)
                 overlay.setAttribute('data-title', e.target.querySelector('h1').innerText)
                 overlay.setAttribute('data-status', e.target.classList.contains('issolved')?'1':'0')
+                overlay.setAttribute('data-file', e.target.dataset.file)
                 document.body.appendChild(overlay)
                 let popup = null
                 import('../components/popup.js').then((module) => {
@@ -85,7 +86,62 @@ export default {
                 })
             }                                                                          
         },
-        
+        // 页面跳转
+        pageShift: async function(page) {
+            // 判断页码合法性
+            if (page < 1 || page > parseInt(sessionStorage.getItem('zctf-challenge-num')/10)+1){
+                window.alert('不存在该页面')
+                return
+            }
+            // 移除展示的题目
+            document.querySelectorAll('.challenge-bar').forEach(item => {
+                document.getElementById('challenge-list').removeChild(item)
+            })
+            // 获取题目列表
+            const type = document.querySelector('.active').innerText
+            await this.appendChallengeList(page, type)
+            // 显示新页码
+            document.getElementById('page').innerText = page
+        },
+        // 上一页
+        toPrev: function() {
+            const self = this
+            return async function() {
+                const page = document.getElementById('page').innerText - 1
+                self.pageShift(page)
+            }
+        },
+        // 下一页
+        toNext: function() {
+            const self = this
+            return async function() {
+                const page = document.getElementById('page').innerText + 1
+                console.log(page)
+                self.pageShift(page)
+            }
+        },
+        // 显示页码输入框
+        showPageInput: function(e) {
+            const input = document.querySelector('#challenge-bank>form')
+            input.style.display = 'flex'
+            // 默认填入当前页码
+            input.querySelector('input').value = e.target.innerText
+        },
+        // 隐藏页码输入框
+        hidePageInput: function(e) {
+            const pageInput = document.querySelector('#challenge-bank>form')
+            if (!pageInput.contains(e.target)&&e.target!==document.getElementById('page')){
+                pageInput.style.display = 'none'
+            }
+        },
+        // 跳转至指定页码
+        toAllocated: function() {
+            const self = this
+            return async function(e) {
+                const page = e.target.previousElementSibling.value
+                self.pageShift(page)
+            }
+        }
     },
     template: `
         <div class="view">
@@ -104,12 +160,12 @@ export default {
             </div>
             <div id="challenge-bank" class="card">
                 <div id="switch-bar">
-                    <a class="active" data-filter="all">All</a><div class="vl"></div>
-                    <a data-filter="misc">Misc</a><div class="vl"></div>
-                    <a data-filter="web">Web</a><div class="vl"></div>
-                    <a data-filter="reverse">Reverse</a><div class="vl"></div>
-                    <a data-filter="pwn">Pwn</a><div class="vl"></div>
-                    <a data-filter="crypto">Crypto</a>
+                    <a class="active">All</a><div class="vl"></div>
+                    <a>Misc</a><div class="vl"></div>
+                    <a>Web</a><div class="vl"></div>
+                    <a>Reverse</a><div class="vl"></div>
+                    <a>Pwn</a><div class="vl"></div>
+                    <a>Crypto</a>
                 </div>
                 <div class="hr"></div>
                 <div id="challenge-list"></div>
@@ -119,7 +175,7 @@ export default {
                     <div class="page-switcher" id="page">1</div>
                     <div class="page-switcher" id="next">&gt;</div>
                 </div>
-                <form class="pageinput" style="display: none">
+                <form class="pageinput card" style="display: none">
                     <input type="text" placeholder="页码">
                     <button>确认</button>
                 </form>
@@ -130,18 +186,32 @@ export default {
         return this.template
     },
     afterMount: function() {
-        this.methods.switchChallengeType = this.methods.switchChallengeType()
+        // 放置swichChallengeTypeView返回的函数
+        this.methods.switchChallengeTypeView = this.methods.switchChallengeType()
+        this.methods.turnToPrev = this.methods.toPrev()
+        this.methods.turnToNext = this.methods.toNext()
+        this.methods.turnToAllocated = this.methods.toAllocated()
         // 获取首页题目列表并渲染
         this.methods.appendChallengeList(1)
         // 渲染信息板
         this.methods.showInfoBoard()
 
         const switchBar = document.getElementById("switch-bar");
-        switchBar.addEventListener('click', this.methods.switchChallengeType)
+        switchBar.addEventListener('click', this.methods.switchChallengeTypeView)
         document.getElementById('challenge-list').addEventListener('click', this.methods.popWindow)
+        document.getElementById('prev').addEventListener('click', this.methods.turnToPrev)
+        document.getElementById('next').addEventListener('click', this.methods.turnToNext)
+        document.getElementById('page').addEventListener('click', this.methods.showPageInput)
+        document.querySelector('form>button').addEventListener('click', this.methods.turnToAllocated)
+        document.addEventListener('click', this.methods.hidePageInput)
     },
     destroyed: function() {
-        document.getElementById('switch-bar').removeEventListener('click', this.methods.switchChallengeType)
+        document.getElementById('switch-bar').removeEventListener('click', this.methods.switchChallengeTypeView)
         document.getElementById('challenge-list').removeEventListener('click', this.methods.popWindow)
+        document.getElementById('prev').removeEventListener('click', this.methods.turnToPrev)
+        document.getElementById('next').removeEventListener('click', this.methods.turnToNext)
+        document.getElementById('page').removeEventListener('click', this.methods.showPageInput)
+        document.querySelector('form>button').removeEventListener('click', this.methods.turnToAllocated)
+        document.removeEventListener('click', this.methods.hidePageInput)
     }
 }
