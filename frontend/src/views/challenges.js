@@ -92,7 +92,7 @@ export default {
                 return
             }
             // 移除展示的题目
-            document.querySelectorAll('.challenge-bar').forEach(item => {
+            document.querySelectorAll('.challenge-bar')?.forEach(item => {
                 document.getElementById('challenge-list').removeChild(item)
             })
             // 获取题目列表
@@ -114,7 +114,6 @@ export default {
             const self = this
             return async function() {
                 const page = document.getElementById('page').innerText + 1
-                console.log(page)
                 self.pageShift(page)
             }
         },
@@ -213,7 +212,7 @@ export default {
         document.querySelector('form>button').removeEventListener('click', this.methods.turnToAllocated)
         document.removeEventListener('click', this.methods.hidePageInput)
         if (typeof document.querySelector('.overlay') !== 'undefined'){
-            this.methods.popup.destroyed()
+            this.methods.popup?.destroyed()
         }
     }
 }

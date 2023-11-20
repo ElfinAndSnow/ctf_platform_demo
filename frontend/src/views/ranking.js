@@ -22,7 +22,6 @@ export default {
       if (results === null) {
         return
       }
-
       // 折线图
       // 获取用户名列表、积分数据
       const userList = []
@@ -46,8 +45,20 @@ export default {
       })
       // 折线图配置信息
       const option = {
+        // 标题
+        title: {
+          text: '用户积分折线图',
+          x: 'center',
+          y: 'top',
+          textAlign: 'left',
+          textStyle: {
+            color: '#818CF8'
+          },
+        },
         // 图例组件
         legend: {
+          show: true,
+          top: '6%',
           data: userList,
           textStyle: {
             color: '#818CF8',
@@ -77,7 +88,14 @@ export default {
           },
         },
         // series 数据（坐标）
-        series
+        series,
+        // tooltip 提示框
+        tooltip: {
+          trigger: 'item',
+          formatter: function(params){
+            return params.marker + params.seriesName + '<br>' + '积分：' + params.data[1] + '<br />时间：' + params.data[0]
+          }
+        }
       }
       // 渲染折线图
       const chart = echarts.init(document.querySelector('#user-rank>.chart'))
