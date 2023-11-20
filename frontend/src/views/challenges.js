@@ -33,12 +33,14 @@ export default {
         },
         // 信息板渲染
         showInfoBoard: () => {
-            const userInfo = JSON.parse(sessionStorage.getItem('zctf-userinfo'))
-            document.getElementById('username').innerText = userInfo.username || 'UserName'
-            document.getElementById('team').innerText = userInfo.team || 'No Team'
-            document.getElementById('score').innerText = userInfo.points
-            const solved = userInfo.solved_challenges.length
-            document.getElementById('solved').innerText = solved
+            if (typeof sessionStorage.getItem('zctf-userinfo') !== 'undefined'){
+                const userInfo = JSON.parse(sessionStorage.getItem('zctf-userinfo'))
+                document.getElementById('username').innerText = userInfo.username || 'UserName'
+                document.getElementById('team').innerText = userInfo.team || 'No Team'
+                document.getElementById('score').innerText = userInfo.points
+                const solved = userInfo.solved_challenges.length
+                document.getElementById('solved').innerText = solved
+            }
         },
         // 分类器
         switchChallengeType: function() {
@@ -61,30 +63,26 @@ export default {
             
         },
         // 调用弹窗
-        popWindow: (e) => {
-            if (e.target.classList.contains('challenge-bar')){
-                // 创建弹窗，并render
-                const overlay = document.createElement('section')
-                overlay.classList.add('overlay')
-                overlay.setAttribute('data-id', e.target.dataset.id)
-                overlay.setAttribute('data-ds', e.target.dataset.ds)
-                overlay.setAttribute('data-title', e.target.querySelector('h1').innerText)
-                overlay.setAttribute('data-status', e.target.classList.contains('issolved')?'1':'0')
-                overlay.setAttribute('data-file', e.target.dataset.file)
-                document.body.appendChild(overlay)
-                let popup = null
-                import('../components/popup.js').then((module) => {
-                    popup = render(module.default)
-                    // 绑定题目id
-                    document.querySelector('.popup').setAttribute('data-id', e.target.dataset.id)
-                    // 绑定关闭弹窗
-                    const destroy = () => {
-                        // 让this指向popup本身,直接绑定监听this会指向label
-                        popup.destroyed()
-                    }
-                    document.querySelector('.popup>header>label').addEventListener('click', destroy)
-                })
-            }                                                                          
+        popChallengeDetail: function(e) {
+            const self = this
+            return (e) => {
+                if (e.target.classList.contains('challenge-bar')){
+                    // 创建弹窗，并render
+                    const overlay = document.createElement('section')
+                    overlay.classList.add('overlay')
+                    overlay.setAttribute('data-id', e.target.dataset.id)
+                    overlay.setAttribute('data-ds', e.target.dataset.ds)
+                    overlay.setAttribute('data-title', e.target.querySelector('h1').innerText)
+                    overlay.setAttribute('data-status', e.target.classList.contains('issolved')?'1':'0')
+                    overlay.setAttribute('data-file', e.target.dataset.file)
+                    document.body.appendChild(overlay)
+                    import(/* webpackChunkName: "popup" */ '../components/popup.js').then((module) => {
+                        self.popup = render(module.default)
+                        // 绑定关闭弹窗
+                        document.querySelector('.popup>header>label').addEventListener('click', self.popup.destroyed)
+                    })
+                }                                                              
+            }            
         },
         // 页面跳转
         pageShift: async function(page) {
@@ -191,6 +189,7 @@ export default {
         this.methods.turnToPrev = this.methods.toPrev()
         this.methods.turnToNext = this.methods.toNext()
         this.methods.turnToAllocated = this.methods.toAllocated()
+        this.methods.popWindow = this.methods.popChallengeDetail()
         // 获取首页题目列表并渲染
         this.methods.appendChallengeList(1)
         // 渲染信息板
@@ -213,5 +212,8 @@ export default {
         document.getElementById('page').removeEventListener('click', this.methods.showPageInput)
         document.querySelector('form>button').removeEventListener('click', this.methods.turnToAllocated)
         document.removeEventListener('click', this.methods.hidePageInput)
+        if (typeof document.querySelector('.overlay') !== 'undefined'){
+            this.methods.popup.destroyed()
+        }
     }
 }

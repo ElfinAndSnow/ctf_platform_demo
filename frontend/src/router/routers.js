@@ -1,6 +1,6 @@
 import * as echarts from 'echarts'
 import render from '../utils/render.js'
-import {verify} from '../api/api.js'
+import {verify, deleteChallengeSession} from '../api/api.js'
 
 
 export default async function router() {
@@ -11,7 +11,7 @@ export default async function router() {
         '/home': {
           render: () => {
           // 懒加载组件
-            import('../views/home.js').then((module) => {
+            import(/* webpackChunkName: "home" */ '../views/home.js').then((module) => {
               view = render(module.default)
             })
           },
@@ -19,7 +19,7 @@ export default async function router() {
         },
         '/challenges': {
           render: () => {
-            import('../views/challenges.js').then((module) => {
+            import(/* webpackChunkName: "challenges" */ '../views/challenges.js').then((module) => {
               view = render(module.default)
             })
           },
@@ -27,7 +27,7 @@ export default async function router() {
         },
         '/ranking': {
           render: () => {
-            import('../views/ranking.js').then((module) => {
+            import(/* webpackChunkName: "ranking" */ '../views/ranking.js').then((module) => {
               view = render(module.default)
             })
           },
@@ -35,7 +35,7 @@ export default async function router() {
         },
         '/login': {
           render: () => {
-            import('../views/login.js').then((module) => {
+            import(/* webpackChunkName: "login" */ '../views/login.js').then((module) => {
               view = render(module.default)
             })
           },
@@ -80,7 +80,19 @@ export default async function router() {
     // 注册路由
     window.addEventListener('DOMContentLoaded', () => {
       window.addEventListener('hashchange', handleHashChange)
-      window.history.pushState('','',location.hash === ''? '#/home':location.hash)
+      window.history.replaceState('','',location.hash === ''? '#/home':location.hash)
       handleHashChange()
+    })
+
+    // 关闭页面事件
+    window.addEventListener('beforeunload', async (e) => {
+      e.preventDefault()
+      // 关闭已有会话
+      await deleteChallengeSession()
+      // 注销组件
+      if (typeof view?.destroyed !== 'undefined'){
+        view.destroyed()
+      }
+      sessionStorage.clear()
     })
 }

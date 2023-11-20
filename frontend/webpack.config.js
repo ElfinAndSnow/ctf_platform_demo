@@ -10,10 +10,6 @@ const config = {
   mode: 'production',
 //  起点或是应用程序的起点入口
   entry:  path.resolve(__dirname, "src/index.js"),
-  include: path.resolve(__dirname, "./src"),
-  resolve:{
-    modules: [path.resolve(__dirname, "./node_modules")]
-  },
   output: {
       // 编译后的输出路径
       // 注意此处必须是绝对路径，不然 webpack 将会抛错（使用 Node.js 的 path 模块）
@@ -67,6 +63,7 @@ const config = {
         `...`,
         new CssMinimizerPlugin(),
       ],
+      concatenateModules: true,
   },
 }
 

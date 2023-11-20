@@ -1,5 +1,3 @@
-import { deleteChallengeSession } from './api/api.js'
-
 // 预加载
 import(/* webpackPreload: true */ './utils/preload.js')
 .then(({preload}) => {
@@ -25,8 +23,3 @@ render(footer)
 import router from './router/routers'
 router()
 
-// 关闭页面事件
-document.addEventListener('unload', () => {
-    // 关闭已有会话
-    deleteChallengeSession()
-})
