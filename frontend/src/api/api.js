@@ -19,7 +19,6 @@ export function errHandler(userAlert = true, warning = '状态异常，请重新
 
 // 获取用户个人信息
 export async function getUserInfo() {
-    console.log('3')
     let flag = false
     // configure message
     const configToGetUserInfo = {
@@ -32,7 +31,6 @@ export async function getUserInfo() {
         // 用户个人信息存入sessionStorage
         sessionStorage.setItem('zctf-userinfo', JSON.stringify(res))
         flag = true
-        console.log('4')
     })
     .catch(err => {
         // 报错，重新登录
