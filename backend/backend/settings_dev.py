@@ -13,9 +13,7 @@ import datetime
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-load_dotenv(dotenv_path)
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,9 +25,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['49.232.236.235']
+# dev env allow all host
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -67,16 +66,6 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
-    'DEFAULT_THROTTLE_CLASSES':
-        [
-            'rest_framework.throttling.AnonRateThrottle',
-            'rest_framework.throttling.UserRateThrottle',
-        ],
-    'DEFAULT_THROTTLE_RATES':
-        {
-            'anon': '5/minute',
-            'user': '30/minute',
-        }
 }
 
 AUTH_USER_MODEL = 'account.User'  # 自定义用户模型
@@ -88,7 +77,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=1),  # 配置过期时间
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=100),  # 配置过期时间
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=15),
     'JWT_ALLOW_REFRESH': True,  # 是否允许用户获取新的token值
     'UPDATE_LAST_LOGIN': True,  # 更新User的last_login
@@ -134,12 +123,8 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -197,13 +182,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # EMAIL_VERIFICATION_REGISTRATION_SECRET_KEY = "OYbJ7Cne7b5PBZYM_E_38T8VgpYYsqNrawghVnO_FAY"
 # EMAIL_VERIFICATION_PASSWORD_RESET_SECRET_KEY = "plHWNLROAEDDSVQFAYOLcHWm1N85sL5EoP3FJ7SQKEo"
 
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_SSL = True
 EMAIL_HOST = os.getenv('EMAIL_HOST')
 EMAIL_PORT = os.getenv('EMAIL_PORT')
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
