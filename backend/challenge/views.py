@@ -69,7 +69,7 @@ class ChallengeFileDownloadViewSet(viewsets.ReadOnlyModelViewSet):
 
         file_handle = instance.file.open()
 
-        response = FileResponse(file_handle, content_type="application/x-rar-compressed")
+        response = FileResponse(file_handle, content_type="application/zip")
         response['Content-Length'] = instance.file.size
         response['Content-Disposition'] = 'attachment; filename="%s"' % instance.file.name
 
