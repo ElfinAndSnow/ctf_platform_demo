@@ -3,7 +3,7 @@
 }
 
 /* 单选框 */
-.radio-inputs {
+#radio-inputs {
     /* 位置：左右居中，距离顶部一定距离 */
     margin-top: 4vh;
     position: relative;
@@ -22,28 +22,30 @@
     font-size: 14px;
 }
 
-.radio-inputs .radio {
+#radio-inputs .radio {
     flex: 1 1;
     text-align: center;
 }
 
-.radio-inputs .radio input {
+#radio-inputs .radio input {
     display: none;
 }
 
-.radio-inputs .radio .name {
+#radio-inputs .radio .name {
+    height: 100%;
     display: flex;
     cursor: pointer;
     align-items: center;
     justify-content: center;
-    border-radius: 0.5rem;
+    border-radius: 5px;
     border: none;
-    padding: .5rem 0;
+    padding: 5px 0;
     color: var(--pure-color);
     transition: all .15s ease-in-out;
+    pointer-events: none;
 }
 
-.radio-inputs .radio input:checked + .name {
+#radio-inputs .radio input:checked + .name {
     background-color: var(--switcher-activate-color);
     font-weight: 600;   
 }

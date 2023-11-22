@@ -15,8 +15,10 @@ export default {
         // 获取题目列表
         appendChallengeList: async function(page, type = 'All') {
             let challenges = await getChallengeList(page, type)
+            // 题数记到dataset中
+            document.getElementById('challenge-bank').setAttribute('data-num', challenges.count)
             const challengeList = document.getElementById('challenge-list')
-            challenges.forEach(item => {
+            challenges.results.forEach(item => {
                 // 添加题目信息
                 challengeList.innerHTML += `
                     <div class="challenge-bar ${item.type.toLowerCase()} ${item.is_solved_by_current_user||item.is_solved_by_current_team?'issolved':''}" data-id="${item.id}" data-ds="${item.description}" data-file="${item.has_file?'1':'0'}">
@@ -27,7 +29,7 @@ export default {
                 `
             })
             // 显示总页数和题数
-            const num = sessionStorage.getItem('zctf-challenge-num')
+            const num = challenges.count
             // 每页最多10题
             document.querySelector('.pagenum').innerText = `共${parseInt(num/10)+1}页，总共${num}题`
         },
@@ -93,7 +95,7 @@ export default {
         // 页面跳转
         pageShift: async function(page) {
             // 判断页码合法性
-            if (page < 1 || page > parseInt(sessionStorage.getItem('zctf-challenge-num')/10)+1){
+            if (page < 1 || page > parseInt(document.getElementById('challenge-bank').dataset.num/10)+1){
                 window.alert('不存在该页面')
                 return
             }

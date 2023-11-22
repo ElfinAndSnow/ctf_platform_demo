@@ -279,9 +279,7 @@ export async function getChallengeList(page, type = 'All') {
     await requests(configToGetChallenges, loader)
     .then(res => {
         // 返回题目信息
-        challenges = res.results
-        // 存储总题目数
-        sessionStorage.setItem('zctf-challenge-num', res.count)
+        challenges = res
     })
     .catch(err => {
         window.alert('服务端错误，获取题目列表失败！')
@@ -420,8 +418,7 @@ export async function getUserRanking(page) {
     }
     await requests(configToGetUserRanking)
     .then(res => {
-        sessionStorage.setItem('zctf-usernum', res.count)
-        results = res.results
+        results = res
     })
     .catch(err => {
         errHandler()
@@ -443,8 +440,7 @@ export async function getTeamRanking(page) {
     }
     await requests(configToGetTeamRanking)
     .then(res => {
-        sessionStorage.setItem('zctf-teamnum', res.count)
-        results = res.results
+        results = res
     })
     .catch(err => {
         errHandler()
