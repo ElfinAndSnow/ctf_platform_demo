@@ -156,7 +156,7 @@ export default {
                 <h3>SCORE</h3>
                 <div class="hr"></div>
                 <h1 id="rank"></h1>
-                <h3>TOTAL RANK</h3>
+                <h3>USER RANK</h3>
                 <div class="hr"></div>
                 <h1 id="solved"></h1>
                 <h3>SOLVED</h3>
