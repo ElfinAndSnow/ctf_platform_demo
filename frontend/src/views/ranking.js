@@ -8,14 +8,9 @@ import { getUserRanking, getTeamRanking } from "../api/api.js";
  */
 export default {
   target: 'main',
-  data: {
-    chartTaget: '.chart',
-    chart: {},
-    option: {},
-  },
   methods: {
     // 获取用户
-    showUserGrade: async (page) => {
+    showLineChart: async (page) => {
       // 获取信息
       const results = await getUserRanking(page)
       // 获取失败
@@ -58,11 +53,17 @@ export default {
         // 图例组件
         legend: {
           show: true,
-          top: '6%',
+          top: '10%',
           data: userList,
           textStyle: {
             color: '#818CF8',
           },
+        },
+        grid: {
+          x: '7%',
+          y: '20%',
+          x2: '5%',
+          y2: '10%',
         },
         // x轴 时间
         xAxis: {
@@ -71,7 +72,7 @@ export default {
             // 展示格式
             formatter: function (dateString){
               const t_date = new Date(dateString);
-              return t_date.getFullYear() + '\n' + (t_date.getMonth() + 1) + '-' + t_date.getDate()
+              return (t_date.getMonth() + 1) + '-' + t_date.getDate()
             },
             textStyle: {
               color: '#818CF8',
@@ -130,65 +131,7 @@ export default {
           data
         })
       })
-      return {
-        userList,
-        series
-      }
     },
-    // initData: () => {
-    //   const teams = ['Team1', 'Team2', 'Team3', 'Team4', 'Team5', 'Team6', 'Team7'];
-    //   const startDate = new Date('2023-10-01');
-    //   const endDate = new Date(); // 当前日期
-    //   const dateData = [];
-    //   const scoreData = [];
-  
-    //   for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
-    //     dateData.push(date.toLocaleDateString());
-    //     const scores = teams.map(() => Math.floor(Math.random() * 100)); // 随机生成分数
-    //     scoreData.push(scores);
-    //   }
-    //   return {
-    //     legend: {
-    //       data: teams,
-    //       textStyle: {
-    //         color: '#818CF8',
-    //       },
-    //     },
-    //     xAxis: {
-    //       type: 'category',
-    //       data: dateData,
-    //       axisLabel: {
-    //         textStyle: {
-    //           color: '#818CF8',
-    //         },
-    //       },
-    //     },
-    //     yAxis: {
-    //       type: 'value',
-    //       axisLabel: {
-    //         textStyle: {
-    //           color: '#818CF8',
-    //         },
-    //       },
-    //     },
-    //     series: teams.map((team, index) => ({
-    //       name: team,
-    //       type: 'line',
-    //       stack: '总分',
-    //       data: scoreData.map(scores => scores[index]),
-    //     }))
-    //   }
-    // },
-    // initChart: (chartTaget, option) => {
-    //   let chart = echarts.init(document.querySelector(chartTaget))
-    //   chart.setOption(option)
-    //   return chart
-    // },
-    // resizeChart: (chart) => {
-    //   if (typeof chart?.resize !== 'undefined'){
-    //     return chart.resize
-    //   }
-    // }
   },
   template: `
     <div id="rank">
@@ -202,7 +145,7 @@ export default {
           <span class="name">战队排名</span>
         </label>
       </div>
-      <div class="card rank" id="user-rank">
+      <div class="rank" id="user-rank">
         <div class="chart"></div>
         <div class="table"></div>
         <p class="pagenum">共1页，总共5个用户</p>
@@ -215,7 +158,7 @@ export default {
             <input type="text" placeholder="页码" value="1">
             <button>确认</button>
         </form>
-        </div>
+      </div>
       <div class="card rank" id="team-rank" style="display: none">
         <div class="chart"></div>
         <div class="table"></div>
@@ -237,8 +180,8 @@ export default {
     return this.template
   },
   afterMount: function() {
-    // 获取用户排名信息
-    this.methods.showUserGrade(1)
+    // 获取前十用户排名折线图
+    this.methods.showLineChart(1)
   },
   destroyed: function() {
   }

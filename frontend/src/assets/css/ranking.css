@@ -53,13 +53,14 @@
     width: 90%;
     /* 居中 */
     margin: 3vh auto;
+    background-color: var(--blur-color);
 }
 
 /* 折线图 */
 .chart {
     /* 宽高 */
     width: 100%;
-    height: 40vh;
+    height: 35vh;
     /* margin&padding */
     padding-top: 20px;
 }

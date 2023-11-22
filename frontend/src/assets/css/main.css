@@ -63,6 +63,7 @@ html {
     --chat-gpt-color: #f7f7f8;
     --switcher-color: #b7dfe6;
     --switcher-activate-color: #9ec8ce;
+    --blur-color: #e9f7f78a;
 
     /*background image*/
     --background-image: url(../images/light.png);
@@ -96,6 +97,7 @@ html {
     --chat-gpt-color: #34353a;
     --switcher-color: #3e3e57;
     --switcher-activate-color: #1f1f29;
+    --blur-color: #090e1898;
 
     --background-image: url(../images/dark.png)
 }
