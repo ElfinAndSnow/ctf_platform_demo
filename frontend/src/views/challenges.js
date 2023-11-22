@@ -33,7 +33,7 @@ export default {
         },
         // 信息板渲染
         showInfoBoard: () => {
-            if (typeof sessionStorage.getItem('zctf-userinfo') !== 'undefined'){
+            if (sessionStorage.getItem('zctf-userinfo') !== null){
                 const userInfo = JSON.parse(sessionStorage.getItem('zctf-userinfo'))
                 // 用户名
                 document.getElementById('username').innerText = userInfo.username || 'UserName'

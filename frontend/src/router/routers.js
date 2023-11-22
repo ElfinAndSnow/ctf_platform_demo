@@ -1,6 +1,6 @@
 import * as echarts from 'echarts'
 import render from '../utils/render.js'
-import {verify, deleteChallengeSession} from '../api/api.js'
+import {verify, deleteChallengeSession, getUserInfo} from '../api/api.js'
 
 
 export default async function router() {
@@ -63,6 +63,12 @@ export default async function router() {
       else {
         const isLogined = await verify()
         if (isLogined){
+          if (!document.body.classList.contains('logined')){
+            document.body.classList.add('logined')
+          }
+          if (sessionStorage.getItem('zctf-userinfo') === null){
+            await getUserInfo()
+          }
           navTo(route)
         }
       }
@@ -78,7 +84,10 @@ export default async function router() {
     }
     
     // 注册路由
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', () => {    
+      // 使用用户上次选择的深浅色模式
+      document.body.dataset.theme = localStorage.getItem('zctf-darkmode')
+  
       window.addEventListener('hashchange', handleHashChange)
       window.history.replaceState('','',location.hash === ''? '#/home':location.hash)
       handleHashChange()
