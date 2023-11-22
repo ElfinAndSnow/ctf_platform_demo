@@ -35,9 +35,15 @@ export default {
         showInfoBoard: () => {
             if (typeof sessionStorage.getItem('zctf-userinfo') !== 'undefined'){
                 const userInfo = JSON.parse(sessionStorage.getItem('zctf-userinfo'))
+                // 用户名
                 document.getElementById('username').innerText = userInfo.username || 'UserName'
-                document.getElementById('team').innerText = userInfo.team || 'No Team'
+                // 战队名
+                document.getElementById('team').innerText = userInfo.team_name || 'No Team'
+                // 得分
                 document.getElementById('score').innerText = userInfo.points
+                // 排名
+                document.getElementById('rank').innerText = userInfo.ranking
+                // 解题数
                 const solved = userInfo.solved_challenges.length
                 document.getElementById('solved').innerText = solved
             }
