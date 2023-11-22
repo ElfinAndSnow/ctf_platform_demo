@@ -17,6 +17,21 @@ class UserInfoSerializer(serializers.ModelSerializer):
     # points = serializers.ReadOnlyField(source='get_points_display')
     solved_challenges = ChallengeSerializer(many=True)
 
+    team_name = serializers.SerializerMethodField()
+    ranking = serializers.SerializerMethodField()
+
+    def get_team_name(self, obj):
+        if obj.team:
+            return obj.team.name
+        return None
+
+    def get_ranking(self, obj):
+        # Assuming you have a field like 'points' to determine ranking
+        user_points = obj.points
+        # Get the ranking of the user
+        users_with_higher_points = User.objects.filter(points__gt=user_points).count()
+        return users_with_higher_points + 1
+
     class Meta:
         model = User
         # fields = '__all__'
@@ -27,19 +42,23 @@ class UserInfoSerializer(serializers.ModelSerializer):
             'is_private',
             'points',
             'team',
+            'team_name',
             'is_email_verified',
             'date_joined',
             'solved_challenges',
             'last_login',
+            'ranking',
         ]
         read_only_fields = [
             'username',
             'id',
             'points',
             'team',
+            'team_name',
             'is_email_verified',
             'solved_challenges',
             'last_login',
+            'ranking',
         ]
 
 
