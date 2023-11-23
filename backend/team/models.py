@@ -1,5 +1,5 @@
 from django.db import models
-from account.models import User
+from account.models import User, Score
 
 
 class Team(models.Model):
@@ -27,22 +27,26 @@ class Team(models.Model):
         verbose_name = "战队"
 
     def check_points(self):
-        self.points = 0
-        self.challenges_solved = 0
-        for user in self.members.all():
-            for challenge in user.solved_challenges.all():
-                if challenge not in self.solved_challenges_team.all():
-                    self.solved_challenges_team.add(challenge, through_defaults={'solved_by': user})
-        for challenge in self.solved_challenges_team.all():
-            self.points += challenge.points
-            self.challenges_solved += 1
-        self.save()
+        users = self.members.all()
+        scores = Score.objects.filter(user__in=users)
 
-        # 保存当前TeamScore
-        score = TeamScore.objects.filter(team=self).last()
-        score.current_points = self.points
-        score.save()
-        return self.points, self.challenges_solved
+        points = 0
+        solved = 0
+        for score in scores:
+            if score.challenge not in self.solved_challenges_team.all():
+                points += score.challenge.points
+                solved += 1
+                self.solved_challenges_team.add(
+                    score.challenge,
+                    through_defaults={
+                        'solved_by': score.user,
+                        'current_points': points
+                    }
+                )
+        self.points = points
+        self.challenges_solved = solved
+        self.save()
+        return points, solved
 
     def check_challenges(self):
         self.challenges_solved = 0
