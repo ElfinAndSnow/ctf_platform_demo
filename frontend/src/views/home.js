@@ -36,9 +36,6 @@ export default {
 
         </div>
     `,
-    beforeMount: function() {
-        return this.template
-    },
     afterMount: function() {
         // 打字特效
         const content = '你说的对，但ZCTF是由第七组自主研发的一款全新开发世界冒险游戏，游戏发生在一个被称作「 CTF world 」 的幻想世界，你将扮演一位名为「 CTFer 」的神秘角色，在自由的题目环境中邂逅性格各异、能力独特的「 teammates 」，和他们一起逐步发掘「 flag 」的真相。'

@@ -53,9 +53,6 @@ export default {
             </div>
         </div>
     `,
-    beforeMount: function() {
-        return this.template
-    },
     afterMount: function() {
         // 载入图标
         import('../assets/images/logo.png').then(logo => {

@@ -187,9 +187,6 @@ export default {
             </div>
         </div>
     `,
-    beforeMount: function() {
-        return this.template
-    },
     afterMount: function() {
         // 放置swichChallengeTypeView返回的函数
         this.methods.switchChallengeTypeView = this.methods.switchChallengeType()

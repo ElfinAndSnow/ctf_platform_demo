@@ -152,9 +152,6 @@ export default {
             </form>
         </div>
     `,
-    beforeMount: function() {
-        return this.template
-    },
     afterMount: function() {
         document.getElementById('header').addEventListener('click', this.methods.switcher)
         document.querySelector('[name="usernametoregister"]').addEventListener('input', this.methods.removeAlert)

@@ -227,6 +227,9 @@ export default {
           
         }
       }
+    },
+    appendGradeList: function() {
+      
     }
   },
   template: `
@@ -246,9 +249,9 @@ export default {
         <div class="table"></div>
         <p class="pagenum">共1页，总共5个用户</p>
         <div class="pagination">
-          <div class="page-switcher" id="prev">&lt;</div>
-          <div class="page-switcher" id="page">1</div>
-          <div class="page-switcher" id="next">&gt;</div>
+          <div class="page-switcher" id="user-prev">&lt;</div>
+          <div class="page-switcher" id="user-page">1</div>
+          <div class="page-switcher" id="user-next">&gt;</div>
         </div>
         <form class="pageinput" style="display: none">
             <input type="text" placeholder="页码" value="1">
@@ -260,9 +263,9 @@ export default {
         <div class="table"></div>
         <p class="pagenum"></p>
         <div class="pagination">
-          <div class="page-switcher" id="prev">&lt;</div>
-          <div class="page-switcher" id="page">1</div>
-          <div class="page-switcher" id="next">&gt;</div>
+          <div class="page-switcher" id="team-prev">&lt;</div>
+          <div class="page-switcher" id="team-page">1</div>
+          <div class="page-switcher" id="team-next">&gt;</div>
         </div>
         <form class="pageinput" style="display: none">
           <input type="text" placeholder="页码" value="1">
@@ -272,9 +275,6 @@ export default {
       </div>
     </div>
   `,
-  beforeMount: function() {
-    return this.template
-  },
   afterMount: function() {
     // 获取前十用户&战队排名折线图
     this.methods.showUserLineChart(1)

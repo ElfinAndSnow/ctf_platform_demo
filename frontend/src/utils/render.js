@@ -2,7 +2,7 @@ export default function render(component) {
     // 获取挂载节点
     const target = document.querySelector(component.target)
     // 挂载前处理（令牌验证、数据请求等）
-    target.innerHTML = component.beforeMount()
+    target.innerHTML = component.template
     // 挂载后处理 （绑定事件等）
     if (typeof component.afterMount !== 'undefined'){
         component.afterMount()

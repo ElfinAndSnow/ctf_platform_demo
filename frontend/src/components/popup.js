@@ -125,9 +125,6 @@ export default {
                 </div>
             </div>
     `,
-    beforeMount: function() {
-        return this.template
-    },
     afterMount: function() {
         const overlay = document.querySelector('.overlay')
         const popup = document.querySelector('.popup')
