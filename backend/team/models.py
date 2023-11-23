@@ -27,9 +27,15 @@ class Team(models.Model):
         verbose_name = "战队"
 
     def check_points(self):
-        users = self.members.all()
-        scores = Score.objects.filter(user__in=users)
+        team_scores = TeamScore.objects.filter(team=self)
+        for score in team_scores:
+            score.delete()
 
+        users = self.members.all()
+        print("当前队员：")
+        print(users)
+        scores = Score.objects.filter(user__in=users)
+        print(scores)
         points = 0
         solved = 0
         for score in scores:
@@ -40,7 +46,8 @@ class Team(models.Model):
                     score.challenge,
                     through_defaults={
                         'solved_by': score.user,
-                        'current_points': points
+                        'current_points': points,
+                        'solved_at': score.solved_at
                     }
                 )
         self.points = points
