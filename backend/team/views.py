@@ -230,8 +230,6 @@ class ChangeTeamLeaderView(generics.UpdateAPIView):
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        team.members.add(request.user)
-
         # Set the new leader
         team.leader = new_leader
         team.save()
