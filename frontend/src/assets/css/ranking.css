@@ -50,6 +50,12 @@
     font-weight: 600;   
 }
 
+#rank>.hide {
+    opacity: 0;
+    position: absolute;
+    left: -9999px;
+}
+
 .rank {
     /* 定位 */
     width: 90%;
