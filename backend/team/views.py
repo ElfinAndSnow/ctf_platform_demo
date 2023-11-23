@@ -180,8 +180,7 @@ class RemoveMemberView(generics.DestroyAPIView):
 
             if user in team.members.all():
                 team.members.remove(user)
-                user.team = None
-                user.save()
+                team.check_points()
                 return Response(
                     data={"msg": "成员移除成功"},
                     status=status.HTTP_200_OK
