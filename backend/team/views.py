@@ -26,13 +26,10 @@ def create_team(request, team_name):
 
         try:
             team = Team(name=team_name, leader=user)
-            team.save()
-
             team.members.add(user)
             team.save()
 
-            user.team = team
-            user.save()
+            team.check_points()
 
             return Response(
                 data={"msg": "队伍创建成功", "Team_id:": team.id, "Team_name:": team_name, "The user id of leader:": user.id},
