@@ -148,8 +148,7 @@ def join_team_name(request, team_name, invitation_token):
 
         # 成为战队队员
     team.members.add(user)
-    user.team = team
-    user.save()
+    team.check_points()
 
     return Response(
         data={"msg": "成功加入战队"},
