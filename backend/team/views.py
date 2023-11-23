@@ -26,8 +26,8 @@ def create_team(request, team_name):
 
         try:
             team = Team(name=team_name, leader=user)
-            team.members.add(user)
             team.save()
+            team.members.add(user)
 
             team.check_points()
 
@@ -378,7 +378,7 @@ class QueryTeamByIDView(generics.GenericAPIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        serializer_team = self.serializer_class(team)
+        serializer_team = self.get_serializer(team)
         return Response(
             data=serializer_team.data,
             status=status.HTTP_200_OK
@@ -415,7 +415,7 @@ class QueryTeamByNameView(generics.GenericAPIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        serialized_team = self.serializer_class(team)
+        serialized_team = self.get_serializer(team)
         return Response(
             data=serialized_team.data,
             status=status.HTTP_200_OK
@@ -442,7 +442,7 @@ class TeamInfoForMemberView(generics.GenericAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        serialized_team = self.serializer_class(team)
+        serialized_team = self.get_serializer(team)
 
         return Response(
             data=serialized_team.data,
