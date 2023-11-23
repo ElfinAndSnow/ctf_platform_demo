@@ -27,12 +27,9 @@ def create_team(request, team_name):
         try:
             team = Team(name=team_name, leader=user)
             team.save()
-
             team.members.add(user)
-            team.save()
 
-            user.team = team
-            user.save()
+            team.check_points()
 
             return Response(
                 data={"msg": "队伍创建成功", "Team_id:": team.id, "Team_name:": team_name, "The user id of leader:": user.id},
@@ -115,8 +112,7 @@ def join_team_id(request, team_id, invitation_token):
 
         # 成为战队队员
     team.members.add(user)
-    user.team = team
-    user.save()
+    team.check_points()
 
     return Response(
         data={"msg": "成功加入战队"},
@@ -152,8 +148,7 @@ def join_team_name(request, team_name, invitation_token):
 
         # 成为战队队员
     team.members.add(user)
-    user.team = team
-    user.save()
+    team.check_points()
 
     return Response(
         data={"msg": "成功加入战队"},
@@ -185,8 +180,7 @@ class RemoveMemberView(generics.DestroyAPIView):
 
             if user in team.members.all():
                 team.members.remove(user)
-                user.team = None
-                user.save()
+                team.check_points()
                 return Response(
                     data={"msg": "成员移除成功"},
                     status=status.HTTP_200_OK
@@ -235,8 +229,6 @@ class ChangeTeamLeaderView(generics.UpdateAPIView):
                 data={"msg": "You are not the team leader."},
                 status=status.HTTP_403_FORBIDDEN
             )
-
-        team.members.add(request.user)
 
         # Set the new leader
         team.leader = new_leader
@@ -386,7 +378,7 @@ class QueryTeamByIDView(generics.GenericAPIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        serializer_team = self.serializer_class(team)
+        serializer_team = self.get_serializer(team)
         return Response(
             data=serializer_team.data,
             status=status.HTTP_200_OK
@@ -423,7 +415,7 @@ class QueryTeamByNameView(generics.GenericAPIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        serialized_team = self.serializer_class(team)
+        serialized_team = self.get_serializer(team)
         return Response(
             data=serialized_team.data,
             status=status.HTTP_200_OK
@@ -450,7 +442,7 @@ class TeamInfoForMemberView(generics.GenericAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        serialized_team = self.serializer_class(team)
+        serialized_team = self.get_serializer(team)
 
         return Response(
             data=serialized_team.data,

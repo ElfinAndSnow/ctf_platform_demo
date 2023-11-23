@@ -71,21 +71,34 @@ class UserChallengeSession(AbstractTimeLimitedModel):
     port_inside = models.CharField(verbose_name="容器内部端口/protocol", max_length=127, default="80/tcp", null=True)
     address = models.CharField(verbose_name="题目地址", max_length=127, null=True, blank=True)
 
-    def is_port_in_use(self, port):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            try:
-                s.bind(('localhost', port))
-            except socket.error:
-                return True  # Port is already in use
-            return False  # Port is available
+    def get_host_ports_in_range(self, start_port, end_port):
+        client = docker.from_env()
+        containers = client.containers.list()
+
+        used_ports = set()
+
+        for container in containers:
+            inspect_data = client.api.inspect_container(container.id)
+            ports = inspect_data['NetworkSettings']['Ports']
+            if ports:
+                for port_info in ports.values():
+                    if port_info is not None:
+                        for port in port_info:
+                            if port is not None and 'HostPort' in port:
+                                host_port = int(port['HostPort'])
+                                if start_port <= host_port <= end_port:
+                                    used_ports.add(host_port)
+
+        return used_ports
+
+    def find_unused_ports(self, start_port, end_port):
+        used_ports = self.get_host_ports_in_range(start_port, end_port)
+        unused_ports = [port for port in range(start_port, end_port + 1) if port not in used_ports]
+        return unused_ports
 
     def distribute_port(self):
-        for port in range(40001, 50001):
-            # test port occupancy using socket
-
-            if not self.is_port_in_use(port):
-                self.port = port
-                break
+        self.port = self.find_unused_ports(40001, 50000)[0]
+        self.save()
 
     def create_container(self, request):
         image_name = self.challenge.image_name
