@@ -17,6 +17,13 @@
     align-items: center;
 }
 
+#header * {
+    font-family: "Popins" sans-serif;
+    height: 100%;
+    flex: 1;
+    line-height: 45px;
+}
+
 #inputarea .hr {
     width: 100%;
 }
@@ -25,7 +32,7 @@
     width: 50%;
     text-align: center;
     margin: auto 0;
-    font-size: var(--global-font-size);
+    font-size: var(--text-font-size);
     color: var(--btn-color);
 }
 

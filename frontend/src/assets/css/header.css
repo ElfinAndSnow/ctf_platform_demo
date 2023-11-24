@@ -3,6 +3,9 @@ header {
     height: var(--navbar-height);
     width: 100%;
 }
+header * {
+    font-family: "Popins", sans-serif;
+}
 header .logo {
     width: var(--navbar-height);
     height: var(--navbar-height);

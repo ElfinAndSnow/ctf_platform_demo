@@ -9,6 +9,9 @@ footer {
     font-size: var(--footer-font-size);
     z-index: 1;
 }
+footer * {
+    font-family: "Popins", sans-serif;
+}
 footer div {
     display: block;
     color: #fff;

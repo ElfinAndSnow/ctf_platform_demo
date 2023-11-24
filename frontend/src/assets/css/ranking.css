@@ -43,6 +43,7 @@
     color: var(--pure-color);
     transition: all .15s ease-in-out;
     pointer-events: none;
+    font-size:  var(--global-font-size);
 }
 
 #radio-inputs .radio input:checked + .name {
@@ -94,6 +95,7 @@
     font-size: var(--footer-font-size);
     font-weight: 400;
     color: var(--title-color);
+    font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 .rate {
