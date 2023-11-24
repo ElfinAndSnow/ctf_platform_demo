@@ -38,6 +38,7 @@ export async function getUserInfo() {
     .then(res => {
         // 用户个人信息存入sessionStorage
         sessionStorage.setItem('zctf-userinfo', JSON.stringify(res.message))
+        document.querySelector('#userinfo>span').innerText = res.message.username
         flag = true
     })
     .catch(err => {

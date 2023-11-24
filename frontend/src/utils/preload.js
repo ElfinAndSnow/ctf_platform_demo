@@ -5,6 +5,7 @@ export async function preload(){
     // 验证是否登录
     const res = await verify()
     if (res){
+        await getUserInfo()
         document.body.classList.add('logined')
     }
     // 载入加载动画
