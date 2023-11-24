@@ -49,7 +49,7 @@ export default {
                     return
                 }
                 else if (res?.status === '2'){
-                    window.alert(res.detail)
+                    window.alert(res?.detail)
                 }
                 // 展示会话视图
                 if (typeof res?.address !== 'undefined') {
@@ -130,6 +130,7 @@ export default {
         const popup = document.querySelector('.popup')
         // 放置createSession返回的函数
         this.methods.openSession = this.methods.createSession()
+        this.destroyPopup = this.destroyed()
         
         // 填入题目基本详情
         popup.querySelector('h1').innerText = overlay.dataset.title
@@ -159,21 +160,24 @@ export default {
             document.querySelector('.content').appendChild(p)
         }
         // 关闭会话
-        popup.querySelector('.popup>header>label').addEventListener('click', this.destory)
+        popup.querySelector('.popup>header>label').addEventListener('click', this.destroyPopup)
 
     },
     destroyed: function() {
-        if (document.querySelector('.overlay').dataset.status === '0'){
-            document.getElementById('open').removeEventListener('click', this.methods.openSession)
-            document.getElementById('close').removeEventListener('click', this.methods.deleteSession)
-            document.querySelector('#flag+.button').removeEventListener('click', this.methods.submitFlag)
-            const download = document.getElementById('download')
-            if (typeof download !== 'undefined'){
-                download.removeEventListener('click', downloadFile)
+        const self = this
+        return function() {
+            if (document.querySelector('.overlay').dataset.status === '0'){
+                document.getElementById('open').removeEventListener('click', self.methods.openSession)
+                document.getElementById('close').removeEventListener('click', self.methods.deleteSession)
+                document.querySelector('#flag+.button').removeEventListener('click', self.methods.submitFlag)
+                const download = document.getElementById('download')
+                if (typeof download !== 'undefined'){
+                    download.removeEventListener('click', downloadFile)
+                }
             }
+            document.querySelector('.popup>header>label').removeEventListener('click', self.destroyPopup)
+            // 移除弹窗
+            document.body.removeChild(document.querySelector('.overlay'))
         }
-        document.querySelector('.popup>header>label').removeEventListener('click', this.destoryed)
-        // 移除弹窗
-        document.body.removeChild(document.querySelector('.overlay'))
     }
 }
