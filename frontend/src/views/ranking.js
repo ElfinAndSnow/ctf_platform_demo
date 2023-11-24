@@ -15,8 +15,10 @@ export default {
       // 获取信息
       const response = await getUserRanking(page)
       const results = response.results
-      // 记录用户数
-      document.getElementById('rank').setAttribute('data-usernum', response.count)
+      // 记录用户数,并渲染
+      document.getElementById('rank').dataset.usernum = response.count
+      const userPage = parseInt(response.count/10)+1
+      document.getElementById('user-pagenum').innerText = `共${userPage}页，${response.count}项数据`
       // 获取失败
       if (results === null) {
         return
@@ -116,7 +118,9 @@ export default {
       const response = await getTeamRanking(page)
       const results = response.results
       // 记录战队数
-      document.getElementById('rank').setAttribute('data-teamnum', response.count)
+      document.getElementById('rank').dataset.teamnum = response.count
+      const teamPage = parseInt(response.count/10)+1
+      document.getElementById('team-pagenum').innerText = `共${teamPage}页，${response.count}项数据`
       // 获取失败
       if (results === null) {
         return
@@ -410,7 +414,7 @@ export default {
       <div class="rank" id="user-rank">
         <div class="chart"></div>
         <div class="table"></div>
-        <p class="pagenum"></p>
+        <p class="pagenum" id="user-pagenum"></p>
         <div class="pagination">
           <div class="page-switcher" id="user-prev" data-page="user-page">&lt;</div>
           <div class="page-switcher" id="user-page" data-input="user-input">1</div>
@@ -424,7 +428,7 @@ export default {
       <div class="rank hide" id="team-rank">
         <div class="chart"></div>
         <div class="table"></div>
-        <p class="pagenum"></p>
+        <p class="pagenum" id="team-pagenum"></p>
         <div class="pagination">
           <div class="page-switcher" id="team-prev" data-page="team-page">&lt;</div>
           <div class="page-switcher" id="team-page" data-input="team-input">1</div>
@@ -446,6 +450,7 @@ export default {
     this.methods.showUserLineChart(1)
     this.methods.showTeamLineChart(1)
     this.methods.appendGradeList()
+
     document.getElementById('radio-inputs').addEventListener('click', this.methods.switchTableView)
     document.getElementById('radio-inputs').addEventListener('click', this.methods.appendGradeList)
     document.getElementById('user-page').addEventListener('click', this.methods.showPageInput)
