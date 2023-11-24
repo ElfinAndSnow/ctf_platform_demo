@@ -52,8 +52,8 @@
 
 #rank>.hide {
     opacity: 0;
-    position: absolute;
-    left: -9999px;
+    position: fixed;
+    left: 999px;
 }
 
 .rank {
@@ -68,15 +68,51 @@
 .chart {
     /* 宽高 */
     width: 100%;
-    height: 35vh;
+    height: 40vh;
     /* margin&padding */
     padding-top: 20px;
 }
 
-/* 表格 */
-/* .table {
+.table {
+    margin-top: 20px;
+    width: 100%;
+}
 
-} */
+.grade {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 60px;
+    width: 90%;
+    margin: 0 auto;
+
+}
+
+.grade * {
+    white-space: nowrap;
+    font-size: var(--footer-font-size);
+    font-weight: 400;
+    color: var(--title-color);
+}
+
+.rate {
+    flex: 1;
+}
+
+.name {
+    flex: 2;
+}
+
+.score {
+    flex: 1;
+    text-align: right;
+}
+
+.time {
+    flex: 2;
+    text-align: right;
+}
 
 @media (max-width: 800px) {
     .rank {

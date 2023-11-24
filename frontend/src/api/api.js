@@ -12,7 +12,6 @@ export function errHandler(err, out = false) {
         window.alert('服务器出错！请网站维修后再访问~')
     }
     else {
-        console.log(err)
         window.alert(err?.message?.detail || '本地状态出错！请重新登录~')
     }
     if (out){
@@ -430,7 +429,7 @@ export async function getUserRanking(page = 1) {
         },
         token: localStorage.getItem('zctf-access')
     }
-    await requests(configToGetUserRanking)
+    await requests(configToGetUserRanking, loader)
     .then(res => {
         results = res.message
     })
@@ -457,7 +456,7 @@ export async function getTeamRanking(page = 1) {
         },
         token: localStorage.getItem('zctf-access')
     }
-    await requests(configToGetTeamRanking)
+    await requests(configToGetTeamRanking, loader)
     .then(res => {
         results = res.message
     })

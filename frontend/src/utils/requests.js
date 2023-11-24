@@ -29,15 +29,24 @@ export default function requests(config, loader = null){
                 // 正常请求结果处理
                 if(xhr.status>=200 && xhr.status<300){
                     if (config.has_file){
-                        resolve(xhr.response)
+                        resolve({
+                            status: xhr.status,
+                            message: xhr.response
+                        })
                     }
                     else {
-                        resolve(JSON.parse(xhr.response))
+                        resolve({
+                            status: xhr.status,
+                            message: JSON.parse(xhr.response)
+                        })
                     }
                 }
                 // 异常请求结果处理
                 else{
-                    reject(JSON.parse(xhr.response))
+                    reject({
+                        status: xhr.status,
+                        message: JSON.parse(xhr.response)
+                    })
                 }
             }
         })
