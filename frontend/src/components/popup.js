@@ -14,6 +14,7 @@ export default {
             if (typeof sessionStorage.getItem('zctf-challenge-addr') !== 'undefined'){
                 const addr = document.querySelector('#addr+p')
                 addr.style.display = 'block'
+                document.getElementById('addr').style.display = 'block'
                 addr.innerText = sessionStorage.getItem('zctf-challenge-addr')
             }
             // 显示flag输入框
@@ -113,7 +114,9 @@ export default {
                 <div class="content">
                     <b id='description'>描述：</b>
                     <p></p>
+                    <br />
                     <a id="download" style="display: none">下载附件</a>
+                    <br />
                     <b id="addr" style="display: none">题目地址：</b>
                     <p></p>
                 </div>
