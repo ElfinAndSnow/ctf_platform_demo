@@ -71,8 +71,13 @@ export default async function router() {
           }
           navTo(route)
         }
+        else {
+          window.alert('请先登录！')
+          location.hash = '#/login'
+        }
       }
     }
+    
     // 路由跳转实现
     function navTo(route) {
       // 销毁上个页面的监听事件

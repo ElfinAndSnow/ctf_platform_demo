@@ -90,7 +90,12 @@ export default {
 
         // 登出
         document.querySelector('.logout').addEventListener('click', () => {
-            errHandler(false)
+            const err = {
+                message: {
+                    detail: '已登出'
+                }
+            }
+            errHandler(err, true)
         })
     },
     destroyed: undefined,

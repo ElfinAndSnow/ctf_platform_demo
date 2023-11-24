@@ -4,17 +4,26 @@ import requests from '../utils/requests.js'
 const loader = document.querySelector('.box')
 
 // 状态异常处理
-export function errHandler(userAlert = true, warning = '状态异常，请重新登录') {
-    if (userAlert) {
-        window.alert(warning)
+export function errHandler(err, out = false) {
+    if (err?.status === 429){
+        window.alert('请求过于频繁！请求被冻结~')
     }
-    // 登出
-    localStorage.removeItem('zctf-access')
-    localStorage.removeItem('zctf-refresh')
-    document.body.classList.remove('logined')
-    sessionStorage.removeItem('zctf-status')
-    // 跳转到登录界面
-    window.location.hash = '#/login'
+    else if (err?.status === 500){
+        window.alert('服务器出错！请网站维修后再访问~')
+    }
+    else {
+        console.log(err)
+        window.alert(err?.message?.detail || '本地状态出错！请重新登录~')
+    }
+    if (out){
+        // 登出
+        localStorage.removeItem('zctf-access')
+        localStorage.removeItem('zctf-refresh')
+        document.body.classList.remove('logined')
+        sessionStorage.removeItem('zctf-status')
+        // 跳转到登录界面
+        window.location.hash = '#/login'
+    }
 }
 
 // 获取用户个人信息
@@ -29,12 +38,12 @@ export async function getUserInfo() {
     await requests(configToGetUserInfo, loader)
     .then(res => {
         // 用户个人信息存入sessionStorage
-        sessionStorage.setItem('zctf-userinfo', JSON.stringify(res))
+        sessionStorage.setItem('zctf-userinfo', JSON.stringify(res.message))
         flag = true
     })
     .catch(err => {
         // 报错，重新登录
-        errHandler()
+        errHandler(err, true)
     })
     return flag
 }
@@ -57,12 +66,10 @@ async function getEmailVerification() {
     })
     .catch(err => {
         // 激活码未过期
-        if (err.detail[0] === 'Please wait for your last verification code expires.'){
-            errHandler(true, '冷却时间未结束，请稍后登录再进行激活')
+        if (err.message.detail[0] === 'Please wait for your last verification code expires.'){
+            window.alert('冷却时间未结束，请稍后登录再进行激活')
         }
-        else {
-            errHandler(true, '服务器故障！请稍后再登录')
-        }
+        errHandler(err, true)
         flag = true
     })
     // 放回成功标志位
@@ -87,7 +94,7 @@ async function accountActivate(data){
     })
     .catch(err => {
         // 激活失败
-        errHandler(true, '激活失败，请稍后重新登录进行激活！')
+        errHandler(err, true)
     })
     return flag
 }
@@ -98,7 +105,6 @@ export async function verify() {
         return true
     }
     if (localStorage.getItem('zctf-access') === null){
-        errHandler(true, '请登录')
         return false
     }
     
@@ -129,7 +135,7 @@ export async function verify() {
         }
         await requests(configToVerify, loader)
         .then(res => {
-            localStorage.setItem('zctf-access', res.access)
+            localStorage.setItem('zctf-access', res.message.access)
             flag = true
         })
         .catch(err => {
@@ -138,7 +144,10 @@ export async function verify() {
     }
     // 验证失败
     if (!flag){
-        errHandler(true, '请登录')
+        localStorage.removeItem('zctf-access')
+        localStorage.removeItem('zctf-refresh')
+        document.body.classList.remove('logined')
+        sessionStorage.removeItem('zctf-status')
     }
     else {
         sessionStorage.setItem('zctf-status', '1')
@@ -159,8 +168,8 @@ export async function login(data, alert = null) {
     await requests(config, loader)
     .then(res => {
         // token存入localStorage
-        localStorage.setItem('zctf-access', res.access)
-        localStorage.setItem('zctf-refresh', res.refresh)
+        localStorage.setItem('zctf-access', res.message.access)
+        localStorage.setItem('zctf-refresh', res.message.refresh)
         flag = true
     })
     .catch(err => {
@@ -196,7 +205,12 @@ export async function login(data, alert = null) {
             }
             // 用户放弃激活，则重新登录
             else {
-                errHandler(true, '激活失败')
+                const err = {
+                    message: {
+                        detail: '激活失败！'
+                    }
+                }
+                errHandler(err, true)
                 return
             }
         }
@@ -233,25 +247,25 @@ export function register(data, loginbar, usernameAlert, emailAlert, pwdToRegiste
     .catch(err => {
         // 失败提示
         window.alert('注册失败！')
-        if ('username' in err){
+        if ('username' in err.message){
             usernameAlert.innerHTML = '*用户名已存在！'
         }
         else {
             usernameAlert.innerHTML = ''
         }
-        if ('email' in err){
+        if ('email' in err.message){
             emailAlert.innerHTML = '*该邮箱已被注册！'
         }
         else {
             emailAlert.innerHTML = ''
         }
-        if ('password' in err){
+        if ('password' in err.message){
             pwdToRegisterAlert.innerHTML = '*密码过于简单！'
         }
         else {
             pwdToRegisterAlert.innerHTML = ''
         }
-        if ('confirm_password' in err){
+        if ('confirm_password' in err.message){
             pwdToConfirmAlert.innerHTML = '*两次密码不相同！'
         }
         else {
@@ -279,7 +293,7 @@ export async function getChallengeList(page, type = 'All') {
     await requests(configToGetChallenges, loader)
     .then(res => {
         // 返回题目信息
-        challenges = res
+        challenges = res.message
     })
     .catch(err => {
         window.alert('服务端错误，获取题目列表失败！')
@@ -305,11 +319,11 @@ export async function createChallengeSession(id) {
     await requests(configToGetDetail, loader)
     .then(res => {
         // 返回result
-        result = res
+        result = res.message
     })
     // 数据获取失败
     .catch(err => {
-        if(err.detail === 'You have created a session for this challenge!'){
+        if(err.message.detail === 'You have created a session for this challenge!'){
             result = {
                 status: '1'
             }
@@ -317,7 +331,7 @@ export async function createChallengeSession(id) {
         else {
             result = {
                 status: '2',
-                detail: err.detail,
+                detail: err.message.detail,
             }
         }
     })
@@ -336,7 +350,7 @@ export function downloadFile() {
     requests(configToDownloadFile)
     .then(res => {
         // 生成临时链接
-        const downloadUrl = URL.createObjectURL(res)
+        const downloadUrl = URL.createObjectURL(res.message)
 
         // 创建一个隐藏的<a>标签
         const a = document.createElement('a')
@@ -352,7 +366,7 @@ export function downloadFile() {
         URL.revokeObjectURL(downloadUrl)
     })
     .catch(err => {
-        console.log(err)
+        errHandler(err)
     })
 }
 
@@ -377,7 +391,7 @@ export async function deleteChallengeSession() {
         // 失败
         response = {
             status: false,
-            detail: err.detail
+            detail: err.message.detail
         }
     })
     return response
@@ -401,12 +415,12 @@ export async function submitFlag(flag) {
         location.reload()
     })
     .catch(err => {
-        window.alert(err.detail)
+        window.alert(err.message.detail)
     })
 }
 
 // 用户排名
-export async function getUserRanking(page) {
+export async function getUserRanking(page = 1) {
     let results = null
     const configToGetUserRanking = {
         method: 'GET',
@@ -418,16 +432,21 @@ export async function getUserRanking(page) {
     }
     await requests(configToGetUserRanking)
     .then(res => {
-        results = res
+        results = res.message
     })
     .catch(err => {
-        errHandler()
+        if (err.message?.detail === 'Invalid page.'){
+            window.alert(err.message.detail)
+        }
+        else {
+            errHandler(err)
+        }
     })
     return results
 }
 
 // 战队排名
-export async function getTeamRanking(page) {
+export async function getTeamRanking(page = 1) {
     let results = null
     const configToGetTeamRanking = {
         method: 'GET',
@@ -440,10 +459,15 @@ export async function getTeamRanking(page) {
     }
     await requests(configToGetTeamRanking)
     .then(res => {
-        results = res
+        results = res.message
     })
     .catch(err => {
-        errHandler()
+        if (err.message?.detail === 'Invalid page.'){
+            window.alert(err.message.detail)
+        }
+        else {
+            errHandler(err)
+        }
     })
     return results
 } 
