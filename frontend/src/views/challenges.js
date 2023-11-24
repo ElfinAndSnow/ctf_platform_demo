@@ -152,7 +152,10 @@ export default {
         <div class="view">
             <div id="aside-bar" class="card">
                 <h1 id="username"></h1>
-                <h3 id="team"></h3>
+                <h3>USERNAME</h3>
+                <div class="hr"></div>
+                <h1 id="team"></h1>
+                <h3>TEAM</h3>
                 <div class="hr"></div>
                 <h1 id="score"></h1>
                 <h3>SCORE</h3>
