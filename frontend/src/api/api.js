@@ -49,14 +49,14 @@ export async function getUserInfo() {
 }
 
 // 获取邮箱激活码
-async function getEmailVerification() {
+export async function getEmailVerification(purpose = 'registration') {
     // 失败返回flag 为true
     let flag = false
     const configToGetVerification = {
         method: 'POST',
         url: '/auth/email-verify/',
         data: {
-            purpose: 'registration'
+            purpose
         },
         token: localStorage.getItem('zctf-access'),
     }
@@ -66,10 +66,7 @@ async function getEmailVerification() {
     })
     .catch(err => {
         // 激活码未过期
-        if (err.message.detail[0] === 'Please wait for your last verification code expires.'){
-            window.alert('冷却时间未结束，请稍后登录再进行激活')
-        }
-        errHandler(err, true)
+        errHandler(err)
         flag = true
     })
     // 放回成功标志位
@@ -191,6 +188,11 @@ export async function login(data, alert = null) {
 
             // 获取激活码失败，重新登录
             if (flag){
+                // 登出
+                localStorage.removeItem('zctf-access')
+                localStorage.removeItem('zctf-refresh')
+                document.body.classList.remove('logined')
+                sessionStorage.removeItem('zctf-status')
                 return
             }
 
@@ -471,3 +473,56 @@ export async function getTeamRanking(page = 1) {
     })
     return results
 } 
+
+export async function resetUsername(username) {
+    let flag = false
+    const configToReviseName = {
+        method: 'PATCH',
+        url: `/api/users/update-username/${JSON.parse(sessionStorage.getItem('zctf-userinfo')).id}/`,
+        token: localStorage.getItem('zctf-access'),
+        data : {
+            username
+        }
+    }
+    await requests(configToReviseName, loader)
+    .then(res => {
+        window.alert('修改成功！')
+        const userinfo = JSON.parse(sessionStorage.getItem('zctf-userinfo'))
+        userinfo.username = res.message.username
+        sessionStorage.setItem('zctf-userinfo', JSON.stringify(userinfo))
+        flag = true
+    })
+    .catch(err => {
+        if ('username' in err.message){
+            window.alert(err.message.username)
+        }
+        else {
+            errHandler(err)
+        }
+    })
+    return flag
+}
+
+export async function resetPwd(data) {
+    let flag = false
+    const configToResetPwd = {
+        method: 'POST',
+        url: '/auth/password-reset/',
+        data,
+        token: localStorage.getItem('zctf-access')
+    }
+    await requests(configToResetPwd, loader)
+    .then(res => {
+        window.alert(res.message.detail)
+        flag = true
+    })
+    .catch(err => {
+        if ('non_field_errors' in err.message){
+            window.alert(err.message.non_field_errors)
+        }
+        if ('detail' in err.message){
+            window.alert(err.message.detail)
+        }
+    })
+    return flag
+}

@@ -41,6 +41,14 @@ export default async function router() {
           },
           noVerify: true,
         },
+        '/userboard': {
+          render: () => {
+            import(/* webpackChunkName: "login" */ '../views/userboard.js').then((module) => {
+              view = render(module.default)
+            })
+          },
+          noVerify: false,
+        }
     };
 
     function handleHashChange() {

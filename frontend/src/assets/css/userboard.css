@@ -1,0 +1,131 @@
+#userboard {
+    width: 80%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 2fr 2fr 2fr 6fr;
+    grid-template-areas: 
+        "username username username"
+        "solved points rank"
+        "status team fs-login"
+        "revise revise revise";
+    color: var(--plain-color);
+}
+
+.item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--divided-line-color);
+}
+
+.item * {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.item b {
+    font-size: var(--global-font);
+}
+
+.item p {
+    font-size: var(--title-font-size);
+    text-align: center;
+}
+
+#user-name {
+    grid-area: username;
+    border-bottom: 1px solid var(--divided-line-color);
+}
+
+#user-name b {
+    font-size: var(--slogan-font-size);
+}
+
+#user-name a {
+    /* 字体样式 */
+    text-decoration: underline;
+    font-style: italic;
+    /* 鼠标行为 */
+    cursor:pointer;
+    /* 颜色 */
+    color: var(--btn-color);
+}
+
+#user-name a:hover {
+    color: var(--btn-hover-color);
+}
+
+#solved-num {
+    grid-area: solved;
+}
+
+#points {
+    grid-area: points;
+}
+
+#rate {
+    grid-area: rank;
+}
+
+#status {
+    grid-area: status;
+}
+
+#team {
+    grid-area: team;
+}
+
+#fs-login {
+    grid-area: fs-login;
+}
+
+
+#revise {
+    grid-area: revise;
+    display: flex;
+    width: 100%;
+    margin: 0 auto;
+    flex-direction: column;
+}
+
+#revise form{
+    width: 100%;
+}
+
+#revisepwd {
+    width: 90px;
+    height: 40px;
+    line-height: 40px;
+    margin: auto;
+}
+
+#activatedcode {
+    width: 50%;
+    left: -15%;
+}
+
+#verify {
+    width: 120px;
+    height: 44px;
+    
+    line-height: 44px;
+    white-space: nowrap;
+    position: absolute;   
+    left: 105%;
+}
+
+#ops {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@media (max-width: 800px) {
+    #userboard {
+        width: 90%;
+    }
+}

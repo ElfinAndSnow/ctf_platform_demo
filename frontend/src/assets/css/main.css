@@ -45,7 +45,7 @@ html {
     --preloader-bg: #37474f;
     --preloader-color: #fff;
     --btn-color: #6486d8;
-    --btn-hover-color: #7a9ff4;  
+    --btn-hover-color: #787878;
     --btn-activate-color: #ff7242;
     --btn-text-color: #32403e;
     --shadow-color: #c8cccc;
@@ -81,7 +81,6 @@ html {
     --shadow-color: #888c93;
     --border-color: #827f82;
     --btn-color: #818CF8;
-    --btn-hover-color: #787878;
     --btn-text-color: #e8e8e8;
     --title-color: #f1f1f1;
     --plain-color: #c0c1c4;
