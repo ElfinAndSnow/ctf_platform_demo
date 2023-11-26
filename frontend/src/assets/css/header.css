@@ -46,6 +46,10 @@ nav .options {
     transform: translateY(-50%);
 }
 
+nav>label * {
+    pointer-events: none;
+}
+
 .options .line {
     transition: all 0.2s ease-in-out;
     pointer-events: none;
