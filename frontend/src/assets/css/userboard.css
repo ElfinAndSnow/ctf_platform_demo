@@ -118,7 +118,7 @@
     left: 105%;
 }
 
-#ops {
+.ops {
     display: flex;
     justify-content: center;
     align-items: center;

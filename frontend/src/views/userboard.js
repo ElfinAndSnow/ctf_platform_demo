@@ -182,7 +182,7 @@ export default {
                         <div class="alert"></div>
                         <div class="button" id="verify">获取验证码</div>
                     </div>
-                    <div id="ops">
+                    <div class="ops">
                         <div class="button" id="confirm">确定</div>
                         <div class="button" id="cancel">取消</div>
                     </div>
