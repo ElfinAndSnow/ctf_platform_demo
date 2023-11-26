@@ -67,31 +67,35 @@ export default {
                 alert.innerHTML = '*密码长度要大于7；不能使用纯数字做密码'
             }
         },
-        getVfCode: async function(e) {
-            // 判断是否可点击
-            if (e.target.dataset.enable === '0'){
-                return 
+        getVerificationCode: function() {
+            const self = this
+            return async function(e){
+                // 判断是否可点击
+                if (e.target.dataset.enable === '0'){
+                    return 
+                }
+                const flag = await getEmailVerification('password_reset')
+                // 若成功
+                if (!flag){
+                    // 提示
+                    window.alert('验证码已发送至您的邮箱')
+                    // 禁止点击
+                    e.target.dataset.enable = '0'
+                    e.target.style.backgroundColor = '#787878'
+                    let scd = 120
+                    self.id = setInterval(()=>{
+                        scd--
+                        e.target.innerText = `${scd}s`
+                        if (scd <= 0){
+                            clearInterval(self.id)
+                            e.target.dataset.enable = '1'
+                            e.target.style.backgroundColor = '#818CF8'
+                            e.target.innerText = '获取验证码'
+                        }
+                    }, 1000)
+                }
             }
-            const flag = await getEmailVerification('password_reset')
-            // 若成功
-            if (!flag){
-                // 提示
-                window.alert('验证码已发送至您的邮箱')
-                // 禁止点击
-                e.target.dataset.enable = '0'
-                e.target.style.backgroundColor = '#787878'
-                let scd = 60
-                this.id = setInterval(()=>{
-                    scd--
-                    e.target.innerText = `${scd}s`
-                    if (scd <= 0){
-                        clearInterval(this.id)
-                        e.target.dataset.enable = '1'
-                        e.target.style.backgroundColor = '#818CF8'
-                        e.target.innerText = '获取验证码'
-                    }
-                }, 1000)
-            }
+            
         },
         resetPwd: async () => {
             const current_password = document.querySelector('[name="pwd"]').value
@@ -189,6 +193,7 @@ export default {
     `,
     afterMount: function() {
         this.methods.showInfo()
+        this.methods.getVfCode = this.methods.getVerificationCode()
         document.querySelector('#user-name>a').addEventListener('click', this.methods.resetName)
         document.getElementById('revisepwd').addEventListener('click', this.methods.showInput)
         document.getElementById('cancel').addEventListener('click', this.methods.hideInput)
