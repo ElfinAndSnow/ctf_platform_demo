@@ -48,6 +48,14 @@ export default async function router() {
             })
           },
           noVerify: false,
+        },
+        '/teamboard': {
+          render: () => {
+            import(/* webpackChunkName: "login" */ '../views/teamboard.js').then((module) => {
+              view = render(module.default)
+            })
+          },
+          noVerify: false,
         }
     };
 
