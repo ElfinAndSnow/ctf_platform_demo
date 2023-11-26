@@ -46,8 +46,7 @@ export default {
                 // 排名
                 document.getElementById('rank').innerText = userInfo.ranking
                 // 解题数
-                const solved = userInfo.solved_challenges.length
-                document.getElementById('solved').innerText = solved
+                document.getElementById('solved').innerText = userInfo.solved_challenges.length
             }
         },
         // 分类器
