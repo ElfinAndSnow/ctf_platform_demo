@@ -11,10 +11,11 @@ export default {
             document.querySelector('#solved-num>p').innerText = userInfo.solved_challenges.length
             document.querySelector('#points>p').innerText = userInfo.points
             document.querySelector('#rate>p').innerText = userInfo.ranking
-            document.querySelector('#status>p').innerText = userInfo.is_email_verified ? '已激活' : '未激活'
+            document.querySelector('#id>p').innerText = userInfo.id
+            document.querySelector('#status>p').innerHTML = userInfo.is_email_verified ? '<b style="color: green">已激活</b>' : '<b style="color: red">未激活</b>'
             document.querySelector('#team>p').innerText = userInfo.team_name || 'No Team'
             const date = new Date(userInfo.date_joined)
-            document.querySelector('#fs-login>p').innerText = date.getFullYear() + '\n' + date.getMonth() + '-' + date.getDate()
+            document.querySelector('#fs-login>p').innerText = date.getFullYear() + ' ' + date.getMonth() + '-' + date.getDate()
         },
         resetName: async () => {
             const newName = window.prompt('请输入新的用户名：')
@@ -124,31 +125,37 @@ export default {
     },
     template: `
         <div id="userboard" class="card">
-            <div id="user-name" class="item">
-                <b></b>
-                <a title="修改用户名"><svg t="1700977891703" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4057"><path d="M922.048 910.72a34.496 34.496 0 0 1-29.376 15.808H130.24a34.496 34.496 0 0 1-29.376-15.808 29.824 29.824 0 0 1 0-31.68 34.432 34.432 0 0 1 29.376-16.064h762.368a34.432 34.432 0 0 1 29.376 15.808 29.696 29.696 0 0 1 0.064 31.936z m-388.672-247.104a234.624 234.624 0 0 1-128 59.328l-82.688 6.912c-40.064 3.264-62.08 5.12-66.24 5.12a32.384 32.384 0 0 1-22.72-9.344c-10.816-10.752-10.816-10.752-4.352-88.768l6.912-82.56a234.688 234.688 0 0 1 59.392-128l304.128-303.808a97.984 97.984 0 0 1 134.848 0l102.848 102.784a95.168 95.168 0 0 1 0 134.4z m259.136-393.6l-102.912-102.784a32 32 0 0 0-44.8 0l-304 303.744a169.28 169.28 0 0 0-40.96 88.384l-6.976 82.496-2.176 26.752 26.752-2.176 82.688-6.912a169.728 169.728 0 0 0 88.384-40.96l304.064-303.744a32 32 0 0 0-0.128-44.8z" p-id="4058"></path></svg></a>
+            <div id="user-info">
+                <div id="user-name" class="item">
+                    <b></b>
+                    <a title="修改用户名"><svg t="1700977891703" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4057"><path d="M922.048 910.72a34.496 34.496 0 0 1-29.376 15.808H130.24a34.496 34.496 0 0 1-29.376-15.808 29.824 29.824 0 0 1 0-31.68 34.432 34.432 0 0 1 29.376-16.064h762.368a34.432 34.432 0 0 1 29.376 15.808 29.696 29.696 0 0 1 0.064 31.936z m-388.672-247.104a234.624 234.624 0 0 1-128 59.328l-82.688 6.912c-40.064 3.264-62.08 5.12-66.24 5.12a32.384 32.384 0 0 1-22.72-9.344c-10.816-10.752-10.816-10.752-4.352-88.768l6.912-82.56a234.688 234.688 0 0 1 59.392-128l304.128-303.808a97.984 97.984 0 0 1 134.848 0l102.848 102.784a95.168 95.168 0 0 1 0 134.4z m259.136-393.6l-102.912-102.784a32 32 0 0 0-44.8 0l-304 303.744a169.28 169.28 0 0 0-40.96 88.384l-6.976 82.496-2.176 26.752 26.752-2.176 82.688-6.912a169.728 169.728 0 0 0 88.384-40.96l304.064-303.744a32 32 0 0 0-0.128-44.8z" p-id="4058"></path></svg></a>
+                </div>
+                <div id="solved-num" class="item">
+                    <b>已解题数</b>
+                    <p></p>
+                </div>
+                <div id="points" class="item">
+                    <b>积分</b>
+                    <p></p>
+                </div>
+                <div id="rate" class="item">
+                    <b>排名</b>
+                    <p></p>
+                </div>
             </div>
-            <div id="solved-num" class="item">
-                <b>已解题数</b>
+            <div id="id" class="list">
+                <b>用户id：</b>
                 <p></p>
             </div>
-            <div id="points" class="item">
-                <b>积分</b>
-                <p></p>
-            </div>
-            <div id="rate" class="item">
-                <b>排名</b>
-                <p></p>
-            </div>
-            <div id="status" class="item">
+            <div id="status" class="list">
                 <b>激活状态：</b>
                 <p></p>
             </div>
-            <div id="team" class="item">
+            <div id="team" class="list">
                 <b>所属战队：</b>
                 <p></p>
             </div>
-            <div id="fs-login" class="item">
+            <div id="fs-login" class="list">
                 <b>首次登录：</b>
                 <p></p>
             </div>
