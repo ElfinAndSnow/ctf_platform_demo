@@ -108,7 +108,6 @@ export default async function router() {
     window.addEventListener('DOMContentLoaded', () => {    
       // 使用用户上次选择的深浅色模式
       document.body.dataset.theme = localStorage.getItem('zctf-darkmode')
-  
       window.addEventListener('hashchange', handleHashChange)
       window.history.replaceState('','',location.hash === ''? '#/home':location.hash)
       handleHashChange()
@@ -118,7 +117,9 @@ export default async function router() {
     window.addEventListener('beforeunload', async (e) => {
       e.preventDefault()
       // 关闭已有会话
-      await deleteChallengeSession()
+      if (sessionStorage.getItem('zctf-challenge-id') !== null){
+        await deleteChallengeSession()
+      }
       // 注销组件
       if (typeof view?.destroyed !== 'undefined'){
         view.destroyed()
