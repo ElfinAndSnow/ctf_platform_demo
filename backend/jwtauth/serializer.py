@@ -107,9 +107,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
 
 class PasswordResetSerializer(serializers.ModelSerializer):
-    current_password = serializers.CharField(write_only=True, required=True)
-    new_password = serializers.CharField(write_only=True, required=True)
-    confirm_new_password = serializers.CharField(write_only=True, required=True)
+    current_password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
+    new_password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
+    confirm_new_password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     verify_code = CodeVerificationSerializer(write_only=True)
 
     class Meta:
