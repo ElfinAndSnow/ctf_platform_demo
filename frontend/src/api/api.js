@@ -29,12 +29,12 @@ export function errHandler(err, out = false) {
 export async function getUserInfo() {
     let flag = false
     // configure message
-    const configToGetUserInfo = {
+    const config = {
         method: 'GET',
         url: '/api/UserInfoPublicView',
         token: localStorage.getItem('zctf-access'),
     }
-    await requests(configToGetUserInfo, loader)
+    await requests(config, loader)
     .then(res => {
         // 用户个人信息存入sessionStorage
         sessionStorage.setItem('zctf-userinfo', JSON.stringify(res.message))
@@ -52,7 +52,7 @@ export async function getUserInfo() {
 export async function getEmailVerification(purpose = 'registration') {
     // 失败返回flag 为true
     let flag = false
-    const configToGetVerification = {
+    const config = {
         method: 'POST',
         url: '/auth/email-verify/',
         data: {
@@ -60,7 +60,7 @@ export async function getEmailVerification(purpose = 'registration') {
         },
         token: localStorage.getItem('zctf-access'),
     }
-    await requests(configToGetVerification, loader)
+    await requests(config, loader)
     .then(res => {
         //die silently
     })
@@ -77,13 +77,13 @@ export async function getEmailVerification(purpose = 'registration') {
 async function accountActivate(data){
     // 失败返回flag 为false
     let flag = false
-    const configToGetActivated = {
+    const config = {
         method: 'POST',
         url: '/auth/account-activate/',
         token: localStorage.getItem('zctf-access'),
         data
     }
-    await requests(configToGetActivated)
+    await requests(config)
     .then(res => {
         // 激活成功
         window.alert('账号激活成功！')
@@ -106,7 +106,7 @@ export async function verify() {
     }
     
     // access 验证
-    let configToVerify = {
+    let config = {
         method: 'POST',
         url: '/auth/token/verify/',
         data: {
@@ -114,7 +114,7 @@ export async function verify() {
         }
     }
     let flag = false
-    await requests(configToVerify, loader)
+    await requests(config, loader)
     .then(res => {
         flag = true
     })
@@ -123,14 +123,14 @@ export async function verify() {
     })
     if (!flag){
         // refresh access
-        configToVerify = {
+        config = {
             method: 'POST',
             url: '/auth/token/refresh/',
             data: {
                 refresh: localStorage.getItem('zctf-refresh'),
             }
         }
-        await requests(configToVerify, loader)
+        await requests(config, loader)
         .then(res => {
             localStorage.setItem('zctf-access', res.message.access)
             flag = true
@@ -279,7 +279,7 @@ export function register(data, loginbar, usernameAlert, emailAlert, pwdToRegiste
 // 获取题目列表（含详情）
 export async function getChallengeList(page, type = 'All') {
     let challenges = {}
-    const configToGetChallenges = {
+    const config = {
         method: 'GET',
         url: '/api/challenges/',
         params: {
@@ -290,9 +290,9 @@ export async function getChallengeList(page, type = 'All') {
     }
     // 添加type属性 misc/web/pwn...
     if (type !== 'All'){
-        configToGetChallenges.params.type = type
+        config.params.type = type
     }
-    await requests(configToGetChallenges, loader)
+    await requests(config, loader)
     .then(res => {
         // 返回题目信息
         challenges = res.message
@@ -309,7 +309,7 @@ export async function getChallengeList(page, type = 'All') {
 // 创建题目会话
 export async function createChallengeSession(id) {
     let result = undefined
-    const configToGetDetail = {
+    const config = {
         method: 'POST',
         url: '/api/challenge-session/',
         token: localStorage.getItem('zctf-access'),
@@ -318,7 +318,7 @@ export async function createChallengeSession(id) {
             challenge: id
         }
     }
-    await requests(configToGetDetail, loader)
+    await requests(config, loader)
     .then(res => {
         // 返回result
         result = res.message
@@ -343,13 +343,13 @@ export async function createChallengeSession(id) {
 // 附件下载
 export function downloadFile() {
     const id = document.querySelector('.overlay').dataset.id
-    const configToDownloadFile = {
+    const config = {
         method: 'GET',
         url: `/api/challenge-file-download/${id}/`,
         token: localStorage.getItem('zctf-access'),
         has_file: true
     }
-    requests(configToDownloadFile)
+    requests(config)
     .then(res => {
         // 生成临时链接
         const downloadUrl = URL.createObjectURL(res.message)
@@ -375,14 +375,14 @@ export function downloadFile() {
 // 销毁题目会话
 export async function deleteChallengeSession() {
     let response = null
-    const configToDeleteSession = {
+    const config = {
         method: 'DELETE',
         url: '/api/challenge-session/',
         token: localStorage.getItem('zctf-access'),
         // 让Content-Type为application/json
         data: {}
     }
-    await requests(configToDeleteSession, loader)
+    await requests(config, loader)
     .then(res => {
         // 成功
         response = {
@@ -401,7 +401,7 @@ export async function deleteChallengeSession() {
 
 // flag提交
 export async function submitFlag(flag) {
-    const configToSubmitFlag = {
+    const config = {
         method: 'POST',
         url: '/api/flag-submission',
         token: localStorage.getItem('zctf-access'),
@@ -410,7 +410,7 @@ export async function submitFlag(flag) {
             user_flag: flag
         }
     }
-    await requests(configToSubmitFlag, loader)
+    await requests(config, loader)
     .then(res => {
         window.alert('flag正确！')
         // 刷新页面
@@ -424,7 +424,7 @@ export async function submitFlag(flag) {
 // 用户排名
 export async function getUserRanking(page = 1) {
     let results = null
-    const configToGetUserRanking = {
+    const config = {
         method: 'GET',
         url: '/api/user-scores/',
         params: {
@@ -432,7 +432,7 @@ export async function getUserRanking(page = 1) {
         },
         token: localStorage.getItem('zctf-access')
     }
-    await requests(configToGetUserRanking, loader)
+    await requests(config, loader)
     .then(res => {
         results = res.message
     })
@@ -450,7 +450,7 @@ export async function getUserRanking(page = 1) {
 // 战队排名
 export async function getTeamRanking(page = 1) {
     let results = null
-    const configToGetTeamRanking = {
+    const config = {
         method: 'GET',
         url: '/api/team-scores/',
         params: {
@@ -459,7 +459,7 @@ export async function getTeamRanking(page = 1) {
         },
         token: localStorage.getItem('zctf-access')
     }
-    await requests(configToGetTeamRanking, loader)
+    await requests(config, loader)
     .then(res => {
         results = res.message
     })
@@ -474,9 +474,10 @@ export async function getTeamRanking(page = 1) {
     return results
 } 
 
+// 修改用户名
 export async function resetUsername(username) {
     let flag = false
-    const configToReviseName = {
+    const config = {
         method: 'PATCH',
         url: `/api/users/update-username/${JSON.parse(sessionStorage.getItem('zctf-userinfo')).id}/`,
         token: localStorage.getItem('zctf-access'),
@@ -484,7 +485,7 @@ export async function resetUsername(username) {
             username
         }
     }
-    await requests(configToReviseName, loader)
+    await requests(config, loader)
     .then(res => {
         window.alert('修改成功！')
         const userinfo = JSON.parse(sessionStorage.getItem('zctf-userinfo'))
@@ -503,15 +504,16 @@ export async function resetUsername(username) {
     return flag
 }
 
+// 重置密码
 export async function resetPwd(data) {
     let flag = false
-    const configToResetPwd = {
+    const config = {
         method: 'POST',
         url: '/auth/password-reset/',
         data,
         token: localStorage.getItem('zctf-access')
     }
-    await requests(configToResetPwd, loader)
+    await requests(config, loader)
     .then(res => {
         window.alert(res.message.detail)
         flag = true
@@ -525,4 +527,176 @@ export async function resetPwd(data) {
         }
     })
     return flag
+}
+
+// 创建战队
+export async function createTeam(team_name){
+    const config = {
+        method: 'POST',
+        url: `/api/create_team/${team_name}/`,
+        token: localStorage.getItem('zctf-access')
+    }
+    await requests(config, loader)
+    .then(res => {
+        window.alert('战队创建成功！即将刷新页面~')
+        sessionStorage.setItem('zctf-team', res.message['Team_id:'])
+        location.reload()
+    })
+    .catch(err => {
+        if ('msg' in err.message){
+            window.alert(err.message.msg)
+        }
+        else {
+            errHandler(err)
+        }
+    })
+}
+
+// 加入战队
+export async function joinTeam(teamName, invitationCode) {
+    const config = {
+        method: 'POST',
+        url: `/api/join_team_name/${teamName}/${invitationCode}/`,
+        token: localStorage.getItem('zctf-access')
+    }
+    await requests(config, loader)
+    .then(res => {
+        window.alert("成功加入战队！即将刷新页面~")
+        location.reload()
+    })
+    .catch(err => {
+        if ('msg' in err.message){
+            window.alert(err.message.msg)
+        }
+        else {
+            errHandler(err)
+        }
+    })
+}
+
+// 生成邀请码
+export async function generateIvCode() {
+    let code = ''
+    const config = {
+        method: 'POST',
+        url: '/api/GenerateInvitationCodeView',
+        token: localStorage.getItem('zctf-access'),
+        data: {}
+    }
+    await requests(config, loader)
+    .then(res => {
+        window.alert("成功生成新的邀请码！")
+        // ivcode
+        code = res.message.invitation_code
+    })
+    .catch(err => {
+        if ('detail' in err.message){
+            window.alert(err.message.detail)
+        }
+        else if('msg' in err.message){
+            window.alert(err.message.msg)
+        }
+        else {
+            errHandler(err)
+        }
+    })
+    return code
+}
+
+// 解散队伍
+export async function deleteTeam() {
+    const config = {
+        method: 'DELETE',
+        url: '/api/DeleteTeamView',
+        token: localStorage.getItem('zctf-access')
+    }
+    await requests(config, loader)
+    .then(res => {
+        window.alert('战队成功解散！')
+    })
+    .catch(err => {
+        if('detail' in err.message){
+            window.alert(err.message.detail)
+        }
+        else if('msg' in err.message){
+            window.alert(err.message.msg)
+        }
+        else {
+            errHandler(err)
+        }
+        console.log(err)
+    })
+}
+
+// 移除成员
+export async function removeMember(user_id) {
+    const config = {
+        method: 'DELETE',
+        url: `/api/RemoveMemberView/${user_id}`,
+        token: localStorage.getItem('zctf-access')
+    }
+    await requests(config, loader)
+    .then(res => {
+        window.alert(res.message.msg)
+    })
+    .catch(err => {
+        if('detail' in err.message){
+            window.alert(err.message.detail)
+        }
+        else if('msg' in err.message){
+            window.alert(err.message.msg)
+        }
+        else {
+            errHandler(err)
+        }
+        console.log(err)
+    })
+}
+
+// 队长转让
+export async function changeLeader(user_id) {
+    const config = {
+        method: 'PATCH',
+        url: `/api/ChangeTeamLeaderView/${user_id}/`,
+        token: localStorage.getItem('zctf-access'),
+        data: {}
+    }
+    await requests(config, loader)
+    .then(res => {
+        window.alert(res.message.msg + '页面即将刷新~')
+        location.reload()
+        console.log(res)
+    })
+    .catch(err => {
+        if('detail' in err.message){
+            window.alert(err.message.detail)
+        }
+        else if('msg' in err.message){
+            window.alert(err.message.msg)
+        }
+        else {
+            errHandler(err)
+        }
+        console.log(err)
+    })
+}
+
+// 获取战队信息
+export async function getTeamInfo() {
+    let result = {status: false}
+    const config = {
+        method: 'GET',
+        url: `/api/TeamInfoForMemberView`,
+        token: localStorage.getItem('zctf-access'),
+    }
+    await requests(config, loader)
+    .then(res => {
+        result = res.message
+        result.status = true
+    })
+    .catch(err => {
+        result.status = false
+        errHandler(err)
+    })
+    return result
 }

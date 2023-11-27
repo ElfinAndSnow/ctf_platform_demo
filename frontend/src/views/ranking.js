@@ -146,9 +146,7 @@ export default {
           data
         })
       })
-      for(let i = 1; 4*i < 10 && 4*i < teamList.length; i++){
-        teamList[4*i] += '\n'
-      }
+      console.log(series)
       // 折线图配置信息
       const option = {
         // 标题
@@ -304,12 +302,13 @@ export default {
         // 渲染数据
         results.forEach(item => {
           const info = item.teamscore_set.at(-1)
+          const rate = String((page-1)*10+results.indexOf(item)+1).padStart(5, '0')
           const points = info?.current_points || 0
           const time = new Date(info?.solved_at)
           const date = typeof info?.solved_at !== 'undefined' ? time.getFullYear() + '-' + time.getMonth() + '-' + time.getDate() : 'No Date'
           const template = `
             <div class="grade">
-              <div class="rate">${(page-1)*10+results.indexOf(item)+1}</div>
+              <div class="rate">${rate}</div>
               <div class="name">${item.name}</div>
               <div class="score">${points}</div>
               <div class="time">${date}</div>

@@ -1,0 +1,133 @@
+#teamboard {
+    width: 80%;
+    margin: 0 auto;
+}
+
+#entrance {
+    width: 100%;
+    height: 20vh;
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#entrance>a {
+    /* 字体样式 */
+    text-decoration: underline;
+    font-style: italic;
+    /* 鼠标行为 */
+    cursor:pointer;
+    /* 颜色 */
+    color: var(--btn-color);
+}
+
+#entrance>a:hover {
+    color: var(--btn-hover-color);
+}
+
+#create, #join{
+    margin-top: 30px;
+}
+
+.ops {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#teaminfo {
+    width: 100%;
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+#baseinfo {
+    width: 100%;
+    margin-top: 20px;
+    color: var(--pure-color);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: 
+        "name name name"
+        "rank score solved";
+}
+
+#team-name {
+    grid-area: name;
+    margin-bottom: 20px;
+}
+
+#team-rank {
+    grid-area: rank;
+}
+
+#team-score {
+    grid-area: score;
+}
+
+#team-solved {
+    grid-area: solved;
+}
+
+#memberinfo {
+    width: 100%;
+    background-color: var(--dropdown-color);
+    color: var(--pure-color);
+}
+
+#title {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: var(--text-font-size);
+}
+
+#infozone {
+    width: 90%;
+    max-height: 40vh;
+    margin: 20px auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px,0.5fr));
+    gap: 20px;
+    overflow: scroll;
+}
+
+.infobar {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+    background-color: var(--card-solid-color);
+    border-radius: 5px;
+}
+
+.infobar li{
+    width: 100%;
+    display: flex;
+}
+
+#icode {
+    width: 100%;
+    text-align: center;
+    font-size: var(--footer-font-size);
+    margin: 20px;
+    color: var(--pure-color);
+}
+
+#leaderzone {
+    min-height: 50px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+#leaderzone .button{
+    margin-bottom: 10px;
+}

@@ -155,7 +155,7 @@ a {
 
 .button {
     height: 4vh;
-    min-width: 70px;
+    width: fit-content;
     max-width: 140px;
     font-size: 22px;
     background-color: var(--btn-color);
@@ -263,9 +263,36 @@ a {
     color: var(--pure-color);
 }
 
+.item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid var(--divided-line-color);
+}
+
+.item * {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.item b {
+    font-size: var(--footer-font-size);
+}
+
+.item p {
+    font-size: var(--title-font-size);
+    text-align: center;
+}
 
 ::-webkit-scrollbar {
     display: none; /* Chrome Safari */
+}
+
+li {
+    list-style-type: none;
 }
 
 @media (max-width: 800px) {
