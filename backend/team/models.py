@@ -4,7 +4,7 @@ from account.models import User, Score
 
 class Team(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(verbose_name="战队", max_length=127, null=True)
+    name = models.CharField(verbose_name="战队", max_length=127, null=True, unique=True)
     description = models.TextField(verbose_name="战队简介", null=True, blank=True, default="该战队尚未填写简介")
     points = models.IntegerField(verbose_name="战队总分", default=0, null=True)
     challenges_solved = models.IntegerField(verbose_name="战队总解出题数(不重复)", default=0, null=True)

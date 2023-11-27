@@ -199,7 +199,7 @@ class RemoveMemberView(generics.DestroyAPIView):
 
 class ChangeTeamLeaderView(generics.UpdateAPIView):
     serializer_class = TeamSerializer
-    permission_classes = [IsAuthenticated, IsActivatedUser, IsTeamLeader]  # Replace IsTeamLeader with your actual permission class
+    permission_classes = [IsAuthenticated, IsActivatedUser, IsTeamLeader]
     lookup_url_kwarg = 'user_id'  # This will match the user_id parameter in the URL
 
     def get_object(self):
