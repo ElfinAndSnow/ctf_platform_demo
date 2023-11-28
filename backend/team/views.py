@@ -1,15 +1,18 @@
 from account.models import User
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework import status, generics
+from rest_framework import status, generics, serializers
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import ValidationError, NotFound
 
 from team.models import Team
-from team.serializer import TeamSerializer, PartialSerializer, TeamScoreSerializer
+from team.serializer import TeamSerializer, TeamInfoSerializer, PartialSerializer, TeamScoreSerializer
 from utils.custom_permissions import IsTeamLeader, IsTeamMate, IsActivatedUser
 
 import random
 import string
+
+from django.db import IntegrityError
 
 
 @api_view(['POST'])
@@ -24,13 +27,19 @@ def create_team(request, team_name):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        existing_team = Team.objects.filter(name=team_name).exists()
+        if existing_team:
+            return Response(
+                data={"msg": f"队伍名称 '{team_name}' 已存在,请更换其他的名称"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         try:
             team = Team(name=team_name, leader=user)
             team.save()
             team.members.add(user)
-
             team.check_points()
-
+            team.save()
             return Response(
                 data={"msg": "队伍创建成功", "Team_id:": team.id, "Team_name:": team_name, "The user id of leader:": user.id},
                 status=status.HTTP_201_CREATED
@@ -73,15 +82,60 @@ class DeleteTeamView(generics.DestroyAPIView):
         # 检查当前用户是否是队长
         if request.user != team.leader:
             return Response(
-                data={"msg": "你不是队长，无法删除队伍"},
+                data={"msg": "你不是队长，无法解散队伍"},
                 status=status.HTTP_403_FORBIDDEN
             )
 
         team.delete()
+        request.user.team = None
         return Response(
-            data={"msg": "队伍已成功删除"},
+            data={"msg": "队伍已成功解散"},
             status=status.HTTP_204_NO_CONTENT
         )
+
+
+# class JoinTeamView(generics.UpdateAPIView):
+#     queryset = Team.objects.all()
+#     serializer_class = TeamSerializer
+#     permission_classes = [IsAuthenticated]
+#     lookup_url_kwarg = 'team_name'
+#
+#     def update(self, request, *args, **kwargs):
+#         team_name = self.kwargs.get(self.lookup_url_kwarg)
+#         invitation_token = request.data.get('invitation_token')
+#
+#         if not team_name:
+#             return Response(
+#                 data={"msg": "请提供队伍名称"},
+#                 status=status.HTTP_400_BAD_REQUEST
+#             )
+#
+#         try:
+#             team = Team.objects.get(name=team_name)
+#         except Team.DoesNotExist:
+#             return Response(
+#                 data={"msg": "未找到对应的队伍，请检查队伍名称是否正确"},
+#                 status=status.HTTP_404_NOT_FOUND
+#             )
+#
+#         if team.invitation_token == invitation_token:
+#             user = request.user
+#             user.team = team
+#             user.save()
+#
+#             team.members.add(user)
+#             team.check_points()
+#             team.save()
+#
+#             return Response(
+#                 data={"msg": "成功加入战队"},
+#                 status=status.HTTP_200_OK
+#             )
+#         else:
+#             return Response(
+#                 data={"msg": "邀请码错误，无法加入战队"},
+#                 status=status.HTTP_400_BAD_REQUEST
+#             )
 
 
 @api_view(['POST'])
@@ -159,7 +213,7 @@ def join_team_name(request, team_name, invitation_token):
 class RemoveMemberView(generics.DestroyAPIView):
     serializer_class = TeamSerializer
     permission_classes = [IsAuthenticated, IsActivatedUser, IsTeamLeader]  # 请替换IsTeamLeader为实际的权限类
-    lookup_url_kwarg = 'user_id'  # 这将匹配URL中的user_id参数
+    lookup_url_kwarg = 'username'  # 这将匹配URL中的user_id参数
 
     def get_object(self):
         team = self.request.user.team
@@ -168,22 +222,29 @@ class RemoveMemberView(generics.DestroyAPIView):
     def destroy(self, request, *args, **kwargs):
         if request.method == 'DELETE':
             team = self.get_object()
-            user_id = self.kwargs[self.lookup_url_kwarg]
+            username = self.kwargs[self.lookup_url_kwarg]
+            leader = team.leader
 
             try:
-                user = User.objects.get(id=user_id)
+                user = User.objects.get(username=username)
             except User.DoesNotExist:
                 return Response(
                     data={"msg": "该用户id指向的用户不存在"},
                     status=status.HTTP_404_NOT_FOUND
                 )
 
-            if user in team.members.all():
+            if user in team.members.all() and user != leader:
                 team.members.remove(user)
+                user.team = None
                 team.check_points()
                 return Response(
                     data={"msg": "成员移除成功"},
                     status=status.HTTP_200_OK
+                )
+            elif user == leader:
+                return Response(
+                    data={"msg": "队长无法将自身移除出队伍"},
+                    status=status.HTTP_400_BAD_REQUEST
                 )
             else:
                 return Response(
@@ -200,7 +261,7 @@ class RemoveMemberView(generics.DestroyAPIView):
 class ChangeTeamLeaderView(generics.UpdateAPIView):
     serializer_class = TeamSerializer
     permission_classes = [IsAuthenticated, IsActivatedUser, IsTeamLeader]
-    lookup_url_kwarg = 'user_id'  # This will match the user_id parameter in the URL
+    lookup_url_kwarg = 'username'  # This will match the user_id parameter in the URL
 
     def get_object(self):
         team = self.request.user.team
@@ -208,10 +269,11 @@ class ChangeTeamLeaderView(generics.UpdateAPIView):
 
     def update(self, request, *args, **kwargs):
         team = self.get_object()
-        user_id = self.kwargs[self.lookup_url_kwarg]
+        username = self.kwargs[self.lookup_url_kwarg]
+        leader = team.leader
 
         try:
-            new_leader = User.objects.get(id=user_id)
+            new_leader = User.objects.get(username=username)
             if new_leader not in team.members.all():
                 return Response(
                     data={"msg": "该成员不在队伍当中"},
@@ -221,6 +283,12 @@ class ChangeTeamLeaderView(generics.UpdateAPIView):
             return Response(
                 data={"msg": "目标用户不存在"},
                 status=status.HTTP_404_NOT_FOUND
+            )
+
+        if new_leader == leader:
+            return Response(
+                data={"msg": "當前用戶已經是隊長了"},
+                status=status.HTTP_400_BAD_REQUEST
             )
 
         # Check if the current user is the team leader
@@ -265,47 +333,80 @@ class GenerateInvitationCodeView(generics.CreateAPIView):
         )
 
 
+# class CalculateTeamPointsView(generics.GenericAPIView):
+#     serializer_class = TeamSerializer
+#     permission_classes = [IsAuthenticated, IsActivatedUser]
+#
+#     def get_object(self, team_id):
+#         try:
+#             team = Team.objects.get(pk=team_id)
+#             return team
+#         except Team.DoesNotExist:
+#             return None
+#
+#     def calculate_team_points(self, team):
+#         team.check_points()
+#
+#     def get(self, request, *args, **kwargs):
+#         team_id = kwargs.get('team_id')
+#         # 获取队伍ID
+#         team = self.get_object(team_id)
+#
+#         if not team:
+#             return Response(
+#                 data={"msg": "目标队伍不存在"},
+#                 status=status.HTTP_404_NOT_FOUND
+#             )
+#
+#         # 调用计算队伍总分的方法
+#         self.calculate_team_points(team)
+#
+#         updated_team = self.get_object(team_id)
+#         if updated_team:
+#             points = updated_team.points
+#
+#             return Response(
+#                 data={"msg": "队伍总分已计算", "总分为:": points},
+#                 status=status.HTTP_200_OK
+#             )
+#         else:
+#             return Response(
+#                 data={"msg": "队伍分数更新失败"},
+#                 status=status.HTTP_400_BAD_REQUEST
+#             )
 class CalculateTeamPointsView(generics.GenericAPIView):
     serializer_class = TeamSerializer
     permission_classes = [IsAuthenticated, IsActivatedUser]
 
-    def get_object(self, team_id):
+    def get_team_for_user(self, username):
         try:
-            team = Team.objects.get(pk=team_id)
-            return team
-        except Team.DoesNotExist:
-            return None
+            user = User.objects.get(username=username)
+            if user.team:
+                return user.team
+        except User.DoesNotExist:
+            raise NotFound(detail="该用户未加入队伍")
+        raise NotFound(detail="目标队伍不存在")
 
     def calculate_team_points(self, team):
         team.check_points()
+        team.save()
 
     def get(self, request, *args, **kwargs):
-        team_id = kwargs.get('team_id')
+        username = kwargs.get('username')
         # 获取队伍ID
-        team = self.get_object(team_id)
-
-        if not team:
-            return Response(
-                data={"msg": "目标队伍不存在" },
-                status=status.HTTP_404_NOT_FOUND
-            )
+        try:
+            team = self.get_team_for_user(username)
+        except NotFound as e:
+            return Response(data={'msg': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
         # 调用计算队伍总分的方法
         self.calculate_team_points(team)
 
-        updated_team = self.get_object(team_id)
-        if updated_team:
-            points = updated_team.points
-
-            return Response(
-                data={"msg": "队伍总分已计算", "总分为:": points},
-                status=status.HTTP_200_OK
-            )
-        else:
-            return Response(
-                data={"msg": "队伍分数更新失败"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        points = team.points
+        return Response(
+            data={"msg": "队伍总分已计算", "总分为:": points},
+            status=status.HTTP_200_OK
+        )
 
 
 class CalculateTeamChallengeView(generics.GenericAPIView):
@@ -424,7 +525,7 @@ class QueryTeamByNameView(generics.GenericAPIView):
 
 class TeamInfoForMemberView(generics.GenericAPIView):
     queryset = Team.objects.all()
-    serializer_class = TeamSerializer
+    serializer_class = TeamInfoSerializer
     permission_classes = [IsAuthenticated, IsActivatedUser, IsTeamMate]
 
     def get_object(self):
