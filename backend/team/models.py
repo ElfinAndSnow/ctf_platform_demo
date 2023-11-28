@@ -18,6 +18,8 @@ class Team(models.Model):
     )
     invitation_token = models.CharField(
         verbose_name="邀请码",
+        null=True,
+        blank=True,
         default="",
         max_length=12,
         help_text="No longer than 12 characters"

@@ -14,8 +14,34 @@ class TeamSerializer(serializers.ModelSerializer):
             'description',
             'points',
             'challenges_solved',
+            'invitation_token',
             'leader',
             'members',
+        ]
+
+
+class TeamInfoSerializer(serializers.ModelSerializer):
+    members = UserInfoSerializer(many=True)
+    is_leader = serializers.SerializerMethodField()
+
+    def get_is_leader(self, obj):
+        request = self.context.get('request')
+        if request and request.user == obj.leader:
+            return True
+        return False
+
+    class Meta:
+        model = Team
+        fields = [
+            'id',
+            'name',
+            'description',
+            'points',
+            'challenges_solved',
+            'invitation_token',
+            'leader',
+            'members',
+            'is_leader',
         ]
 
 
