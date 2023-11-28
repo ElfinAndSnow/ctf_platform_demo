@@ -49,9 +49,7 @@ INSTALLED_APPS = [
     'challenge',
     'team',
     'account',
-    'article',
     'jwtauth',
-    'library',
 ]
 
 REST_FRAMEWORK = {
@@ -192,9 +190,6 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
-        # 'Basic': {
-        #       'type': 'basic'
-        # },
         'Bearer': {
             'type': 'apiKey',
             'name': 'Authorization',
