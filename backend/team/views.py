@@ -524,7 +524,6 @@ class QueryTeamByNameView(generics.GenericAPIView):
 
 
 class TeamInfoForMemberView(generics.GenericAPIView):
-    queryset = Team.objects.all()
     serializer_class = TeamInfoSerializer
     permission_classes = [IsAuthenticated, IsActivatedUser, IsTeamMate]
 
@@ -532,16 +531,13 @@ class TeamInfoForMemberView(generics.GenericAPIView):
         try:
             team = self.request.user.team
         except Team.DoesNotExist:
-            return None
+            raise NotFound(detail="該用戶不在隊伍中")
+        if not team:
+            raise NotFound(detail="該用戶不在隊伍中")
         return team
 
     def get(self, request, *args, **kwargs):
         team = self.get_object()
-        if not team:
-            return Response(
-                data={"msg": "你所属的队伍不存在"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
 
         serialized_team = self.get_serializer(team)
 

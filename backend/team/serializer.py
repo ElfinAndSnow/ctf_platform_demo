@@ -23,12 +23,21 @@ class TeamSerializer(serializers.ModelSerializer):
 class TeamInfoSerializer(serializers.ModelSerializer):
     members = UserInfoSerializer(many=True)
     is_leader = serializers.SerializerMethodField()
+    team_rank = serializers.SerializerMethodField()
 
     def get_is_leader(self, obj):
         request = self.context.get('request')
         if request and request.user == obj.leader:
             return True
         return False
+
+    def get_team_rank(self, obj):
+        team = obj
+        if team:
+            queryset = Team.objects.order_by('-points')
+            team_rank = list(queryset).index(team) + 1
+            return team_rank
+        return None
 
     class Meta:
         model = Team
@@ -42,6 +51,7 @@ class TeamInfoSerializer(serializers.ModelSerializer):
             'leader',
             'members',
             'is_leader',
+            'team_rank',
         ]
 
 
