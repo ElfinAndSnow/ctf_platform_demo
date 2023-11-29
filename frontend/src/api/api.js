@@ -629,10 +629,10 @@ export async function deleteTeam() {
 }
 
 // 移除成员
-export async function removeMember(user_id) {
+export async function removeMember(username) {
     const config = {
         method: 'DELETE',
-        url: `/api/RemoveMemberView/${user_id}`,
+        url: `/api/RemoveMemberView/${username}`,
         token: localStorage.getItem('zctf-access')
     }
     await requests(config, loader)
@@ -654,10 +654,10 @@ export async function removeMember(user_id) {
 }
 
 // 队长转让
-export async function changeLeader(user_id) {
+export async function changeLeader(username) {
     const config = {
         method: 'PATCH',
-        url: `/api/ChangeTeamLeaderView/${user_id}/`,
+        url: `/api/ChangeTeamLeaderView/${username}/`,
         token: localStorage.getItem('zctf-access'),
         data: {}
     }

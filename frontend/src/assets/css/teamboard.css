@@ -115,8 +115,7 @@
 #icode {
     width: 100%;
     text-align: center;
-    font-size: var(--footer-font-size);
-    margin: 20px;
+    font-size: var(--text-font-size);
     color: var(--pure-color);
 }
 
@@ -130,4 +129,11 @@
 
 #leaderzone .button{
     margin-bottom: 10px;
+}
+
+#prompt {
+    width: 100%;
+    text-align: center;
+    font-size: var(--text-font-size);
+    color: green;
 }

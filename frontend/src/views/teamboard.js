@@ -74,7 +74,7 @@ export default {
             })
             // 邀请码
             if (result.invitation_token !== ''){
-                document.getElementById('icode').innerText = result.invitation_token
+                document.getElementById('icode').innerText = '战队邀请码：' + result.invitation_token
             }
 
             //队长视图
@@ -82,6 +82,7 @@ export default {
                 this.isLeader = result.is_leader
                 document.getElementById('icode').style.display = 'block'
                 document.getElementById('leaderzone').style.display = 'flex'
+                document.getElementById('prompt').style.display = 'block'
                 document.getElementById('code').addEventListener('click', this.generateIvCode)
                 document.getElementById('dismiss').addEventListener('click', this.deleteTeam)
                 document.getElementById('change').addEventListener('click', this.changeLeader)
@@ -91,7 +92,7 @@ export default {
         generateIvCode: async () => {
             const code = await generateIvCode()
             if (code !== ''){
-                document.getElementById('icode').innerText = '邀请码：' + code
+                document.getElementById('icode').innerText = '战队邀请码：' + code
             }
         },
         deleteTeam: () => {
@@ -101,21 +102,21 @@ export default {
             }
         },
         removeMember: async () => {
-            const id = window.prompt('请输入想要移除的用户id')
-            if (id !== null && id !== ''){
-                await removeMember(id)
+            const name = window.prompt('请输入想要移除的用户名')
+            if ( name !== null && name !== ''){
+                await removeMember(name)
             }
-            else if(id === ''){
-                window.alert('id不可为空！')
+            else if(name === ''){
+                window.alert('用户名不可为空！')
             }
         },
         changeLeader: async () => {
-            const id = window.prompt('请输入想要移除的用户id')
-            if (id !== null && id !== ''){
-                await changeLeader(id)
+            const name = window.prompt('请输入想要移除的用户id')
+            if (name !== null && name !== ''){
+                await changeLeader(name)
             }
-            else if(id === ''){
-                window.alert('id不可为空！')
+            else if(name === ''){
+                window.alert('用户名不可为空！')
             }
         }
 
@@ -175,6 +176,7 @@ export default {
                     <div id="title">成员信息</div>
                     <div id="infozone"></div>
                 </div>
+                <div id="prompt" style="display: none">你是队长</div>
                 <div id="icode" style="display: none"></div>
                 <div id="leaderzone" style="display: none">
                     <div class="button" id="code">创建邀请码</div>
@@ -201,8 +203,6 @@ export default {
             document.getElementById('entrance').style.display = 'none'
             document.getElementById('teaminfo').style.display = 'flex'
             this.methods.showTeamInfo()
-            // 判断是否是队长
-
 
         }
     },

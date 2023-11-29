@@ -75,7 +75,7 @@ if (process.env.NODE_ENV === 'production'){
   config.externals = {
     'echarts': 'echarts'
   }
-  config.devtool = 'hidden-source-map'
+  config.devtool = 'cheap-module-source-map'
 }
 
 module.exports = config
