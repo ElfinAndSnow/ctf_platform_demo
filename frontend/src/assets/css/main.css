@@ -155,7 +155,7 @@ a {
 
 .button {
     height: 4vh;
-    width: fit-content;
+    min-width: 100px;
     max-width: 140px;
     font-size: 22px;
     background-color: var(--btn-color);
