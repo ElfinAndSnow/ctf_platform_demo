@@ -43,7 +43,7 @@ export default {
             }
             joinTeam(teamName, iCode)
         },
-        showTeamInfo: async () => {
+        showTeamInfo: async function() {
             const result = await getTeamInfo()
 
             // 战队名和成员数
@@ -51,7 +51,8 @@ export default {
             document.querySelector('#team-name b').innerText = `共${result.members.length}名成员`
 
             // 基本信息
-            // document.querySelector('#team-name>p').innerText = result.ranking
+            console.log(result.team_rank)
+            document.querySelector('#team-rank>p').innerText = result.team_rank
             document.querySelector('#team-score p').innerText = result.points
             document.querySelector('#team-solved p').innerText = result.challenges_solved
 
@@ -72,6 +73,20 @@ export default {
                 infoZone.innerHTML += template
             })
             // 邀请码
+            if (result.invitation_token !== ''){
+                document.getElementById('icode').innerText = result.invitation_token
+            }
+
+            //队长视图
+            if (result.is_leader){
+                this.isLeader = result.is_leader
+                document.getElementById('icode').style.display = 'block'
+                document.getElementById('leaderzone').style.display = 'flex'
+                document.getElementById('code').addEventListener('click', this.generateIvCode)
+                document.getElementById('dismiss').addEventListener('click', this.deleteTeam)
+                document.getElementById('change').addEventListener('click', this.changeLeader)
+                document.getElementById('remove').addEventListener('click', this.removeMember)
+            } 
         },
         generateIvCode: async () => {
             const code = await generateIvCode()
@@ -145,7 +160,7 @@ export default {
                     </div>
                     <div id="team-rank" class="item">
                         <b>排名</b>
-                        <p>1</p>
+                        <p></p>
                     </div>
                     <div id="team-score" class="item">
                         <b>积分</b>
@@ -160,8 +175,8 @@ export default {
                     <div id="title">成员信息</div>
                     <div id="infozone"></div>
                 </div>
-                <div id="icode"></div>
-                <div id="leaderzone">
+                <div id="icode" style="display: none"></div>
+                <div id="leaderzone" style="display: none">
                     <div class="button" id="code">创建邀请码</div>
                     <div class="button" id="remove">移除成员</div>
                     <div class="button" id="change">队长转让</div>
@@ -188,10 +203,7 @@ export default {
             this.methods.showTeamInfo()
             // 判断是否是队长
 
-            document.getElementById('code').addEventListener('click', this.methods.generateIvCode)
-            document.getElementById('dismiss').addEventListener('click', this.methods.deleteTeam)
-            document.getElementById('change').addEventListener('click', this.methods.changeLeader)
-            document.getElementById('remove').addEventListener('click', this.methods.removeMember)
+
         }
     },
     destroyed: function() {
@@ -208,11 +220,12 @@ export default {
         // 已有队伍视图
         else {
             // 判断是否是队长
-
-            document.getElementById('code').removeEventListener('click', this.methods.generateIvCode)
-            document.getElementById('dismiss').removeEventListener('click', this.methods.deleteTeam)
-            document.getElementById('change').removeEventListener('click', this.methods.changeLeader)
-            document.getElementById('remove').removeEventListener('click', this.methods.removeMember)
+            if (this.methods.isLeader){
+                document.getElementById('code').removeEventListener('click', this.methods.generateIvCode)
+                document.getElementById('dismiss').removeEventListener('click', this.methods.deleteTeam)
+                document.getElementById('change').removeEventListener('click', this.methods.changeLeader)
+                document.getElementById('remove').removeEventListener('click', this.methods.removeMember)
+            }
         }
     }
 }
