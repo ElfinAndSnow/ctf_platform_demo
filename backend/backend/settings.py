@@ -50,9 +50,7 @@ INSTALLED_APPS = [
     'challenge',
     'team',
     'account',
-    'article',
     'jwtauth',
-    'library',
 ]
 
 REST_FRAMEWORK = {
