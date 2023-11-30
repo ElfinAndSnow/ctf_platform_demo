@@ -115,8 +115,8 @@ class UserChallengeSession(AbstractTimeLimitedModel):
         for k in image.attrs['ContainerConfig']['ExposedPorts']:
             port_inside = k
             break
-        if self.port_inside:
-            port_inside = self.port_inside
+        if self.challenge.port_inside:
+            port_inside = self.challenge.port_inside
         container_name = (
                 str(self.id) + "-" +
                 str(self.user.username) + "-" +
