@@ -31,5 +31,8 @@ class Challenge(models.Model):
     # 题目文件 空则不需要
     file = models.FileField(upload_to='challenge_files/', null=True, blank=True)
 
+    # 容器内部端口
+    port_inside = models.CharField(verbose_name="容器内部端口/protocol", max_length=127, default="80/tcp", null=True, blank=True)
+
     def __str__(self):
         return str(self.id) + " | " + self.name + "_" + self.type
