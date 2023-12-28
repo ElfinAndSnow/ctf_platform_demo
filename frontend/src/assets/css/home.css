@@ -1,0 +1,111 @@
+#intro {
+    width: 100%;
+    overflow: hidden;
+    min-height: 90vh;
+}
+
+#qs {
+    width: 100%;
+    margin-top: 8vh;
+}
+#qs h1 {
+    color: var(--plain-color);
+    font-size: var(--slogan-font-size);
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+#qs h3 {
+    font-size: var(--challenge-font-size);
+    display: block;
+    width: 100%;
+    text-align: center;
+    background-image: linear-gradient(135deg,color(display-p3 .6196078431 .4784313725 1/1) 0%,color(display-p3 .9960784314 .5450980392 .7333333333/1) 33.33%,color(display-p3 1 .7411764706 .4784313725/1) 66.67%,color(display-p3 .9725490196 .9176470588 .7647058824/1) 100%);
+    -webkit-background-clip: text;
+    color: transparent;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
+
+
+.blinking-cursor {
+    margin-left: 5px;
+    animation: blink 1s infinite;
+}
+
+.chatbox {
+    width: 90%;
+    margin: 0 auto;
+    border-radius: 10px;
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+.chat {
+    width: 100%;
+    display: flex;
+    min-height: 60px;
+}
+
+.leftaside {
+    width: max(90px, 10%);
+    display: flex;
+    justify-content: center;
+}
+
+.chat p {
+    color: var(--plain-color);
+    font-size: var(--text-font-size);
+    width: 100%;
+    margin-top: 10px;
+    margin-right: 20px;
+}
+
+.profile {
+    background-color: orange;
+    font-size: 40px;
+    color: white;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 10px 10px 0 10px;
+}
+
+.profile, .gpt{
+    width: 40px;
+    height: 40px;
+    margin-top: 10px;
+}
+
+.gpt path:first-child {
+    fill: #74aa9c;
+}
+.gpt path:last-child {
+    fill: white;
+}
+
+#userinput {
+    background-color: var(--chat-user-color);
+}
+
+#gptoutput {
+    background-color: var(--chat-gpt-color);
+}
+
+@keyframes blink {
+    0%, 50% {
+        opacity: 1;
+    }
+    50.1%, 100% {
+        opacity: 0;
+    }
+}
+
+
+@media (max-width: 800px) {
+    #qs {
+        width: 100%;
+    }
+}

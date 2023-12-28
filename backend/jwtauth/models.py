@@ -1,3 +1,43 @@
 from django.db import models
 
-# Create your models here.
+from utils.models import AbstractTimeLimitedModel
+
+
+class EmailVerification(AbstractTimeLimitedModel):
+    # 默认超时时限2分钟
+    time_limit_second = 120
+
+    PURPOSE_CHOICES = (
+        ('registration', 'Registration'),
+        ('password_reset', 'Password Reset'),
+    )
+
+    user = models.ForeignKey(
+        'account.User',
+        verbose_name="用户",
+        on_delete=models.CASCADE,
+        related_name='email_verifications',
+    )
+    is_verified = models.BooleanField(verbose_name="是否验证", default=False, blank=True)
+    purpose = models.CharField(max_length=15, choices=PURPOSE_CHOICES, null=False)
+    code = models.CharField(verbose_name="验证代码", null=True, max_length=127)
+
+    def __str__(self):
+        state = "[OPEN]"
+        if self.is_verified or self.is_expired:
+            state = "[CLOSED]"
+        return f"{self.id} | {state}{self.purpose}: {self.user.username}"
+
+    def code_verification(self, code):
+        if code == self.code:
+            self.is_verified = True
+            self.save()
+            return True
+        else:
+            return False
+
+    def save(
+        self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
+        self.time_limit = self.time_limit_second
+        super().save(force_insert=False, force_update=False, using=None, update_fields=None)

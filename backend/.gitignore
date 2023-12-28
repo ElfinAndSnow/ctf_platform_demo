@@ -1,1 +1,10 @@
-migrations
+0*.py
+*.env
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# static and media folder
+static/
+media/

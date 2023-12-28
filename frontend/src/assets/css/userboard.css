@@ -1,0 +1,89 @@
+#userboard {
+    width: 80%;
+    margin: 0 auto;
+   
+    color: var(--plain-color);
+}
+
+#user-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 2fr 2fr;
+    grid-template-areas: 
+        "username username username"
+        "solved points rank";
+}
+
+#user-name {
+    grid-area: username;
+    border-bottom: 1px solid var(--divided-line-color);
+}
+
+#user-name b {
+    font-size: var(--slogan-font-size);
+}
+
+#solved-num {
+    grid-area: solved;
+}
+
+#points {
+    grid-area: points;
+}
+
+#rate {
+    grid-area: rank;
+}
+
+.list {
+    font-size: var(--text-font-size);
+    display: flex;
+    margin-left: 15%;
+    margin-top: 20px;
+}
+
+#revise {
+    grid-area: revise;
+    display: flex;
+    width: 100%;
+    margin: 20px auto;
+    flex-direction: column;
+}
+
+#revise form{
+    width: 100%;
+}
+
+#revisepwd {
+    width: 90px;
+    height: 40px;
+    line-height: 40px;
+    margin: auto;
+}
+
+#activatedcode {
+    width: 50%;
+    left: -5%;
+}
+
+#verify {
+    width: 120px;
+    height: 44px;
+    
+    line-height: 44px;
+    white-space: nowrap;
+    position: absolute;   
+    left: 105%;
+}
+
+.ops {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@media (max-width: 800px) {
+    #userboard {
+        width: 90%;
+    }
+}

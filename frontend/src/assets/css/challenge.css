@@ -1,0 +1,166 @@
+.view {
+    width: 90%;
+    margin: 20px auto;
+}
+
+#challenge-bank {
+    width: 70vw;
+}
+
+#aside-bar {
+    position: fixed;
+    width: 20vw;
+    left: 77vw;
+    background-color: var(--card-color);
+    border-radius: 1vw;
+    max-height: var(--aside-bar-height);
+    color: var(--title-color);
+    border: 1px solid var(--edge-color);
+}
+
+#aside-bar h1 {
+    width: 100%;
+    height: 80px;
+    text-align: center;
+    line-height: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#aside-bar h3 {
+    width: 100%;
+    text-align: center;
+}
+#switch-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--border-color);
+    border-radius: var(--switcher-height);
+    width: 65%;
+    height: var(--switcher-height);
+    margin: var(--distance) auto;
+    box-sizing: border-box;
+    cursor: pointer;
+    
+}
+
+#switch-bar a {
+    height: 100%;
+    line-height: var(--switcher-height);
+    flex:1;
+    text-align: center;
+}
+#switch-bar a:first-child {
+    border-radius: var(--switcher-height) 0 0 var(--switcher-height);
+}
+#switch-bar a:last-child {
+    border-radius: 0 var(--switcher-height) var(--switcher-height) 0;
+}
+#switch-bar a:hover {
+    background-color: var(--btn-hover-color);
+}
+
+#switch-bar a:active {
+    background-color: var(--btn-activate-color);
+}
+
+#challenge-list {
+    display: grid;
+    width: 95%;
+    margin: 15px auto;
+    grid-template-columns: repeat(auto-fill, minmax(var(--challenge-bar-width), 0.5fr));
+    gap: 15px;
+    box-sizing: content-box;
+}
+
+.challenge-bar {
+    height: var(--challenge-bar-height);
+    background-color: var(--challenge-bar-color);
+    border-radius: calc(var(--challenge-bar-height)/5);
+    cursor: pointer;
+}
+
+.misc, .web, .reverse, .pwn, .crypto {
+    background-position: center right;
+    background-repeat: no-repeat;
+}
+
+.misc {
+    background-image: var(--misc);
+}
+
+.web {
+    background-image: var(--web);
+}
+
+.reverse {
+    background-image: var(--reverse);
+}
+
+.pwn {
+    background-image: var(--pwn);
+}
+
+.crypto {
+    background-image: var(--crypto);
+}
+
+.challenge-bar:hover {
+    box-shadow: 3px 3px 3px var(--shadow-color),
+    -3px -3px 3px var(--shadow-color);
+}
+
+.challenge-bar:active {
+    background-color: var(--btn-hover-color);
+}
+
+.challenge-bar h1 {
+    color: var(--title-color);
+    height: 50%;
+    width: 85%;
+    line-height: calc(var(--challenge-bar-height)/2);
+    font-size: var(--challenge-font-size);
+    margin: 0 auto;
+    white-space: nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.challenge-bar h2 {
+    color: var(--plain-color);
+    height: 50%;
+    line-height: calc(var(--challenge-bar-height)/2);
+    margin-left: 10px;
+}
+
+.challenge-bar * {
+    /* 使点击子元素无效 */
+    pointer-events: none;
+}
+
+.issolved {
+    background-color: var(--solved-color);
+}
+
+
+
+@media (max-width: 955px) {
+    main {
+        flex-direction: column;
+        justify-content: start;
+    }
+    #aside-bar {
+        position: static;
+        width: 100%;
+        margin-bottom: 10px;  
+    }
+    #challenge-bank {
+        position: static;
+        width: 100%;
+        margin: 0;
+    }
+    #switch-bar {
+        width: 95%;
+    }
+}

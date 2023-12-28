@@ -1,0 +1,123 @@
+#rank {
+    width: 100%;
+}
+
+/* 单选框 */
+#radio-inputs {
+    /* 位置：左右居中，距离顶部一定距离 */
+    margin-top: 4vh;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    /* 弹性盒子 */
+    display: flex;
+    flex-wrap: wrap;
+    /* 外形样式：圆角矩阵 */
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: var(--switcher-color);
+    box-sizing: border-box;
+    width: 300px;
+    /* 字体大小 */
+    font-size: 14px;
+}
+
+#radio-inputs .radio {
+    flex: 1 1;
+    text-align: center;
+}
+
+#radio-inputs .radio input {
+    display: none;
+}
+
+#radio-inputs .radio .name {
+    height: 100%;
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    border: none;
+    padding: 5px 0;
+    color: var(--pure-color);
+    transition: all .15s ease-in-out;
+    pointer-events: none;
+    font-size:  var(--global-font-size);
+}
+
+#radio-inputs .radio input:checked + .name {
+    background-color: var(--switcher-activate-color);
+    font-weight: 600;   
+}
+
+#rank>.hide {
+    opacity: 0;
+    position: fixed;
+    left: 999px;
+}
+
+.rank {
+    /* 定位 */
+    width: 90%;
+    /* 居中 */
+    margin: 3vh auto;
+    background-color: var(--blur-color);
+}
+
+/* 折线图 */
+.chart {
+    /* 宽高 */
+    width: 100%;
+    height: 40vh;
+    /* margin&padding */
+    padding-top: 20px;
+}
+
+.table {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.grade {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 60px;
+    width: 90%;
+    margin: 0 auto;
+
+}
+
+.grade * {
+    white-space: nowrap;
+    font-size: var(--footer-font-size);
+    font-weight: 400;
+    color: var(--title-color);
+    font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.rate {
+    flex: 1;
+}
+
+.name {
+    flex: 2;
+}
+
+.score {
+    flex: 1;
+    text-align: right;
+}
+
+.time {
+    flex: 2;
+    text-align: right;
+}
+
+@media (max-width: 800px) {
+    .rank {
+        width: 100%;
+    }
+}

@@ -1,0 +1,120 @@
+#inputarea {
+    width: 40%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+}
+
+#inputarea #header {
+    display: flex;
+    width: 100%;
+    height: 45px;
+    justify-content: center;
+    align-items: center;
+}
+
+#header * {
+    font-family: "Popins" sans-serif;
+    height: 100%;
+    flex: 1;
+    line-height: 45px;
+}
+
+#inputarea .hr {
+    width: 100%;
+}
+
+#loginbar, #registerbar {
+    width: 50%;
+    text-align: center;
+    margin: auto 0;
+    font-size: var(--text-font-size);
+    color: var(--btn-color);
+}
+
+
+#loginform, #registerform {
+    width: 100%;
+    display: flex;
+    margin-top: 20px;
+    flex-direction: column;
+    justify-content: start;
+}
+
+#loginform.hide, #registerform.hide {
+    display: none;
+}
+
+.alert {
+    color: red;
+    font-size: 15px;
+    height: 20px;
+    white-space: nowrap;
+}
+
+
+.forminput {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin: 0 auto;
+    width: 60%;
+    height: 95px;
+}
+
+.forminput label {
+    font-size: 15px;
+    color: var(--btn-color);
+    font-weight: 700;
+    position: relative;
+    top: 10px;
+    padding: 0 3px;
+    background: var(--card-solid-color);
+    width: fit-content;
+}
+
+.forminput input {
+    padding: 11px 10px;
+    font-size: 15px;
+    border: 2px var(--btn-color) solid;
+    border-radius: 5px;
+    background: var(--card-solid-color);
+    color: var(--pure-color);
+}
+.forminput svg {
+    width: 40px;
+    height: 40px;
+    position: absolute;   
+    left: 100%;
+    top: 30%;            
+}
+
+.forminput>.hide {
+    display: none;
+}
+
+svg path {
+    pointer-events: none;
+}
+
+.forminput input:focus {
+    outline: none;
+}
+
+form .button {
+    margin: 20px auto;
+}
+
+
+@media (max-width:955px) {
+    #inputarea {
+        width: 100%;
+    }
+    .forminput {
+        width: 80%;
+    }
+}
